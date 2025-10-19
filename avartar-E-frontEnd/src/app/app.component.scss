@@ -1,0 +1,119 @@
+// bloquea el scrool del body caundo el menu movil esta abierto
+.body-lock{
+  // position: fixed;
+  // width: 100%;
+  overflow: hidden;
+
+}
+
+
+// Animaciones para el componente principal
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// Clases de animación
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-progress {
+  animation: progress 2s ease-in-out infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Mejoras para el loading overlay
+.fixed {
+  backdrop-filter: blur(8px);
+}
+
+// Transiciones suaves para el contenido
+main {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-progress,
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
+
+  .transition-all,
+  .transition-opacity {
+    transition: none;
+  }
+}
+
+// Estados de focus para elementos interactivos
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: 100dvh; // Para dispositivos móviles
+  }
+}
+
+// Mejoras visuales para el gradient
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}

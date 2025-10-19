@@ -1,0 +1,106 @@
+<!-- Layout pricipal de la aplicacion -->
+
+<!-- <div class="min-h-screen flex flex-col bg-gray-50 "> -->
+<div class="min-h-screen">
+  <!-- <div class="min-h-screen bg-gray-500"> -->
+  <!-- Navbar global -->
+  <app-navbar></app-navbar>
+
+  <!-- Contenido principal -->
+  <main
+    class="flex-grow-0 transition-all duration-300"
+    [class]="getMainClasses()"
+    (click)="onContentClick($event)"
+  >
+    <!-- Loading overlay global -->
+    <div
+      [class]="getLoadingOverlayClasses()"
+      role="status"
+      aria-live="polite"
+      aria-label="Cargando aplicacion"
+    >
+      <div class="text-center space-y-4 animate-fade-in">
+        <!-- Logo durante loading -->
+        <div class="flex justify-center mb-4">
+          <div
+            class="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-2xl shadow-lg"
+          >
+            <img
+              [src]="logoWhite"
+              alt="logo"
+              class="w-12 h-12 amimate-pulse opacity-60"
+            />
+          </div>
+        </div>
+        <!-- Spinner animado -->
+        <!-- <div class="relative">
+          <div
+            class="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto"
+          ></div>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-8 h-8 bg-blue-600 rounded-full animate-ping"></div>
+          </div>
+        </div> -->
+
+        <!-- Texto de loading -->
+        <div class="space-y-2">
+          <p class="text-gray-700 font-semibold text-lg">Imprenta Avatar</p>
+          <p class="text-gray-500 text-sm">Cargando...</p>
+        </div>
+        <!-- Progress bar sutil -->
+        <div class="w-48 h-1 bg-gray-200 rounded-full overflow-hidden mx-auto">
+          <div
+            class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-progress"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Router outlet para contenido dinámico -->
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer global -->
+  <!-- <app-footer></app-footer> -->
+
+  <!-- Componentes globales de UI -->
+
+  <!-- Sistema de alertas -->
+  <app-alert-container></app-alert-container>
+
+  <!-- Diálogos de confirmación -->
+  <app-confirm-dialog></app-confirm-dialog>
+</div>
+
+<!-- <div class="mt-9"></div> -->
+
+<!-- <app-product-list-page></app-product-list-page> -->
+<!-- <app-color-chip></app-color-chip> -->
+<!-- <app-login></app-login> -->
+<!-- <app-register></app-register> -->
+<!-- <app-forgot-password></app-forgot-password> -->
+<!-- <app-prueba-list-product></app-prueba-list-product> -->
+<!-- <app-product-card [product]="productMock"></app-product-card> -->
+<!-- <app-product-list-page></app-product-list-page> -->
+<!-- <app-order-report></app-order-report> -->
+<!-- <app-order-detail-modal></app-order-detail-modal> -->
+
+<!-- Botones básicos -->
+<!-- <button class="btn btn-primary">Comprar ahora</button>
+<button class="btn btn-secondary">Agregar al carrito</button>
+<button class="btn btn-outline">Más info</button>
+<button class="btn btn-danger">Eliminar</button>
+
+<button class="btn-apply-coupon">Aplicar cupón</button>
+<button class="btn-continue-shopping">Seguir comprando</button>
+
+<input type="text" class="input" placeholder="Escribe aquí..." /> -->
+<!-- <router-outlet></router-outlet>
+
+<app-footer></app-footer>
+
+Componentes de alertas globales
+<app-confirm-dialog></app-confirm-dialog>
+
+<app-alert-container></app-alert-container>
+-->

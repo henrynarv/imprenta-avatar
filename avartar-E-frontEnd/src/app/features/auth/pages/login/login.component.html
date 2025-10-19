@@ -1,0 +1,71 @@
+<!-- Pagina cpmleta de login -->
+<div
+  class="min-h-screen bg-gradient-to-b from-blue-50 via-white to-indigo-100 flex items-center justify-center p-4 animate-slide-in"
+>
+  <div class="max-w-md w-full">
+    <!-- Card principal -->
+    <div
+      class="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:shadow-2xl"
+    >
+      <!-- Header con branding -->
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 text-center">
+        <div class="flex items-center justify-center mb-3">
+          <div class="bg-white/20 p-3 rounded-2xl backdrop-blur-sm">
+            <div class="bg-white p-2 rounded-full shadow-lg">
+              <!-- <ng-icon
+                name="heroPrinter"
+                class="text-blue-600"
+                size="32"
+              ></ng-icon> -->
+              <img
+                src="/images/logo-ava.png"
+                alt="logo"
+                class="w-8 h-8 opacity-30"
+              />
+            </div>
+          </div>
+        </div>
+        <h1 class="text-2xl font-bold text-white mb-2">Imprenta Avatar</h1>
+        <p class="text-blue-100/90 text-sm font-thin">
+          Tu mundo, impreso a medida
+        </p>
+      </div>
+
+      <!-- Contenido del formulario -->
+      <div class="p-2">
+        <h2 class="text-2xl font-bold text-gray-700 text-center mb-2">
+          Bienvenido
+        </h2>
+        <!-- <p class="text-gray-600 text-center mb-2">
+          Ingreasa tu cuenta para continuar
+        </p> -->
+
+        <!-- componente formulario reutilizable -->
+        <app-login-form
+          [isLoading]="isLoading()"
+          [errorMessage]="errorMesage()"
+          [showSocialLogin]="true"
+          [showRegisterLink]="true"
+          (loginSubmitted)="onLoginSubmit($event)"
+          (socialLoginRequested)="onSocialLogin($event)"
+        ></app-login-form>
+      </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="mt-8 text-center">
+      <p class="text-xs text-gray-500">
+        ¿Necesitas ayuda?
+        <a
+          href="mailto:soporte@eimprenta.cl"
+          class="text-blue-600 hover:text-blue-500 transition-colors"
+        >
+          Contacta a nuestro soporte
+        </a>
+      </p>
+      <p class="text-xs text-gray-400 mt-2">
+        v1.0 • © {{ year() }} Imprenta Avatar
+      </p>
+    </div>
+  </div>
+</div>

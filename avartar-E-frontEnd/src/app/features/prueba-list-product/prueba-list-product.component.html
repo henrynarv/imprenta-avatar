@@ -1,0 +1,41 @@
+<div class="space-y-4">
+  @for (product of products; track product.id) {
+  <div class="flex items-center justify-between p-4 bg-white rounded-lg shadow">
+    <span>{{ product.name }}</span>
+    <button
+      (click)="deleteProduct(product)"
+      class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+    >
+      Eliminar
+    </button>
+  </div>
+  }
+
+  <!-- Botones de ejemplo para diferentes tipos de alertas -->
+  <div class="flex space-x-4 mt-8">
+    <button
+      (click)="showSuccess()"
+      class="px-4 py-2 bg-green-600 text-white rounded"
+    >
+      Éxito
+    </button>
+    <button
+      (click)="showError()"
+      class="px-4 py-2 bg-red-600 text-white rounded"
+    >
+      Error
+    </button>
+    <button
+      (click)="showWarning()"
+      class="px-4 py-2 bg-yellow-600 text-white rounded"
+    >
+      Advertencia
+    </button>
+    <button
+      (click)="showInfo()"
+      class="px-4 py-2 bg-blue-600 text-white rounded"
+    >
+      Info
+    </button>
+  </div>
+</div>

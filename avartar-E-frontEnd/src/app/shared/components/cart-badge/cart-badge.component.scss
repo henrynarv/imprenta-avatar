@@ -1,0 +1,52 @@
+// Animaciones para el badge del carrito
+@keyframes bounceScale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+}
+
+// Clases de animación
+.animate-bounce-scale {
+  animation: bounceScale 0.6s ease-in-out;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-bounce-scale {
+    animation: none;
+  }
+}
+
+// Efectos hover mejorados
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .min-w-\[18px\] {
+    min-width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+  }
+}

@@ -1,0 +1,104 @@
+// Animaciones para el diálogo de confirmación
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+// Clases de animación
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-dialog-in {
+  animation: dialogIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-dialog-in,
+  .animate-shake {
+    animation: none;
+  }
+}
+
+// Efectos hover mejorados para botones
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  // Efecto de elevación en hover
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .max-w-md {
+    margin: 1rem;
+  }
+
+  .p-6 {
+    padding: 1rem;
+  }
+
+  .flex-row {
+    flex-direction: column;
+  }
+
+  // .space-x-3 {
+  //   space-x: 0;
+  //   space-y: 0.75rem;
+  // }
+}
+
+// Mejoras visuales para el overlay
+.bg-opacity-50 {
+  backdrop-filter: blur(4px);
+}
+
+// Efecto de profundidad para el diálogo
+.shadow-2xl {
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}

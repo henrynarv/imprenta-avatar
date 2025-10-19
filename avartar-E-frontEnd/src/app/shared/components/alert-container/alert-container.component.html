@@ -1,0 +1,86 @@
+<!-- Contenedor principal de alertas -->
+<div [class]="getContainerClasses()">
+  @for (alert of alerts(); track trackByAlertId($index, alert)) {
+  <div
+    [class]="getAlertClasses(alert)"
+    role="alert"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <!-- Contenido de la alerta -->
+    <div class="flex items-start">
+      <!-- Icono -->
+      <div class="flex-shrink-0">
+        <ng-icon
+          [name]="getAlertIcon(alert)"
+          [class]="getIconClasses(alert)"
+          size="20"
+          aria-hidden="true"
+        ></ng-icon>
+      </div>
+
+      <!-- Texto y contenido -->
+      <div class="ml-3 flex-1">
+        <!-- Título -->
+        <h3 class="text-sm font-semibold">
+          {{ alert.title }}
+        </h3>
+
+        <!-- Mensaje -->
+        @if (alert.message) {
+        <div class="mt-1 text-sm opacity-90">
+          <p>{{ alert.message }}</p>
+        </div>
+        }
+
+        <!-- Botones de acción -->
+        @if (alert.showConfirmButton) {
+        <div class="mt-3 flex space-x-2">
+          <button
+            type="button"
+            (click)="onConfirm(alert)"
+            [class]="getConfirmButtonClasses(alert)"
+          >
+            {{ alert.confirmButtonText || "Confirmar" }}
+          </button>
+
+          @if (alert.onCancel) {
+          <button
+            type="button"
+            (click)="onCancel(alert)"
+            class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          >
+            {{ alert.cancelButtonText || "Cancelar" }}
+          </button>
+          }
+        </div>
+        }
+      </div>
+
+      <!-- Botón de cerrar -->
+      @if (alert.showCloseButton) {
+      <button
+        type="button"
+        (click)="closeAlert(alert.id!)"
+        class="ml-4 flex-shrink-0 rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+        aria-label="Cerrar alerta"
+      >
+        <ng-icon name="heroXMark" size="16" aria-hidden="true"></ng-icon>
+      </button>
+      }
+    </div>
+
+    <!-- Barra de progreso para alertas con duración -->
+    @if (alert.duration && alert.duration > 0) {
+    <div class="absolute bottom-0 left-0 right-0 h-1 bg-current opacity-20">
+      <div
+        class="h-full bg-current transition-all duration-linear"
+        [style.width]="'0%'"
+        [class.animate-progress]="alert.duration > 0"
+        [style.animationDuration]="alert.duration + 'ms'"
+      ></div>
+    </div>
+    }
+  </div>
+  }
+</div>

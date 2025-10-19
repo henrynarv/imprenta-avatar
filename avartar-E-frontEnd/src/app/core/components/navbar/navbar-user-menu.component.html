@@ -1,0 +1,806 @@
+<!-- Menú de Navegación para Usuario -->
+<ul
+  class="flex flex-col md:flex-row md:items-center md:space-x-1 lg:space-x-2"
+  (mouseleave)="closeAllMenus()"
+>
+  <!-- Inicio -->
+  <li class="relative">
+    <a
+      [routerLink]="['/']"
+      class="group flex items-center space-x-2 px-4 py-3 text-gray-500 hover:text-black rounded-lg transition-all duration-200 font-medium"
+      (click)="closeAllMenus()"
+    >
+      <ng-icon
+        name="heroHome"
+        size="18"
+        class="text-gray-400 group-hover:text-black"
+      ></ng-icon>
+      <span>Inicio</span>
+    </a>
+  </li>
+
+  <!-- Productos (Mega Menu) -->
+  <li class="relative">
+    <button
+      class="group flex items-center space-x-2 px-4 py-3 text-gray-500 hover:text-black rounded-lg transition-all duration-200 font-medium"
+      aria-haspopup="true"
+      [attr.aria-expanded]="isProductsMenuOpen()"
+      (mouseenter)="openProductsMenu()"
+    >
+      <ng-icon
+        name="heroShoppingBag"
+        size="18"
+        class="text-gray-400 group-hover:text-black"
+      ></ng-icon>
+      <span>Productos</span>
+      <ng-icon
+        name="heroChevronDown"
+        size="14"
+        [class]="
+          isProductsMenuOpen()
+            ? 'rotate-180 text-black'
+            : 'text-gray-400 group-hover:text-white'
+        "
+        class="transition-transform duration-200"
+      ></ng-icon>
+    </button>
+  </li>
+
+  <!-- Servicios (Mega Menu) -->
+  <li class="relative">
+    <button
+      class="group flex items-center space-x-2 px-4 py-3 text-gray-500 hover:text-black rounded-lg transition-all duration-200 font-medium"
+      aria-haspopup="true"
+      [attr.aria-expanded]="isServicesMenuOpen()"
+      (mouseenter)="openServicesMenu()"
+    >
+      <ng-icon
+        name="heroDocumentText"
+        size="18"
+        class="text-gray-400 group-hover:text-black"
+      ></ng-icon>
+      <span>Servicios</span>
+      <ng-icon
+        name="heroChevronDown"
+        size="14"
+        [class]="
+          isServicesMenuOpen()
+            ? 'rotate-180 text-black'
+            : 'text-gray-400 group-hover:text-white'
+        "
+        class="transition-transform duration-200"
+      ></ng-icon>
+    </button>
+  </li>
+
+  <!-- Items simples -->
+  <li>
+    <a
+      [routerLink]="['/about']"
+      class="group flex items-center space-x-2 px-4 py-3 text-gray-500 hover:text-black rounded-lg transition-all duration-200 font-medium"
+      (click)="closeAllMenus()"
+    >
+      <ng-icon
+        name="heroQuestionMarkCircle"
+        size="18"
+        class="text-gray-400 group-hover:text-black"
+      ></ng-icon>
+      <span>Nosotros</span>
+    </a>
+  </li>
+
+  <li>
+    <a
+      [routerLink]="['/contact']"
+      class="group flex items-center space-x-2 px-4 py-3 text-gray-500 hover:text-black rounded-lg transition-all duration-200 font-medium"
+      (click)="closeAllMenus()"
+    >
+      <ng-icon
+        name="heroPhone"
+        size="18"
+        class="text-gray-400 group-hover:text-black"
+      ></ng-icon>
+      <span>Contacto</span>
+    </a>
+  </li>
+</ul>
+
+<!-- ============ MEGA MENU PRODUCTOS ============ -->
+<div
+  class="absolute top-full left-0 w-full bg-gray-900 border border-gray-700 shadow-2xl z-50 opacity-0 pointer-events-none transition-all duration-300 ease-in-out before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-6"
+  [class.opacity-100]="isProductsMenuOpen()"
+  [class.pointer-events-auto]="isProductsMenuOpen()"
+  (mouseenter)="openProductsMenu()"
+  (mouseleave)="closeProductsMenu()"
+>
+  <div class="p-8 mx-auto">
+    <div class="grid grid-cols-6 gap-4">
+      <!-- Columna 1: Impresión Digital -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Impresión Digital
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Tarjetas de Presentación
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Folletos y Volantes
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Posters y Afiches
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Invitaciones y Tarjetas
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Menús y Cartas
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 2: Gran Formato -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Gran Formato
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Lona Frontlit/Backlit
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Vinilo Adhesivo
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Pendones y Banners
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Stickers y Calcomanías
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Vallas Publicitarias
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Corporativo -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Corporativo
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Carpetas Ejecutivas
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Blocks y Notas
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Manuales y Catálogos
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Membretes y Facturas
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Agendas Corporativas
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Especialidades -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Especialidades
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Etiquetas Adhesivas
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Empaques y Envases
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Tarjetas con Relieve
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Invitaciones de Lujo
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Material POP/Display
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 5 y 6: Productos Destacados -->
+      <div class="col-span-2 min-w-0 space-y-4">
+        <h3
+          class="font-semibold text-white text-base border-b-2 border-gray-600 pb-2"
+        >
+          Productos Destacados
+        </h3>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Producto 1 -->
+          <div
+            class="group cursor-pointer bg-gray-800 rounded-lg p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-600 hover:border-gray-400 min-w-0"
+          >
+            <div class="relative overflow-hidden rounded-md bg-gray-700">
+              <img
+                src="/images/bro.jpg"
+                alt="Tarjetas Premium Brillo UV"
+                class="w-full h-20 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <span
+                class="absolute top-1 left-1 bg-gray-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
+              >
+                Nuevo
+              </span>
+            </div>
+            <div class="mt-2 min-w-0">
+              <h4 class="font-semibold text-white text-xs truncate">
+                Tarjetas Premium UV
+              </h4>
+              <p class="text-gray-300 text-[10px] mt-0.5 truncate">
+                Brillo UV Selectivo
+              </p>
+              <div class="flex items-center mt-1">
+                <span class="text-white font-bold text-xs">$12.990</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Producto 2 -->
+          <div
+            class="group cursor-pointer bg-gray-800 rounded-lg p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-600 hover:border-gray-400 min-w-0"
+          >
+            <div class="relative overflow-hidden rounded-md bg-gray-700">
+              <img
+                src="/images/tarjeta.jpg"
+                alt="Stickers Transparentes Personalizados"
+                class="w-full h-20 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <span
+                class="absolute top-1 left-1 bg-gray-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-semibold"
+              >
+                Popular
+              </span>
+            </div>
+            <div class="mt-2 min-w-0">
+              <h4 class="font-semibold text-white text-xs truncate">
+                Stickers Transparentes
+              </h4>
+              <p class="text-gray-300 text-[10px] mt-0.5 truncate">
+                Resistentes al agua
+              </p>
+              <div class="flex items-center mt-1">
+                <span class="text-white font-bold text-xs">$8.990</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call to Action -->
+        <button
+          (click)="navigateTo('/products')"
+          class="w-full bg-gradient-to-r from-gray-700 to-gray-800 text-white py-2 px-4 rounded-lg font-semibold hover:from-gray-600 hover:to-gray-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 shadow-lg text-sm border border-gray-600"
+        >
+          Ver Todos los Productos
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MEGA MENU SERVICIOS ============ -->
+<div
+  class="absolute top-full left-0 w-full bg-gray-900 border border-gray-700 shadow-2xl z-50 opacity-0 pointer-events-none transition-all duration-300 ease-in-out before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-6"
+  [class.opacity-100]="isServicesMenuOpen()"
+  [class.pointer-events-auto]="isServicesMenuOpen()"
+  (mouseenter)="openServicesMenu()"
+  (mouseleave)="closeServicesMenu()"
+>
+  <div class="p-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-6 gap-4">
+      <!-- Columna 1: Diseño Gráfico -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Diseño Gráfico
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Diseño de Logotipos
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Identidad Corporativa
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Material Publicitario
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Rediseño de Marca
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Social Media Kit
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 2: Impresión Especial -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Impresión Especial
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Impresión en Textiles
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Serigrafía Industrial
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Grabado Láser
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Troquelado Especial
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Foil Stamping
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Instalación -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Instalación
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Letreros Luminosos
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Vinilos Decorativos
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Señalética Corporativa
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Montaje en PDV
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Rotulación Vehicular
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 4: Digitalización -->
+      <div class="min-w-0">
+        <h3
+          class="font-semibold text-white mb-3 text-base border-b-2 border-gray-600 pb-2 truncate"
+        >
+          Digitalización
+        </h3>
+        <ul class="space-y-1">
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Fotografía Producto
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Retoque Digital
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Vectorización
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Pre-prensa Digital
+            </button>
+          </li>
+          <li>
+            <button
+              class="text-gray-300 hover:text-white hover:bg-gray-800 text-xs transition-all duration-200 w-full text-left px-2 py-1.5 rounded-lg font-medium truncate"
+            >
+              Formatos Print Ready
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 5 y 6: Información de Servicios -->
+      <div
+        class="col-span-2 min-w-0 bg-gray-800 rounded-lg p-4 border border-gray-600"
+      >
+        <h3 class="font-semibold text-white mb-2 text-base truncate">
+          Servicios Profesionales
+        </h3>
+        <p class="text-gray-300 text-xs mb-3 leading-relaxed">
+          Soluciones integrales de impresión y diseño para empresas y
+          emprendedores.
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 mb-3">
+          <div class="flex items-center space-x-1">
+            <ng-icon
+              name="heroClock"
+              class="text-gray-400 flex-shrink-0"
+              size="12"
+            ></ng-icon>
+            <span class="text-[10px] text-gray-300 font-medium truncate"
+              >24-48h</span
+            >
+          </div>
+          <div class="flex items-center space-x-1">
+            <ng-icon
+              name="heroCheckBadge"
+              class="text-gray-400 flex-shrink-0"
+              size="12"
+            ></ng-icon>
+            <span class="text-[10px] text-gray-300 font-medium truncate"
+              >Calidad</span
+            >
+          </div>
+          <div class="flex items-center space-x-1">
+            <ng-icon
+              name="heroTruck"
+              class="text-gray-400 flex-shrink-0"
+              size="12"
+            ></ng-icon>
+            <span class="text-[10px] text-gray-300 font-medium truncate"
+              >Envío Chile</span
+            >
+          </div>
+          <div class="flex items-center space-x-1">
+            <ng-icon
+              name="heroHeart"
+              class="text-gray-400 flex-shrink-0"
+              size="12"
+            ></ng-icon>
+            <span class="text-[10px] text-gray-300 font-medium truncate"
+              >Asesoría</span
+            >
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <div class="bg-gray-700 rounded p-2 border border-gray-600 min-w-0">
+            <h4 class="font-semibold text-white text-xs truncate">
+              Consultoría Gratuita
+            </h4>
+            <p class="text-gray-400 text-[10px] truncate">
+              Asesoramiento profesional
+            </p>
+          </div>
+
+          <div class="bg-gray-700 rounded p-2 border border-gray-600 min-w-0">
+            <h4 class="font-semibold text-white text-xs truncate">
+              Presupuesto Inmediato
+            </h4>
+            <p class="text-gray-400 text-[10px] truncate">
+              Cotización en 2 horas
+            </p>
+          </div>
+        </div>
+
+        <button
+          (click)="navigateTo('/contact')"
+          class="w-full mt-3 bg-gray-700 text-white border border-gray-600 py-2 px-3 rounded font-semibold hover:bg-gray-600 hover:border-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 shadow text-xs"
+        >
+          Solicitar Cotización
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--
+Menús Desktop
+<ul class="hidden md:flex gap-6">
+  Men
+  <li (mouseenter)="openMegaMenu()" (mouseleave)="closeMegaMenu()">
+    <button
+      class="text-gray-500 font-semibold hover:text-gray-800 cursor-default"
+    >
+      Men
+    </button>
+  </li>
+
+  Women
+  <li (mouseenter)="openMegaMenuWomen()" (mouseleave)="closeMegaMenuWomen()">
+    <button
+      class="text-gray-500 font-semibold hover:text-gray-800 cursor-default"
+    >
+      Women
+    </button>
+  </li>
+</ul>
+
+============ MEGA MENU MEN (fuera de <li>, dentro del nav) ============
+<div
+  class="absolute top-full left-0 w-full bg-black text-white p-8 shadow-lg z-50 opacity-0 pointer-events-none transition-opacity duration-500 ease-in-out  before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-6"
+  [class.opacity-100]="isMegaMenuOpen()"
+  [class.pointer-events-auto]="isMegaMenuOpen()"
+  (mouseenter)="openMegaMenu()"
+  (mouseleave)="closeMegaMenu()"
+>
+  <div class="grid grid-cols-5 gap-8 w-full max-w-7xl mx-auto">
+    Columna 1
+    <div>
+      <h3 class="font-bold mb-2">CloThing</h3>
+      <ul class="space-y-1">
+        @for (item of menus[0].items; track $index) {
+        <li class="text-gray-400 hover:text-white cursor-pointer">
+          <a href="">{{ item }}</a>
+        </li>
+        }
+      </ul>
+    </div>
+
+    Columna 2
+    <div>
+      <h3 class="font-bold mb-2">Accessories</h3>
+      <ul class="space-y-1">
+        @for (acc of accessories; track $index) {
+
+        <li class="text-gray-400 hover:text-white cursor-pointer">
+          {{ acc }}
+        </li>
+        }
+      </ul>
+    </div>
+
+    Columna 3
+    <div>
+      <h3 class="font-bold mb-2">Brands</h3>
+      <ul class="space-y-1">
+        @for (brand of brands; track $index) {
+
+        <li class="hover:underline cursor-pointer">
+          {{ brand }}
+        </li>
+        }
+      </ul>
+    </div>
+
+    Columna 4
+    <div class="relative w-40">
+      <img
+        src="/images/image.jpg"
+        alt="new"
+        class="w-40 h-56 object-cover rounded realtive"
+      />
+      <span
+        class="absolute top-2 left-1 bg-gray-600 text-white text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full"
+        >Nuevo</span
+      >
+      <p class="text-xs text-gray-300 mt-1">New Arrival</p>
+    </div>
+
+    Columna 5
+    <div class="relative w-40">
+      <img
+        src="/images/image.jpg"
+        alt="lehenga"
+        class="w-40 h-56 object-cover rounded"
+      />
+      <span
+        class="absolute top-2 left-1 bg-gray-600 text-white text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full"
+        >Nuevo</span
+      >
+      <p class="text-xs text-gray-300 mt-1">
+        Light Grey Zariwork Net Readymade Lehenga
+      </p>
+    </div>
+  </div>
+</div>
+
+============ MEGA MENU WOMEN (fuera de <li>, dentro del nav) ============
+<div
+  class="absolute top-full left-0 w-full bg-black text-white p-8 shadow-lg z-50 opacity-0 pointer-events-none transition-opacity duration-500 ease-in-out before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-6"
+  [class.opacity-100]="isMegaMenuOpenWomen()"
+  [class.pointer-events-auto]="isMegaMenuOpenWomen()"
+  (mouseenter)="openMegaMenuWomen()"
+  (mouseleave)="closeMegaMenuWomen()"
+>
+  <div class="grid grid-cols-4 gap-8 w-full max-w-7xl mx-auto">
+    <div>
+      <h3 class="font-bold mb-2">Traditional</h3>
+      <ul class="space-y-1">
+        <li>Kurtas</li>
+        <li>Sarees</li>
+        <li>Lehenga</li>
+        <li>Salwar</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="font-bold mb-2">Western</h3>
+      <ul class="space-y-1">
+        <li>Tops</li>
+        <li>Jeans</li>
+        <li>Dresses</li>
+      </ul>
+    </div>
+    <div>
+      <img
+        src="/images/bro.jpg"
+        alt="dress"
+        class="w-40 h-56 object-cover rounded"
+      />
+      <p class="text-xs text-gray-300 mt-1">Exclusive Dresses</p>
+    </div>
+    <div>
+      <img
+        src="/images/tarjeta.jpg"
+        alt="new"
+        class="w-40 h-56 object-cover rounded"
+      />
+      <p class="text-xs text-gray-300 mt-1">New Collection</p>
+    </div>
+  </div>
+</div>
+-->

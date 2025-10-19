@@ -1,0 +1,99 @@
+// Host component styles
+:host {
+  display: block;
+  // Asegura que el footer esté en el contexto de apilamiento correcto
+  z-index: 10;
+  position: relative;
+}
+
+// Animaciones personalizadas con Tailwind-like utilities
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    // Sombra sutil para efecto de elevación
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  // Estado focus para accesibilidad
+  &:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+}
+
+// // Efectos para enlaces con animación de subrayado
+// .footer-link {
+//   position: relative;
+//   transition: color 0.3s ease;
+
+//   // Subrayado animado
+//   &::after {
+//     content: '';
+//     position: absolute;
+//     width: 0;
+//     height: 2px;
+//     bottom: -2px;
+//     left: 0;
+//     background: linear-gradient(90deg, #3b82f6, #60a5fa); // Gradiente azul
+//     transition: width 0.3s ease;
+//     border-radius: 1px;
+//   }
+
+//   // Estados interactivos
+//   &:hover::after,
+//   &:focus::after {
+//     width: 100%;
+//   }
+
+//   // Mejor contraste para accesibilidad
+//   &:focus {
+//     outline: none;
+//     color: #60a5fa;
+//   }
+// }
+
+// Mejoras de responsive design
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  // Optimización para móviles
+  :host {
+    font-size: 0.9rem;
+  }
+
+  // Ajustes específicos para grid en móviles
+  .grid {
+    gap: 1.5rem;
+  }
+}
+
+// Modo dark adicional (por si acaso)
+@media (prefers-color-scheme: dark) {
+  :host {
+    background-color: #1a202c;
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .hover-lift,
+  .footer-link::after {
+    transition: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+}
+
+// Print styles
+@media print {
+  :host {
+    display: none;
+  }
+}

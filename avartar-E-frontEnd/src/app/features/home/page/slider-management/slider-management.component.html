@@ -1,0 +1,434 @@
+<!-- Página de Administración del Slider -->
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Administrar Slider</h1>
+          <p class="text-gray-600 mt-1">
+            Gestiona las imágenes del carrusel principal
+          </p>
+        </div>
+
+        <!-- Botón Agregar Imagen -->
+        <button
+          (click)="toggleAddForm()"
+          class="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <ng-icon name="heroPlus" size="20"></ng-icon>
+          <span>Agregar Imagen</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Formulario de Agregar/Editar -->
+    @if (showAddForm()) {
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
+      <h2 class="text-xl font-semibold text-gray-900 mb-6">
+        {{ editingImageId() ? "Editar Imagen" : "Agregar Nueva Imagen" }}
+      </h2>
+
+      <form
+        [formGroup]="imageForm"
+        (ngSubmit)="onSubmit()"
+        class="space-y-6"
+        enctype="multipart/form-data"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Nombre -->
+          <div>
+            <label
+              for="name"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Nombre de la Imagen *
+            </label>
+            <input
+              id="name"
+              type="text"
+              formControlName="name"
+              [class]="getInputClasses(imageForm.controls.name)"
+              placeholder="Ej: Oferta de Verano"
+            />
+            @if (imageForm.controls.name.touched &&
+            imageForm.controls.name.invalid) {
+            <p class="mt-1 text-sm text-red-600">
+              El nombre es requerido y debe tener al menos 2 caracteres
+            </p>
+            }
+          </div>
+
+          <!-- Subida de Archivo -->
+          <div>
+            <label
+              for="imageFile"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              {{ editingImageId() ? "Cambiar Imagen" : "Seleccionar Imagen *" }}
+            </label>
+
+            <!-- Input de archivo oculto -->
+            <input
+              #fileInput
+              id="imageFile"
+              type="file"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+              class="hidden"
+            />
+
+            <!-- Área de drop personalizada -->
+            <div
+              (click)="fileInput.click()"
+              (drop)="onFileDrop($event)"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              [class]="getDropZoneClasses()"
+            >
+              <div class="text-center">
+                <ng-icon
+                  name="heroPhoto"
+                  class="mx-auto mb-3 text-gray-400"
+                  size="32"
+                ></ng-icon>
+
+                @if (selectedFile()) {
+                <div class="mb-3">
+                  <img
+                    [src]="selectedFilePreview()"
+                    alt="Vista previa"
+                    class="mx-auto max-h-32 rounded-lg border border-gray-200"
+                  />
+                </div>
+                <p class="text-sm font-medium text-gray-900">
+                  {{ selectedFile()?.name }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Tamaño:
+                  {{
+                    (selectedFile()?.size || 0) / 1024 / 1024 | number : "1.2-2"
+                  }}
+                  MB
+                </p>
+                } @else {
+                <p class="text-sm font-medium text-gray-900">
+                  {{
+                    editingImageId()
+                      ? "Haz clic para cambiar imagen"
+                      : "Haz clic para seleccionar"
+                  }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Arrastra y suelta o haz clic para subir
+                </p>
+                <p class="text-xs text-gray-400 mt-2">
+                  Formatos: JPG, PNG, WEBP • Máx. 2MB
+                </p>
+                <p class="mt-1 text-xs text-gray-400">
+                  💡 Recomendado: Imágenes de 1920x600 px para mejor calidad
+                </p>
+                }
+
+                <button
+                  type="button"
+                  class="mt-3 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  {{
+                    selectedFile() ? "Cambiar Archivo" : "Seleccionar Archivo"
+                  }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Validación de archivo -->
+            @if (imageForm.controls.imageFile.touched &&
+            imageForm.controls.imageFile.invalid) {
+            <p class="mt-1 text-sm text-red-600">
+              {{ getFileErrorMessage() }}
+            </p>
+            }
+
+            <!-- Preview de imagen actual en edición -->
+            @if (editingImageId() && !selectedFile()) {
+            <div class="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <p class="text-sm font-medium text-gray-700 mb-2">
+                Imagen actual:
+              </p>
+              <img
+                [src]="getCurrentImageUrl()"
+                [alt]="imageForm.controls.altText.value"
+                class="max-h-32 rounded border border-gray-200"
+              />
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- Texto Alternativo -->
+        <div>
+          <label
+            for="altText"
+            class="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Texto Alternativo (Alt Text) *
+          </label>
+          <textarea
+            id="altText"
+            formControlName="altText"
+            [class]="getInputClasses(imageForm.controls.altText)"
+            rows="3"
+            placeholder="Descripción de la imagen para accesibilidad..."
+          ></textarea>
+          @if (imageForm.controls.altText.touched &&
+          imageForm.controls.altText.invalid) {
+          <p class="mt-1 text-sm text-red-600">
+            El texto alternativo es requerido para accesibilidad
+          </p>
+          }
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Orden -->
+          <div>
+            <label
+              for="order"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Orden de Visualización
+            </label>
+            <input
+              id="order"
+              type="number"
+              formControlName="order"
+              [class]="getInputClasses(imageForm.controls.order)"
+              min="0"
+              [max]="sliderImages().length"
+            />
+          </div>
+
+          <!-- Estado Activo -->
+          <div class="flex items-center space-x-3">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                formControlName="isActive"
+                class="sr-only peer"
+              />
+              <div
+                class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+              ></div>
+            </label>
+            <span class="text-sm font-medium text-gray-700">Imagen Activa</span>
+          </div>
+        </div>
+
+        <!-- Botones del Formulario -->
+        <div
+          class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200"
+        >
+          <button
+            type="submit"
+            [disabled]="!imageForm.valid || isSubmitting()"
+            class="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            @if (isSubmitting()) {
+            <div
+              class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+            ></div>
+            } @else {
+            <ng-icon name="heroCheck" size="20"></ng-icon>
+            }
+            <span>
+              {{
+                isSubmitting()
+                  ? "Procesando..."
+                  : (editingImageId() ? "Actualizar" : "Agregar") + " Imagen"
+              }}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            (click)="cancelEdit()"
+            [disabled]="isSubmitting()"
+            class="flex items-center space-x-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50"
+          >
+            <ng-icon name="heroXMark" size="20"></ng-icon>
+            <span>Cancelar</span>
+          </button>
+        </div>
+      </form>
+    </div>
+    }
+
+    <!-- Lista de Imágenes -->
+    <div
+      class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
+    >
+      <!-- Header de la Lista -->
+      <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h2 class="text-lg font-semibold text-gray-900">
+          Imágenes del Slider ({{ sliderImages().length }})
+        </h2>
+      </div>
+
+      <!-- Estado de Loading -->
+      @if (isLoading()) {
+      <div class="flex items-center justify-center py-12">
+        <div class="text-center">
+          <div
+            class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+          ></div>
+          <p class="text-gray-600 font-medium">Cargando imágenes...</p>
+        </div>
+      </div>
+      }
+
+      <!-- Lista de Imágenes con View Transitions -->
+      @if (!isLoading() && sliderImages().length > 0) {
+      <div
+        class="divide-y divide-gray-200"
+        style="view-transition-name: slider-list"
+      >
+        @for (image of sliderImages(); track trackByImageId($index, image); let
+        i = $index) {
+        <div
+          class="p-6 hover:bg-gray-50 transition-colors duration-200"
+          [style.view-transition-name]="'slide-item-' + image.id"
+        >
+          <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+            <!-- Preview de la Imagen con View Transition -->
+            <div
+              class="flex-shrink-0"
+              [style.view-transition-name]="'slide-image-' + image.id"
+            >
+              <img
+                [src]="getImageUrl(image)"
+                [alt]="image.altText"
+                class="w-32 h-20 object-cover rounded-lg border border-gray-200 shadow-sm"
+                loading="lazy"
+              />
+            </div>
+
+            <!-- Información de la Imagen -->
+            <div class="flex-grow">
+              <div class="flex items-start justify-between">
+                <div>
+                  <h3
+                    class="text-lg font-medium text-gray-900"
+                    [style.view-transition-name]="'slide-title-' + image.id"
+                  >
+                    {{ image.name }}
+                  </h3>
+                  <p
+                    class="text-gray-600 mt-1 text-sm"
+                    [style.view-transition-name]="'slide-desc-' + image.id"
+                  >
+                    {{ image.altText }}
+                  </p>
+                  <div class="flex items-center space-x-4 mt-2">
+                    <span
+                      class="text-sm text-gray-500"
+                      [style.view-transition-name]="'slide-order-' + image.id"
+                    >
+                      Orden: {{ image.order }}
+                    </span>
+                    <span
+                      [class]="
+                        image.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      "
+                      class="px-2 py-1 rounded-full text-xs font-medium"
+                      [style.view-transition-name]="'slide-status-' + image.id"
+                    >
+                      {{ image.isActive ? "Activa" : "Inactiva" }}
+                    </span>
+                    <span class="text-sm text-gray-500">
+                      {{ image.createdAt | date : "medium" }}
+                    </span>
+                    @if (image.fileSize) {
+                    <span class="text-sm text-gray-500">
+                      {{ image.fileSize / 1024 / 1024 | number : "1.2-2" }} MB
+                    </span>
+                    }
+                  </div>
+                </div>
+
+                <!-- Acciones -->
+                <div class="flex items-center space-x-2">
+                  <!-- Mover Arriba -->
+                  <button
+                    (click)="moveImageUpWithTransition(i)"
+                    [disabled]="i === 0 || isReordering()"
+                    class="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-200"
+                    [attr.aria-label]="'Mover imagen hacia arriba'"
+                  >
+                    <ng-icon name="heroArrowUp" size="20"></ng-icon>
+                  </button>
+
+                  <!-- Mover Abajo -->
+                  <button
+                    (click)="moveImageDownWithTransition(i)"
+                    [disabled]="
+                      i === sliderImages().length - 1 || isReordering()
+                    "
+                    class="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-200"
+                    [attr.aria-label]="'Mover imagen hacia abajo'"
+                  >
+                    <ng-icon name="heroArrowDown" size="20"></ng-icon>
+                  </button>
+
+                  <!-- Editar -->
+                  <button
+                    (click)="editImage(image)"
+                    [disabled]="isSubmitting()"
+                    class="p-2 text-blue-600 hover:text-blue-800 transition-colors duration-200 disabled:opacity-50"
+                    aria-label="Editar imagen"
+                  >
+                    <ng-icon name="heroPencilSquare" size="20"></ng-icon>
+                  </button>
+
+                  <!-- Eliminar -->
+                  <button
+                    (click)="deleteImageWithTransition(image.id)"
+                    [disabled]="isSubmitting()"
+                    class="p-2 text-red-600 hover:text-red-800 transition-colors duration-200 disabled:opacity-50"
+                    aria-label="Eliminar imagen"
+                  >
+                    <ng-icon name="heroTrash" size="20"></ng-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Estado Vacío -->
+      @if (!isLoading() && sliderImages().length === 0) {
+      <div class="text-center py-12">
+        <ng-icon
+          name="heroPhoto"
+          class="text-gray-400 mx-auto mb-4"
+          size="48"
+        ></ng-icon>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No hay imágenes</h3>
+        <p class="text-gray-600 mb-4">
+          Comienza agregando la primera imagen al slider.
+        </p>
+        <button
+          (click)="toggleAddForm()"
+          class="inline-flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          <ng-icon name="heroPlus" size="20"></ng-icon>
+          <span>Agregar Primera Imagen</span>
+        </button>
+      </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,202 @@
+<!-- components/photo-gallery/photo-gallery.component.html -->
+<div class="bg-white rounded-xl shadow-lg p-6 min-h-0 flex flex-col">
+  <!-- Header (mantener igual) -->
+  <div class="flex items-center justify-between mb-6">
+    @if (isAdmin()) {
+    <div class="flex space-x-3">
+      @if (isEditing()) {
+      <button
+        (click)="toggleEditMode()"
+        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+      >
+        <ng-icon name="heroXMark" class="mr-2" size="18"></ng-icon>
+        Cancelar
+      </button>
+      } @else {
+      <button
+        (click)="toggleEditMode()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+      >
+        <ng-icon name="heroPencil" class="mr-2" size="18"></ng-icon>
+        Editar Fotos
+      </button>
+      } @if (isEditing()) {
+      <label
+        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors cursor-pointer"
+      >
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          (change)="addPhotos($event)"
+          class="hidden"
+          #fileInput
+        />
+        <ng-icon name="heroPlus" class="mr-2" size="18"></ng-icon>
+        Agregar Fotos
+      </label>
+      }
+    </div>
+    }
+
+    <div></div>
+    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+      <ng-icon
+        name="heroPhoto"
+        class="text-purple-600 mr-2"
+        size="24"
+      ></ng-icon>
+      Galería - {{ location().name }}
+    </h2>
+  </div>
+
+  <!-- Contenido de la Galería -->
+  <div class="flex-1 min-h-0">
+    <!-- Estado vacío -->
+    @if (!hasPhotos()) {
+    <div
+      class="text-center py-12 text-gray-500 flex-1 flex items-center justify-center"
+    >
+      <div>
+        <ng-icon
+          name="heroPhoto"
+          size="48"
+          class="mx-auto mb-4 opacity-50"
+        ></ng-icon>
+        <p class="text-lg mb-2">No hay fotos para esta sede</p>
+        @if (isAdmin() && isEditing()) {
+        <p class="text-sm">Usa el botón "Agregar Fotos" para comenzar</p>
+        }
+      </div>
+    </div>
+    } @else {
+    <!-- ✅ CONTENEDOR PRINCIPAL DE DRAG & DROP UNIFICADO -->
+    <div
+      cdkDropList
+      id="photos-drop-list"
+      [cdkDropListData]="location().photos"
+      (cdkDropListDropped)="onPhotoDrop($event)"
+      class="space-y-6"
+    >
+      <!-- Foto Principal -->
+      @if (primaryPhoto()) {
+      <div
+        cdkDrag
+        [cdkDragDisabled]="!(isAdmin() && isEditing())"
+        class="relative group"
+      >
+        <img
+          [src]="primaryPhoto()!.url"
+          [alt]="primaryPhoto()!.alt"
+          class="w-full h-80 object-cover rounded-xl shadow-md transition-transform duration-300 group-hover:scale-105"
+        />
+
+        <!-- Badge de foto principal -->
+        <div
+          class="absolute top-3 left-3 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg"
+        >
+          Foto Principal
+        </div>
+
+        <!-- Overlay de acciones para admin en modo edición -->
+        @if (isAdmin() && isEditing()) {
+        <div
+          class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-xl transition-all duration-300 flex items-center justify-center space-x-3 opacity-0 group-hover:opacity-100"
+        >
+          <button
+            (click)="deletePhoto(primaryPhoto()!.id); $event.stopPropagation()"
+            class="bg-red-600 text-white p-3 rounded-full shadow-lg hover:bg-red-700 transition-colors transform hover:scale-110"
+            title="Eliminar foto"
+          >
+            <ng-icon name="heroTrash" size="20"></ng-icon>
+          </button>
+        </div>
+
+        <!-- Indicador de arrastre -->
+        <div
+          class="absolute top-3 right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center"
+        >
+          <ng-icon
+            name="heroArrowsPointingOut"
+            class="mr-1"
+            size="16"
+          ></ng-icon>
+          Arrastrar
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Grid de Fotos Secundarias -->
+      @if (hasSecondaryPhotos()) {
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        @for (layoutItem of photoLayout(); track layoutItem.photo.id; let i =
+        $index) {
+        <div
+          cdkDrag
+          [cdkDragDisabled]="!(isAdmin() && isEditing())"
+          [class]="layoutItem.widthClass"
+        >
+          <div [class]="getPhotoClasses(layoutItem)">
+            <img
+              [src]="layoutItem.photo.url"
+              [alt]="layoutItem.photo.alt"
+              [class]="layoutItem.heightClass"
+              class="w-full object-cover rounded-lg"
+            />
+
+            <!-- Overlay de acciones para admin en modo edición -->
+            @if (isAdmin() && isEditing()) {
+            <div
+              class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 opacity-0 group-hover:opacity-100"
+            >
+              <button
+                (click)="
+                  setPrimaryPhoto(layoutItem.photo.id); $event.stopPropagation()
+                "
+                class="bg-white text-green-600 p-2 rounded-full shadow-lg hover:bg-green-50 transition-colors transform hover:scale-110"
+                title="Establecer como principal"
+              >
+                <ng-icon name="heroCheck" size="16"></ng-icon>
+              </button>
+              <button
+                (click)="
+                  deletePhoto(layoutItem.photo.id); $event.stopPropagation()
+                "
+                class="bg-white text-red-600 p-2 rounded-full shadow-lg hover:bg-red-50 transition-colors transform hover:scale-110"
+                title="Eliminar foto"
+              >
+                <ng-icon name="heroTrash" size="16"></ng-icon>
+              </button>
+            </div>
+
+            <!-- Indicador de arrastre -->
+            <div
+              class="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center"
+            >
+              <ng-icon
+                name="heroArrowsPointingOut"
+                class="mr-1"
+                size="12"
+              ></ng-icon>
+              Mover
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="flex justify-center items-center py-8">
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+      ></div>
+    </div>
+    }
+  </div>
+</div>

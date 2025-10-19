@@ -1,0 +1,307 @@
+import { Component, signal } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroShoppingCartSolid, heroXMarkSolid } from '@ng-icons/heroicons/solid';
+import { heroUsers, heroShoppingBag, heroBars3, heroXMark } from '@ng-icons/heroicons/outline';
+import { CommonModule } from '@angular/common';
+import { OrderReportComponent } from "./features/orders/pages/order-report/order-report.component";
+import { ColorChipComponent } from "./features/color-chip/color-chip.component";
+import { ProductListPageComponent } from "./features/products/page/product-list-page/product-list-page.component";
+
+
+
+@Component({
+  selector: 'app-root',
+  imports: [NgIcon, CommonModule, OrderReportComponent, ColorChipComponent, ProductListPageComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
+  providers: [provideIcons({ heroShoppingCartSolid, heroUsers, heroShoppingBag, heroBars3, heroXMark })],
+})
+export class AppComponent {
+
+  isMenuOpen = signal<boolean>(false);
+  isMegaMenuOpen = signal<boolean>(false);
+  isMegaMenuOpenWomen = signal<boolean>(false);
+
+
+  toggleMenu() {
+    this.isMenuOpen.set(!this.isMenuOpen());
+
+    if (this.isMenuOpen()) {
+      document.body.classList.add('body-lock');//bloquea scrool de body
+    } else {
+      document.body.classList.remove('body-lock');
+    }
+
+  }
+  scrollY = 0;
+
+  // CAMBIO: handlers separados para Men
+  openMegaMenu() {
+    this.isMegaMenuOpen.set(true);
+    this.isMegaMenuOpenWomen.set(false); // cerrar Women si está abierto
+  }
+  closeMegaMenu() {
+    this.isMegaMenuOpen.set(false);
+  }
+
+  // CAMBIO: handlers separados para Women
+  openMegaMenuWomen() {
+    this.isMegaMenuOpenWomen.set(true);
+    this.isMegaMenuOpen.set(false); // cerrar Men si está abierto
+  }
+  closeMegaMenuWomen() {
+    this.isMegaMenuOpenWomen.set(false);
+  }
+
+
+
+  menus = [
+    { name: 'Men', items: ['Tops', 'Dresses', 'Pants', 'Sweaters', 'T-Shirts', 'Jackets'] },
+    { name: 'Women', items: ['Sarees', 'Lehenga Choli', 'Kurtas', 'Gowns'] },
+  ];
+
+  brands = ['Full Nelson', 'My Way', 'Re-Arranged', 'Counterfeit', 'Significant Other'];
+
+  accessories = ['Watches', 'Wallets', 'Bags', 'Sunglasses', 'Hats', 'Belts'];
+
+
+
+}
+
+===========================================================
+
+
+<!-- Barra superior -->
+<nav
+  class="bg-[#D3D3D3] px-6 py-3 flex justify-between items-center relative w-full"
+>
+  <!-- Logo + Menus -->
+  <div class="flex items-center gap-2">
+    <img src="/images/logo-avatar.png" alt="" class="w-8 h-8 mr-4" />
+    <span class="font-semibold"></span>
+
+    <!-- Menús Desktop-->
+    <ul class="hidden md:flex gap-6">
+      <!-- Men -->
+      <li (mouseenter)="openMegaMenu()" (mouseleave)="closeMegaMenu()">
+        <button
+          class="text-gray-500 font-semibold hover:text-gray-800 cursor-default"
+        >
+          Men
+        </button>
+      </li>
+
+      <!-- Women -->
+      <li
+        (mouseenter)="openMegaMenuWomen()"
+        (mouseleave)="closeMegaMenuWomen()"
+      >
+        <button
+          class="text-gray-500 font-semibold hover:text-gray-800 cursor-default"
+        >
+          Women
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <!-- boton hamburguesa (solo movil) -->
+  <button class="md:hidden" (click)="toggleMenu()">
+    <ng-icon name="heroBars3" size="24"></ng-icon>
+  </button>
+
+  <!-- Usuario y carrito -->
+  <div class="flex items-center gap-4">
+    <button class="flex items-center gap-2">
+      <span class="material-icons">shopping_cart</span>
+      <span>Sita</span>
+    </button>
+
+    <div
+      class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white"
+    >
+      <span class="material-icons">person</span>
+    </div>
+  </div>
+
+  <!-- ============ MEGA MENU MEN (fuera de <li>, dentro del nav) ============ -->
+  <div
+    class="absolute top-full left-0 w-full bg-black text-white p-8 shadow-lg z-50 opacity-0 pointer-events-none transition-opacity duration-500 ease-in-out <!-- CAMBIO: solo opacidad --> before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-6"
+    [class.opacity-100]="isMegaMenuOpen()"
+    [class.pointer-events-auto]="isMegaMenuOpen()"
+    (mouseenter)="openMegaMenu()"
+    (mouseleave)="closeMegaMenu()"
+  >
+    <div class="grid grid-cols-5 gap-8 w-full max-w-7xl mx-auto">
+      <!-- Columna 1 -->
+      <div>
+        <h3 class="font-bold mb-2">Clothing</h3>
+        <ul class="space-y-1">
+          <li
+            *ngFor="let item of menus[0].items"
+            class="text-gray-400 hover:text-white cursor-pointer"
+          >
+            <a href="">{{ item }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 2 -->
+      <div>
+        <h3 class="font-bold mb-2">Accessories</h3>
+        <ul class="space-y-1">
+          <li
+            *ngFor="let acc of accessories"
+            class="text-gray-400 hover:text-white cursor-pointer"
+          >
+            {{ acc }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 3 -->
+      <div>
+        <h3 class="font-bold mb-2">Brands</h3>
+        <ul class="space-y-1">
+          <li
+            *ngFor="let brand of brands"
+            class="hover:underline cursor-pointer"
+          >
+            {{ brand }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Columna 4 -->
+      <div class="relative w-40">
+        <img
+          src="/images/image.jpg"
+          alt="new"
+          class="w-40 h-56 object-cover rounded realtive"
+        />
+        <span
+          class="absolute top-2 left-1 bg-gray-600 text-white text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full"
+          >Nuevo</span
+        >
+        <p class="text-xs text-gray-300 mt-1">New Arrival</p>
+      </div>
+
+      <!-- Columna 5 -->
+      <div class="relative w-40">
+        <img
+          src="/images/image.jpg"
+          alt="lehenga"
+          class="w-40 h-56 object-cover rounded"
+        />
+        <span
+          class="absolute top-2 left-1 bg-gray-600 text-white text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded-full"
+          >Nuevo</span
+        >
+        <p class="text-xs text-gray-300 mt-1">
+          Light Grey Zariwork Net Readymade Lehenga
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MEGA MENU WOMEN (fuera de <li>, dentro del nav) ============ -->
+  <div
+    class="absolute top-full left-0 w-full bg-black text-white p-8 shadow-lg z-50 opacity-0 pointer-events-none transition-opacity duration-500 ease-in-out <!-- CAMBIO: solo opacidad --> before:content-[''] before:absolute before:top-[-20px] before:left-0 before:w-full before:h-6"
+    [class.opacity-100]="isMegaMenuOpenWomen()"
+    [class.pointer-events-auto]="isMegaMenuOpenWomen()"
+    (mouseenter)="openMegaMenuWomen()"
+    (mouseleave)="closeMegaMenuWomen()"
+  >
+    <div class="grid grid-cols-4 gap-8 w-full max-w-7xl mx-auto">
+      <div>
+        <h3 class="font-bold mb-2">Traditional</h3>
+        <ul class="space-y-1">
+          <li>Kurtas</li>
+          <li>Sarees</li>
+          <li>Lehenga</li>
+          <li>Salwar</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-bold mb-2">Western</h3>
+        <ul class="space-y-1">
+          <li>Tops</li>
+          <li>Jeans</li>
+          <li>Dresses</li>
+        </ul>
+      </div>
+      <div>
+        <img
+          src="https://i.ibb.co/fXMZfqf/model-2.jpg"
+          alt="dress"
+          class="w-40 h-56 object-cover rounded"
+        />
+        <p class="text-xs text-gray-300 mt-1">Exclusive Dresses</p>
+      </div>
+      <div>
+        <img
+          src="https://i.ibb.co/k6StQFt/model-1.jpg"
+          alt="new"
+          class="w-40 h-56 object-cover rounded"
+        />
+        <p class="text-xs text-gray-300 mt-1">New Collection</p>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- menu mobile fullScreen -->
+@if (isMenuOpen()) {
+<div
+  class="fixed inset-0 bg-black text-white z-50 p-6 md:hidden overflow-y-auto"
+>
+  <!-- boton cerrar -->
+  <button class="mb-4" (click)="toggleMenu()">
+    <ng-icon name="heroXMark" size="24"></ng-icon>
+  </button>
+
+  <!-- Opciones del menú -->
+  <ul class="space-y-4">
+    <li>Men</li>
+    <li>Women</li>
+    <li>Accessories</li>
+    <!-- ... -->
+  </ul>
+</div>
+}
+
+<!-- Resto de tu markup (iconos, botones, componentes) -->
+<ng-icon name="heroUsers" size="24"></ng-icon>
+
+<!-- Carrito -->
+<div class="flex items-center gap-2 cursor-pointer hover:text-gray-200">
+  <ng-icon
+    name="heroShoppingCartSolid"
+    size="24"
+    color="red"
+    class="hover:text-green-600"
+  ></ng-icon>
+  <span>Sita</span>
+</div>
+
+<!-- Usuario -->
+<div
+  class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white"
+>
+  <ng-icon name="heroShoppingBag" class="w-30 h-30"></ng-icon>
+</div>
+
+<!-- Botones básicos -->
+<button class="btn btn-primary">Comprar ahora</button>
+<button class="btn btn-secondary">Agregar al carrito</button>
+<button class="btn btn-outline">Más info</button>
+<button class="btn btn-danger">Eliminar</button>
+
+<button class="btn-apply-coupon">Aplicar cupón</button>
+<button class="btn-continue-shopping">Seguir comprando</button>
+
+<input type="text" class="input" placeholder="Escribe aquí..." />
+
+<app-color-chip></app-color-chip>
+<app-product-list-page></app-product-list-page>
+

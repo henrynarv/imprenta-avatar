@@ -1,0 +1,85 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === BOTONES BASE === */
+.btn {
+  @apply px-4 py-2 font-medium  focus:outline-none rounded-md transition-all duration-200 ease-in-out;
+}
+
+/* === VARIANTES === */
+.btn-primary {
+  @apply bg-primary text-white hover:bg-primary-dark active:bg-green-700;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 hover:bg-gray-300 active:bg-gray-400;
+}
+
+.btn-outline {
+  @apply border border-primary text-primary hover:bg-primary-light hover:text-white;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700 active:bg-red-800;
+}
+
+.btn-warning {
+  @apply bg-yellow-400 text-black hover:bg-yellow-500;
+}
+
+.btn-disabled {
+  @apply bg-gray-300 text-gray-500 cursor-not-allowed;
+}
+
+/* === TAMAÑOS === */
+.btn-sm {
+  @apply px-2 py-1 text-sm;
+}
+
+.btn-lg {
+  @apply px-6 py-3 text-lg;
+}
+
+/* === ESPECIALES ECOMMERCE === */
+.btn-add-cart {
+  @apply btn btn-primary w-full flex items-center justify-center gap-2;
+}
+
+.btn-buy-now {
+  @apply btn btn-warning w-full text-lg font-bold;
+}
+
+.btn-checkout {
+  @apply btn btn-primary w-full font-semibold;
+}
+
+.btn-apply-coupon {
+  @apply btn btn-outline;
+}
+
+.btn-continue-shopping {
+  @apply btn btn-secondary;
+}
+
+/* formulario */
+.input {
+  @apply px-3 py-2 border rounded-md text-gray-700
+         focus:outline-none focus:ring-2 focus:ring-primary;
+}
+
+/* clase base del chip */
+.chip {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mr-2 mb-2 transition;
+}
+
+/* boton de cierre dentro del chip */
+.chip-close {
+  @apply ml-2 cursor-pointer font-bold;
+}
+
+.card {
+  @apply bg-white rounded-md shadow-md overflow-hidden transform transition-all duration-300 ease-in-out lg:hover:scale-105 lg:hover:shadow-lg;
+}
+

@@ -1,0 +1,169 @@
+<div class="p-6 space-y-6">
+  <!-- filtros -->
+  <div class="flex flex-wrap gap-4 items-center bg-white p-4 rounded shadow">
+    <!-- fecha de inicio -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Fecha inicio</label
+      >
+      <input
+        type="date"
+        [ngModel]="startDate()"
+        (ngModelChange)="startDate.set($event)"
+        class="mt-1 border rounded px-3 py-2"
+      />
+    </div>
+
+    <!-- fecha fin -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Fecha fin</label>
+      <input
+        type="date"
+        [ngModel]="endDate()"
+        (ngModelChange)="endDate.set($event)"
+        class="mt-1 border rounded px-3 py-2"
+      />
+    </div>
+
+    <!-- tipo de reporte -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700"
+        >Tipo de reporte</label
+      >
+      <select
+        [ngModel]="selectedReportType()"
+        (ngModelChange)="selectedReportType.set($event)"
+        class="mt-1 border rounded px-3 py-2"
+      >
+        @for (type of reportTypes; track $index) {
+        <option [ngValue]="type">
+          {{ type }}
+        </option>
+        }
+      </select>
+    </div>
+
+    <!-- boton filtrar -->
+    <!-- <button
+      (click)="loadReports()"
+      class="ml-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Filtrar
+    </button> -->
+  </div>
+
+  <!-- buscador solo para el reporte ALL -->
+  @if (selectedReportType() === 'ALL') {
+  <div class="mt-4">
+    <input
+      type="text"
+      placeholder="Buscar por codigo, email o status"
+      [ngModel]="searchText()"
+      (ngModelChange)="searchText.set($event)"
+      class="w-full border rounded px-3 py2 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+    />
+  </div>
+  }
+
+  <!-- tabla de reportes -->
+  <div class="bg-white shadow rounded overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">
+            Periodo / Orden
+          </th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">
+            Total
+          </th>
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">
+            Monto
+          </th>
+          @if(selectedReportType() === 'ALL'){
+          <th class="px-4 py-2 text-left text-sm font-semibold text-gray-600">
+            Acciones
+          </th>
+          }
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-200">
+        @for (report of reports(); track report.id) {
+        <tr>
+          <td class="px-4 py-2">
+            {{ report.period || report.code }}
+          </td>
+          <td class="px-4 py-2">{{ report.totalOrders || report.status }}</td>
+          <td class="px-4 py-2">{{ report.totalAmount | currency }}</td>
+          @if(selectedReportType() === 'ALL'){
+          <td class="px-4 py-2">
+            <button
+              (click)="viewOrderDetail(report.id)"
+              class="bg-blue-600 hover:bg-blue-700"
+            >
+              ver detalles
+            </button>
+          </td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- paginacion -->
+  <div class="flex justify-between items-center mt-4">
+    <!-- botn anterior -->
+    <button
+      (click)="loadReports(currentPage() - 1)"
+      [disabled]="currentPage() === 0"
+      class="px-3 py-1 border rounded disabled:opacity-50"
+    >
+      Anterior
+    </button>
+    <span>Página {{ currentPage() + 1 }} de {{ totalPages() }}</span>
+
+    <!-- boton siguiente -->
+    <button
+      (click)="loadReports(currentPage() + 1)"
+      [disabled]="currentPage() >= totalPages() - 1"
+      class="px-3 py-1 border rounded disabled:opacity-50"
+    >
+      Siguiente
+    </button>
+  </div>
+
+  <!-- modal detalle de la Orden -->
+  @if(selectedOrder()){
+
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+  >
+    <div class="bg-white rounded-lg p-6 w-2/3 relative">
+      <button
+        (click)="closeOrderDetail()"
+        class="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+      >
+        X
+      </button>
+      <h2 class="text-xl font-bold mb-4">Detalle de la orden</h2>
+      <p><strong>Código:</strong> {{ selectedOrder().code }}</p>
+      <p><strong>Email:</strong> {{ selectedOrder().email }}</p>
+      <p><strong>Etatus:</strong> {{ selectedOrder().status }}</p>
+      <p>
+        <strong>Monto total:</strong>
+        {{ selectedOrder().totalAmount | currency }}
+      </p>
+      <h3 class="mt-4 font-semibold">Items</h3>
+      <ul class="list-disc ml-6">
+        @for (item of selectedOrder().items; track $index) {
+        <li>
+          {{ item.productName }} - {{ item.quantity }} x
+          {{ item.price | currency }}
+        </li>
+        }
+      </ul>
+    </div>
+  </div>
+  }
+</div>

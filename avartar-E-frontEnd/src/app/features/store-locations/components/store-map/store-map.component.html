@@ -1,0 +1,37 @@
+<div
+  class="w-full h-full rounded-xl overflow-hidden bg-white shadow-lg border border-gray-200"
+>
+  <google-map
+    #map
+    mapId="d6483ce2f9ad3d9b4b2c125d"
+    height="100%"
+    width="100%"
+    [options]="mapOptions()"
+    (mapClick)="onCenterChanged($event)"
+    (mapInitialized)="onMapReady($event)"
+  >
+    @for (location of locations(); track location.id; let i = $index) {
+    <map-advanced-marker
+      #marker="mapAdvancedMarker"
+      (mapClick)="onMarkerClick(i)"
+      [position]="{ lat: location.latitude, lng: location.longitude }"
+      [title]="location.name"
+      [content]="getMarkerContent(i)"
+    >
+      <!-- <div
+        [class]="
+          selectedIndex() === i
+            ? 'bg-blue-600 text-white shadow-lg transform scale-110 border-2 border-white'
+            : 'bg-white text-gray-800 shadow-md border-2 border-gray-300'
+        "
+        class="px-3 py-2 rounded-full font-semibold text-sm flex items-center justify-center min-w-8 min-h-8"
+      >
+        {{ i + 1 }}
+      </div> -->
+    </map-advanced-marker>
+    }
+
+    <!-- InfoWindow para mostrar detalles -->
+    <map-info-window #infoWindow />
+  </google-map>
+</div>

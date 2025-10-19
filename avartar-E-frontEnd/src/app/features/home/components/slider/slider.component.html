@@ -1,0 +1,153 @@
+<!-- class="relative bg-gradient-to-br from-slate-100 to-slate-200 py-8 md:py-12" -->
+<section
+  class="relative py-8 md:py-12"
+  aria-label="Carrusel de imágenes promocionales"
+>
+  <!-- Estado de loading -->
+  @if (isLoading()) {
+  <div
+    class="flex justify-center items-center h-80 md:h-[500px] mx-4 md:mx-6 lg:mx-8 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700"
+  >
+    <div class="text-center">
+      <div
+        class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+      ></div>
+      <p class="text-slate-200 font-medium text-lg">Cargando imágenes...</p>
+    </div>
+  </div>
+  }
+
+  <!-- Slider Principal -->
+  @if (!isLoading() && sliderImages().length > 0) {
+  <div class="css-slider-container">
+    <div class="slider-wrapper">
+      <!-- Slides -->
+      <div class="slides-container">
+        @for (image of sliderImages(); track image.id; let i = $index) {
+        <div
+          class="slide"
+          [class.active]="currentSliderIndex() === i"
+          (click)="onSlideClick(image)"
+        >
+          <div class="slide-image-container">
+            <img
+              [src]="image.imageUrl"
+              [alt]="image.altText"
+              class="slide-image"
+              loading="eager"
+              decoding="sync"
+            />
+          </div>
+
+          <!-- Overlay -->
+          <div class="slide-overlay"></div>
+
+          <!-- Contenido -->
+          <div class="slide-content">
+            <div class="content-wrapper">
+              <div class="badge">Destacado</div>
+              <h2 class="title">{{ image.name }}</h2>
+              <p class="description">{{ image.altText }}</p>
+              <button class="cta-button">
+                <span>Descubrir Más</span>
+                <svg
+                  class="arrow-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2.5"
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Controles de navegación -->
+      <div class="slider-controls">
+        <!-- Botones prev/next -->
+        <button
+          class="nav-btn prev"
+          (click)="goToPrev()"
+          aria-label="Imagen anterior"
+        >
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+        </button>
+
+        <button
+          class="nav-btn next"
+          (click)="goToNext()"
+          aria-label="Imagen siguiente"
+        >
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
+
+        <!-- Indicadores/paginación -->
+        <div class="pagination">
+          @for (image of sliderImages(); track image.id; let i = $index) {
+          <button
+            class="pagination-dot"
+            [class.active]="currentSliderIndex() === i"
+            (click)="goToSlide(i)"
+            [attr.aria-label]="'Ir a imagen ' + (i + 1)"
+          ></button>
+          }
+        </div>
+
+        <!-- Contador -->
+        <div class="slide-counter">
+          <span class="current">{{ currentSliderIndex() + 1 }}</span>
+          <span class="separator">/</span>
+          <span class="total">{{ sliderImages().length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Estado vacío -->
+  @if (!isLoading() && sliderImages().length === 0) {
+  <div
+    class="flex flex-col items-center justify-center h-80 md:h-[500px] mx-4 md:mx-6 lg:mx-8 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 text-slate-200"
+  >
+    <svg
+      class="w-16 h-16 mb-4 opacity-50"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+      />
+    </svg>
+    <p class="text-xl font-medium">No hay imágenes disponibles</p>
+    <p class="text-slate-400 mt-2 text-center max-w-md">
+      En este momento no tenemos promociones activas.
+    </p>
+  </div>
+  }
+</section>

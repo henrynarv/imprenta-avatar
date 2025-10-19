@@ -1,0 +1,196 @@
+<!-- Menú de Navegación para Administrador -->
+<ul class="flex flex-col md:flex-row md:items-center md:space-x-1 lg:space-x-2">
+  <!-- Dashboard -->
+  <li>
+    <a
+      [routerLink]="['/dashboard']"
+      [class]="getNavItemClasses()"
+      class="group"
+      (click)="closeAllMenus()"
+    >
+      <ng-icon
+        name="heroChartBar"
+        size="18"
+        class="text-gray-500 group-hover:text-blue-500"
+      ></ng-icon>
+      <span>Dashboard</span>
+    </a>
+  </li>
+
+  <!-- Gestión -->
+  <li class="relative">
+    <button
+      [class]="getNavItemClasses(isManagementMenuOpen())"
+      class="group"
+      (click)="toggleManagementMenu()"
+      aria-haspopup="true"
+      [attr.aria-expanded]="isManagementMenuOpen()"
+    >
+      <ng-icon
+        name="heroCube"
+        size="18"
+        class="text-gray-500 group-hover:text-blue-500"
+      ></ng-icon>
+      <span>Gestión</span>
+      <ng-icon
+        name="heroChevronDown"
+        size="14"
+        [class]="
+          isManagementMenuOpen() ? 'rotate-180 text-blue-500' : 'text-gray-400'
+        "
+        class="transition-transform duration-200"
+      ></ng-icon>
+    </button>
+
+    <!-- Dropdown Gestión -->
+    @if (isManagementMenuOpen()) {
+    <div
+      class="absolute top-full left-0 w-64 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 mt-2 animate-dropdown-in"
+      role="menu"
+    >
+      <div class="p-2">
+        <!-- Productos -->
+        <button
+          (click)="navigateTo('/admin/products')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <ng-icon
+            name="heroShoppingBag"
+            class="text-gray-400 group-hover:text-blue-500"
+            size="16"
+          ></ng-icon>
+          <span>Gestionar Productos</span>
+        </button>
+
+        <!-- Órdenes -->
+        <button
+          (click)="navigateTo('/admin/orders')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <ng-icon
+            name="heroDocumentText"
+            class="text-gray-400 group-hover:text-blue-500"
+            size="16"
+          ></ng-icon>
+          <span>Gestionar Órdenes</span>
+        </button>
+
+        <!-- Usuarios -->
+        <button
+          (click)="navigateTo('/admin/users')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <ng-icon
+            name="heroUsers"
+            class="text-gray-400 group-hover:text-blue-500"
+            size="16"
+          ></ng-icon>
+          <span>Gestionar Usuarios</span>
+        </button>
+
+        <!-- Gestionar Locaciones -->
+        <button
+          (click)="navigateTo('/locations')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <ng-icon
+            name="heroMapPin"
+            class="text-gray-400 group-hover:text-blue-500"
+            size="16"
+          ></ng-icon>
+          <span>Gestionar Locaciones</span>
+        </button>
+      </div>
+    </div>
+    }
+  </li>
+
+  <!-- Reportes -->
+  <li class="relative">
+    <button
+      [class]="getNavItemClasses(isReportsMenuOpen())"
+      class="group"
+      (click)="toggleReportsMenu()"
+      aria-haspopup="true"
+      [attr.aria-expanded]="isReportsMenuOpen()"
+    >
+      <ng-icon
+        name="heroChartBar"
+        size="18"
+        class="text-gray-500 group-hover:text-blue-500"
+      ></ng-icon>
+      <span>Reportes</span>
+      <ng-icon
+        name="heroChevronDown"
+        size="14"
+        [class]="
+          isReportsMenuOpen() ? 'rotate-180 text-blue-500' : 'text-gray-400'
+        "
+        class="transition-transform duration-200"
+      ></ng-icon>
+    </button>
+
+    <!-- Dropdown Reportes -->
+    @if (isReportsMenuOpen()) {
+    <div
+      class="absolute top-full left-0 w-56 bg-white border border-gray-200 rounded-xl shadow-2xl z-50 mt-2 animate-dropdown-in"
+      role="menu"
+    >
+      <div class="p-2">
+        <button
+          (click)="navigateTo('/admin/reports/sales')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <span>Reportes de Ventas</span>
+        </button>
+        <button
+          (click)="navigateTo('/admin/reports/products')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <span>Reportes de Productos</span>
+        </button>
+        <button
+          (click)="navigateTo('/admin/reports/orders')"
+          class="flex items-center space-x-3 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-150 group"
+          role="menuitem"
+        >
+          <span>Reportes de Órdenes</span>
+        </button>
+      </div>
+    </div>
+    }
+  </li>
+
+  <!-- Configuración -->
+  <li>
+    <a
+      [routerLink]="['/admin/settings']"
+      [class]="getNavItemClasses()"
+      class="group"
+      (click)="closeAllMenus()"
+    >
+      <ng-icon
+        name="heroCog6Tooth"
+        size="18"
+        class="text-gray-500 group-hover:text-blue-500"
+      ></ng-icon>
+      <span>Configuración</span>
+    </a>
+  </li>
+</ul>
+
+<!--
+  <ul class="flex gap-6 font-medium text-red-600">
+    <li class="hover:text-red-800 cursor-pointer">Dashboard</li>
+    <li class="hover:text-red-800 cursor-pointer">Órdenes</li>
+    <li class="hover:text-red-800 cursor-pointer">Usuarios</li>
+    <li class="hover:text-red-800 cursor-pointer">Reportes</li>
+  </ul>
+
+  -->

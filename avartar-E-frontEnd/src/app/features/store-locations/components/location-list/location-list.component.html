@@ -1,0 +1,111 @@
+<div class="bg-white rounded-xl shadow-lg p-6 w-full">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+      <ng-icon name="heroMapPin" size="24" class="text-blue-600"></ng-icon>
+      Nuestras Tiendas
+    </h2>
+    <span
+      class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold"
+    >
+      {{ activeLocations().length }} ubicaciones
+    </span>
+  </div>
+
+  <div class="space-y-2 max-h-[440px] overflow-y-auto pr-2 custom-scrollbar">
+    @for (location of activeLocations(); track location.id; let i = $index) {
+    <div
+      [class]="getItemClasses(i)"
+      (click)="selectLocation(location, i)"
+      class="group cursor-pointer"
+      [attr.data-location-index]="i"
+    >
+      <div class="flex justify-between items-start">
+        <div class="flex-1 min-w-0">
+          <!-- Header con nombre y badge -->
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold text-gray-900 text-lg truncate pr-2">
+              {{ location.name }}
+            </h3>
+
+            <div
+              [class]="
+                selectedIndex() === i
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-600'
+              "
+              class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-semibold transition-colors flex-shrink-0"
+            >
+              {{ i + 1 }}
+            </div>
+          </div>
+
+          <!-- Direccion -->
+          <p class="text-sm text-gray-600 mb-3 flex items-start">
+            <ng-icon
+              name="heroMapPin"
+              size="16"
+              class="text-gray-400 mr-2 mt-0.5 flex-shrink-0"
+            ></ng-icon>
+            <span class="line-clamp-2">{{ location.address }}</span>
+          </p>
+
+          <!-- Informacion de contacto -->
+          <div class="space-y-2 text-sm">
+            <p class="text-gray-700 flex items-center">
+              <ng-icon
+                name="heroPhone"
+                size="16"
+                class="text-gray-400 mr-2"
+              ></ng-icon>
+              {{ location.phone }}
+            </p>
+            <P class="text-gray-700 flex items-center">
+              <ng-icon
+                name="heroClock"
+                size="16"
+                class="text-gray-400 mr-2 mt-0.5"
+              ></ng-icon>
+              <span>{{ location.hours }}</span>
+            </P>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones para Administradores -->
+      @if (showActions()) {
+      <div
+        class="flex justify-end space-x-2 mt-3 pt-3 border-t border-gray-200"
+      >
+        <button
+          (click)="editLocation(location, $event)"
+          class="text-blue-500 hover:text-blue-800 px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center"
+        >
+          <ng-icon name="heroPencil" class="mr-1" size="14"></ng-icon>
+          Editar
+        </button>
+
+        <button
+          (click)="deleteLocation(location, $event)"
+          class="text-red-600 hover:text-red-800 px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center"
+        >
+          <ng-icon name="heroTrash" class="mr-1" size="14"></ng-icon>
+          Eliminar
+        </button>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Estado vacion -->
+    @if (activeLocations().length ===0 ) {
+    <div class="text-center py-8 text-gray-500">
+      <ng-icon
+        name="heroMapPin"
+        size="48"
+        class="mx-auto mb-4 opacity-50"
+      ></ng-icon>
+      <p>No hay tiendas disonibles</p>
+    </div>
+    }
+  </div>
+</div>

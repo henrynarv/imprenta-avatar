@@ -1,0 +1,40 @@
+/* components/location-form/location-form.component.scss */
+:host {
+  display: block;
+}
+
+// Animaciones
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Estilos para el mapa
+google-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

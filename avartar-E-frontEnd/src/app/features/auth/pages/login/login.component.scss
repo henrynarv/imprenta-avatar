@@ -1,0 +1,51 @@
+// Animaciones para la página completa
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+// Fondo animado opcional
+.animated-gradient {
+  background: linear-gradient(-45deg, #EEF2FF, #E0E7FF, #DBEAFE, #E0F2FE);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .max-w-md {
+    margin: 1rem;
+  }
+
+  .p-8 {
+    padding: 1.5rem;
+  }
+}
+
+// Mejoras de impresión
+@media print {
+  :host {
+    display: none;
+  }
+}

@@ -1,0 +1,122 @@
+<!-- Página principal del carrito de compras -->
+<div class="min-h-screen bg-gray-50 py-8 animate-fade-in">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header y navegación -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <!-- Título y breadcrumb -->
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="continueShopping()"
+            class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors duration-200"
+          >
+            <ng-icon name="heroArrowLeft" size="20"></ng-icon>
+            <span class="font-medium">Seguir Comprando</span>
+          </button>
+
+          <div class="h-6 w-px bg-gray-300"></div>
+
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Carrito de Compras</h1>
+            <p class="text-gray-600 mt-1">Revisa y gestiona tus productos</p>
+          </div>
+        </div>
+
+        <!-- Acciones del carrito -->
+        @if (hasItems() && !isClearing()) {
+        <button
+          (click)="clearCart()"
+          class="flex items-center space-x-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors duration-200"
+        >
+          <ng-icon name="heroTrash" size="18"></ng-icon>
+          <span class="font-medium">Vaciar Carrito</span>
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Columna izquierda - Lista de items -->
+      <div class="lg:col-span-2">
+        <!-- Estado: Carrito con items -->
+        @if (hasItems()) {
+        <div class="space-y-6">
+          <!-- Header de la lista -->
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-gray-900">
+              Tus Productos ({{ items().length }})
+            </h2>
+
+            <div class="text-sm text-gray-500">
+              {{ cartService.totalItems() }} unidades en total
+            </div>
+          </div>
+
+          <!-- Lista de items -->
+          <div class="space-y-4">
+            @for (item of items(); track item.id) {
+            <app-cart-item
+              [item]="item"
+              (quantityChanged)="onQuantityChanged($event)"
+              (itemRemoved)="onItemRemoved($event)"
+            ></app-cart-item>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Estado: Carrito vacío -->
+        @if (isEmpty()) {
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center"
+        >
+          <div class="max-w-md mx-auto">
+            <!-- Icono -->
+            <div class="flex justify-center mb-6">
+              <div class="p-4 bg-blue-50 rounded-full">
+                <ng-icon
+                  name="heroShoppingCart"
+                  class="text-blue-500"
+                  size="48"
+                ></ng-icon>
+              </div>
+            </div>
+
+            <!-- Mensaje -->
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">
+              Tu carrito está vacío
+            </h3>
+
+            <p class="text-gray-600 mb-8 text-lg">
+              {{ getEmptyMessage() }}
+            </p>
+
+            <!-- Call to Action -->
+            <button
+              (click)="continueShopping()"
+              class="inline-flex items-center space-x-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              <span>Explorar Catálogo</span>
+              <ng-icon name="heroArrowRight" size="20"></ng-icon>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+
+      <!-- Columna derecha - Resumen -->
+      <div class="lg:col-span-1">
+        @if (hasItems()) {
+        <app-cart-summary
+          [summary]="summary()"
+          [selectedShipping]="selectedShipping()"
+          [isLoading]="isLoading()"
+          (shippingSelected)="onShippingSelected($event)"
+          (checkoutRequested)="onCheckoutRequested()"
+        ></app-cart-summary>
+        }
+      </div>
+    </div>
+  </div>
+</div>

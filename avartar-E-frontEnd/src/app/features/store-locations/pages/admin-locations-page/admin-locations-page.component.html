@@ -1,0 +1,185 @@
+<!-- pages/admin-locations-page/admin-locations-page.component.html -->
+<div class="min-h-screen bg-gradient-to-b from-blue-50 via-white to-white p-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header con Controles de Admin -->
+    <div class="text-center mb-4">
+      <!-- <h1 class="text-3xl font-bold text-gray-800 mb-4">
+        Administrar Sedes Físicas
+      </h1>
+      <p class="text-md text-gray-600 max-w-2xl mx-auto mb-5">
+        Gestiona todas las ubicaciones de tus tiendas físicas
+      </p> -->
+
+      <!-- <h1 class="text-3xl font-bold text-gray-800 mb-4">Nuestras Sedes</h1> -->
+
+      <hr />
+      <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-3 mt-3">
+        <strong> Administrar Sedes Físicas</strong> | Gestiona todas las
+        ubicaciones de tus tiendas físicas
+      </p>
+      <!-- Línea agregada aquí -->
+      <hr class="mb-4" />
+
+      @if(!showLocationForm()) {
+
+      <!-- Barra de Herramientas de Admin -->
+      <div class="flex flex-wrap justify-center gap-4 mb-6">
+        <!-- Botón Nueva Sede - Verde profesional -->
+        <button
+          (click)="openCreateForm()"
+          class="group relative bg-[#D1FAE5] hover:bg-[#A7F3D0] text-[#065F46] px-8 py-3 rounded-xl flex items-center transition-all duration-300 shadow-md hover:shadow-lg hover:scale-x-105 active:scale-95 border border-emerald-200 overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+          <ng-icon
+            name="heroPlus"
+            class="mr-3 relative z-10"
+            size="22"
+          ></ng-icon>
+          <span class="font-semibold relative z-10">Nueva Sede</span>
+        </button>
+
+        @if (selectedLocation()) {
+        <!-- Botón Editar Sede - Azul profesional -->
+        <button
+          (click)="openEditForm()"
+          class="group relative bg-[#DBEAFE] hover:bg-[#BFDBFE] text-[#1E40AF] px-8 py-2 rounded-xl flex items-center transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 border border-blue-200 overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+          <ng-icon
+            name="heroPencil"
+            class="mr-3 relative z-10"
+            size="22"
+          ></ng-icon>
+          <span class="font-semibold relative z-10">Editar Sede</span>
+        </button>
+
+        <!-- Botón Eliminar Sede - Rojo profesional -->
+        <button
+          (click)="deleteCurrentLocation()"
+          class="group relative bg-[#FEE2E2] hover:bg-[#FECACA] text-[#DC2626] px-8 py-2 rounded-xl flex items-center transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 border border-red-200 overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+          <ng-icon
+            name="heroTrash"
+            class="mr-3 relative z-10"
+            size="22"
+          ></ng-icon>
+          <span class="font-semibold relative z-10">Eliminar Sede</span>
+        </button>
+
+        <!-- Botón Toggle - Púrpura profesional -->
+        <button
+          (click)="togglePhotos()"
+          class="group relative bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#475569] px-8 py-2 rounded-xl flex items-center transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 border border-slate-300 overflow-hidden"
+        >
+          <div
+            class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+          <ng-icon
+            name="heroEye"
+            class="mr-3 relative z-10"
+            size="22"
+          ></ng-icon>
+          <span class="font-semibold relative z-10">
+            {{ showPhotos() ? "Ver Mapa" : "Ver Fotos" }}
+          </span>
+        </button>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="flex justify-center items-center py-12">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+      ></div>
+      <span class="ml-4 text-gray-600">Cargando ubicaciones...</span>
+    </div>
+    } @else {
+
+    <!-- Formulario de Ubicación (si está activo) -->
+    @if (showLocationForm()) {
+    <div class="mb-6">
+      <app-location-form
+        [location]="editingLocation()"
+        (saved)="onLocationSaved($event)"
+        (canceled)="closeForm()"
+      ></app-location-form>
+    </div>
+    }
+
+    <!-- Contenido Principal -->
+    @if (!showLocationForm()) {
+    <div class="flex flex-col lg:flex-row gap-4 h-[calc(100vh-200px)]">
+      <!-- Columna Izquierda - Lista y Galería -->
+      <div class="lg:w-2/5 flex flex-col space-y-6">
+        <!-- Lista de Ubicaciones -->
+        <app-location-list
+          [locations]="locations()"
+          [selectedIndex]="selectedIndex()"
+          [showActions]="true"
+          (locationSelected)="onLocationSelected($event)"
+          (locationEdit)="onLocationEdit($event)"
+          (locationCentered)="onLocationCentered($event)"
+          (locationDelete)="onLocationDelete($event)"
+        ></app-location-list>
+      </div>
+
+      <!-- Columna Derecha - Mapa -->
+
+      <div class="lg:w-3/5 h-full">
+        @if (!showPhotos() && locations().length > 0) {
+        <app-store-map
+          #storeMap
+          [locations]="locations()"
+          [selectedIndex]="selectedIndex()"
+          [readonly]="false"
+          (markerClicked)="onMarkerClicked($event)"
+        ></app-store-map>
+        }@else if(!showPhotos()) {
+        <!-- Mapa vacío -->
+        <div
+          class="bg-white rounded-2xl shadow-lg p-6 h-full flex items-center justify-center"
+        >
+          <div class="text-center text-gray-500">
+            <ng-icon
+              name="heroMap"
+              size="48"
+              class="mx-auto mb-4 opacity-50"
+            ></ng-icon>
+            <p class="text-lg">No hay ubicaciones para mostrar</p>
+          </div>
+        </div>
+        }
+        <!-- Galería de Fotos -->
+        @if (selectedLocation() && showPhotos()) {
+        <app-photo-gallery
+          [location]="selectedLocation()"
+          [isAdmin]="true"
+          [editable]="true"
+          (photosUpdated)="onPhotosUpdated($event)"
+        ></app-photo-gallery>
+        }@else if (showPhotos()) {
+        <!-- Estado vacio -->
+        <div
+          class="bg-white rounded-2xl shadow-lg p-6 min-h-0 flex items-center justify-center"
+        >
+          <div class="text-center text-gray-500">
+            <p class="text-lg mb-2">No hay ubicaciones</p>
+            <p class="text-sm">Usa el botón "Nueva Sede" para comenzar</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    } }
+  </div>
+</div>

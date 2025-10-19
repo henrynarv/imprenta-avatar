@@ -1,0 +1,167 @@
+// Animaciones personalizadas para el formulario
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Clases de animación
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Mejoras para inputs
+input {
+  transition: all 0.2s ease-in-out;
+
+  &::placeholder {
+    color: #9CA3AF;
+    transition: color 0.2s ease;
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+
+  // Remover estilos por defecto de autofill
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    box-shadow: 0 0 0px 1000px white inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+// Botón de toggle de password
+.password-toggle {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    color: #4B5563;
+  }
+
+  // &:focus {
+  //   outline: 2px solid #3B82F6;
+  //   outline-offset: 2px;
+  //   border-radius: 4px;
+  // }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Efectos hover para botones
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:disabled {
+    transform: none !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  // Efecto de elevación en hover
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Enlaces con efecto de subrayado
+a {
+  position: relative;
+  transition: color 0.2s ease;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -1px;
+    left: 0;
+    background-color: currentColor;
+    transition: width 0.2s ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  :host {
+    padding: 0 0.5rem;
+  }
+
+  // Ajustes para móviles
+  .space-y-5 > * + * {
+    margin-top: 1rem;
+  }
+}
+
+// Estados de focus mejorados
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// Loading spinner personalizado
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

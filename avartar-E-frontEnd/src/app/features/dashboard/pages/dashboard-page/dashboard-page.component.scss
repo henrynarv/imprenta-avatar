@@ -1,0 +1,155 @@
+// Animaciones personalizadas para el dashboard
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    // transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Clases de animación
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  // min-height: 100vh;
+
+}
+
+// Mejoras para las tarjetas KPI
+.kpi-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+// Mejoras para la tabla
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th {
+    background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  tr {
+    transition: background-color 0.15s ease-in-out;
+
+    &:hover {
+      background-color: #f9fafb;
+    }
+  }
+}
+
+// Efectos de gradiente mejorados
+.bg-gradient-to-br {
+  background-attachment: fixed;
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-pulse-glow,
+  .animate-slide-in-right,
+  .animate-bounce {
+    animation: none;
+  }
+
+  .transition-all,
+  .transform {
+    transition: none;
+  }
+}
+
+// Responsive design mejorado
+@media (max-width: 768px) {
+  :host {
+    .grid-cols-6 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .p-6 {
+      padding: 1rem;
+    }
+  }
+}
+
+// Estados de focus mejorados
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+// Loading states
+.loading-spinner {
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Mejoras visuales para badges
+[class*="bg-"] {
+  transition: all 0.2s ease-in-out;
+}
+
+// Efectos de profundidad
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+// Mejoras de rendimiento
+* {
+  backface-visibility: hidden;
+}

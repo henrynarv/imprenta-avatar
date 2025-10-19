@@ -1,0 +1,349 @@
+<!-- View Transition para la página completa -->
+
+<div
+  class="min-h-screen bg-gray-50 animate-fade-in"
+  style="view-transition-name: product-detail-page"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Navegación -->
+    <nav class="mb-8">
+      <button
+        (click)="goBack()"
+        class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors duration-200"
+      >
+        <ng-icon name="heroArrowLeft" size="20"></ng-icon>
+        <span class="font-medium">Volver al catálogo</span>
+      </button>
+    </nav>
+
+    <!-- Loading State -->
+    @if(isLoading()) {
+    <div class="flex items-center justify-center py-20">
+      <div class="text-center">
+        <div
+          class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"
+        ></div>
+        <p class="text-gray-600 font-medium">Cargando producto...</p>
+      </div>
+    </div>
+    }
+
+    <!-- Contenido pricipal -->
+    @if(!isLoading() && product()) {
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
+        <!-- Galieria de imagenes -->
+        <div class="space-y-4">
+          <!-- Imagen principal con View Transition -->
+          <div
+            class="relative overflow-hidden rounded-xl bg-gray-100 cursor-zoom-in"
+            (click)="zoomImage()"
+          >
+            <img
+              [src]="selectedImage() || product()!.images[0]"
+              [alt]="product()!.name"
+              class="w-full h-96 object-cover transition-transform duration-300"
+              [class.scale-110]="isZoomed()"
+              [style.view-transition-name]="'product-image-' + product()!.id"
+            />
+
+            <!-- Badges -->
+            <div class="absolute top-4 left-4 flex flex-col space-y-2">
+              @if (hasDiscount()) {
+              <span
+                class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg animate-pulse"
+              >
+                -{{ discountPercentage() }}%
+              </span>
+              } @if (product()!.isFeatured) {
+              <span
+                class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
+              >
+                Destacado
+              </span>
+              }
+            </div>
+            <!-- Boton Favorito -->
+            <button
+              (click)="toggleFavorite($event)"
+              class="absolute h-12 w-12 top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-200 hover:scale-110"
+              [class.text-pink-500]="isFavorite()"
+              [class.text-gray-700]="!isFavorite()"
+            >
+              <ng-icon
+                [name]="isFavorite() ? 'heroHeartSolid' : 'heroHeart'"
+                size="24"
+              ></ng-icon>
+            </button>
+          </div>
+
+          <!-- Miniaturas -->
+          @if (product()!.images.length > 1) {
+          <div class="flex space-x-2 overflow-x-auto pb-2">
+            @for (image of product()!.images; track $index) {
+            <button
+              (click)="selectImage(image)"
+              [class]="
+                'flex-shrink-0 w-20 h-20 rounded-lg border-2 transition-all duration-200 ' +
+                (selectedImage() === image
+                  ? 'border-blue-500 ring-2 ring-blue-200'
+                  : 'border-gray-200')
+              "
+            >
+              <img
+                [src]="image"
+                [alt]="'Miniatura ' + ($index + 1)"
+                class="w-full h-full object-cover rounded"
+              />
+            </button>
+            }
+          </div>
+          }
+        </div>
+
+        <!-- Información del producto -->
+        <div class="space-y-6">
+          <!-- Encabezado -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span
+                class="text-sm font-medium text-blue-600 uppercase tracking-wide"
+              >
+                {{ formatCategory(product()!.category) }}
+              </span>
+              <span
+                [class]="
+                  'px-3 py-1 rounded-full text-sm font-medium ' +
+                  getStockColor(product()!.stock)
+                "
+              >
+                {{ getStockText(product()!.stock) }}
+              </span>
+            </div>
+            <h1
+              class="text-2xl font-bold text-gray-900"
+              [style.view-transition-name]="'product-title-' + product()!.id"
+            >
+              {{ product()!.name }}
+            </h1>
+            <!-- Rating -->
+            <div class="flex items-center space-x-4">
+              <div class="flex items-center space-x-1">
+                @for (star of generateStars(product()!.rating); track $index) {
+                @if (star === 'full') {
+                <ng-icon
+                  name="heroStarSolid"
+                  class="text-yellow-400"
+                  size="20"
+                ></ng-icon>
+                } @else if (star === 'half') {
+                <!-- Media estrella personalizada -->
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  class="text-yellow-400"
+                >
+                  <!-- Estrella exterior gris -->
+                  <path
+                    fill="currentColor"
+                    d="M12 17.27L18.18 21l-1.64-7.03
+               L22 9.24l-7.19-.61L12 2 9.19 8.63
+               2 9.24l5.46 4.73L5.82 21z"
+                    class="text-gray-300"
+                  ></path>
+
+                  <!-- Media parte izquierda amarilla -->
+                  <path
+                    fill="currentColor"
+                    d="M12 17.27V2L9.19 8.63
+               2 9.24l5.46 4.73L5.82 21z"
+                    class="text-yellow-400"
+                  ></path>
+                </svg>
+                } @else {
+                <ng-icon
+                  name="heroStar"
+                  class="text-gray-300"
+                  size="20"
+                ></ng-icon>
+                } }
+              </div>
+              <span class="text-gray-600"
+                >{{ product()!.reviewCount }} reseñas</span
+              >
+            </div>
+          </div>
+
+          <!-- Precio -->
+          <div class="flex items-center space-x-4">
+            <span class="text-3xl font-bold text-gray-900">
+              {{ product()!.price | currency : "CLP" : "symbol" : "1.0-0" }}
+            </span>
+            @if (hasDiscount()) {
+            <span class="text-2xl text-gray-500 line-through">
+              {{
+                product()!.originalPrice | currency : "CLP" : "symbol" : "1.0-0"
+              }}
+            </span>
+            }
+          </div>
+
+          <!-- Descripción -->
+          <div class="space-x-3">
+            <h3 class="text-lg font-semibold text-gray-900">
+              Especificaciones
+            </h3>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              @if (product()!.specifications.paperType) {
+              <div class="flex items-center space-x-2">
+                <ng-icon
+                  name="heroDocumentText"
+                  size="18"
+                  class="text-gray-400"
+                ></ng-icon>
+                <span class="text-gray-600"
+                  >Tipo de papel:
+                  {{ product()!.specifications.paperType }}</span
+                >
+              </div>
+              } @if (product()!.specifications.size) {
+              <div class="flex items-center space-x-2">
+                <ng-icon
+                  name="heroArrowsPointingOut"
+                  size="18"
+                  class="text-gray-400"
+                ></ng-icon>
+                <span class="text-gray-600"
+                  >Tamaño: {{ product()!.specifications.size }}</span
+                >
+              </div>
+              } @if (product!()?.specifications?.finish) {
+              <div class="flex items-center space-x-2">
+                <ng-icon
+                  name="heroSparkles"
+                  size="18"
+                  class="text-gray-400"
+                ></ng-icon>
+                <span class="text-gray-600"
+                  >Acabado: {{ product()!.specifications.finish }}</span
+                >
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Controles de compta -->
+          <div class="space-y-4 pt-4 border-t border-gray-200">
+            <!-- Cantidad -->
+            <div class="flex items-center space-x-4">
+              <label class="text-sm font-medium text-gray-700">Cantidad:</label>
+              <div class="flex items-center space-x-2">
+                <button
+                  (click)="decreaseQuantity()"
+                  [disabled]="quantity() <= product()!.minimumOrder"
+                  class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors disabled:opacity-50"
+                >
+                  <ng-icon name="heroMinus" size="16"></ng-icon>
+                </button>
+                <span class="w-12 text-center font-medium">{{
+                  quantity()
+                }}</span>
+
+                <button
+                  (click)="increaseQuantity()"
+                  [disabled]="quantity() >= product()!.stock"
+                  class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-colors disabled:opacity-50"
+                >
+                  <ng-icon name="heroPlus" size="16"></ng-icon>
+                </button>
+              </div>
+              <span class="text-sm text-gray-500">
+                Min. {{ product()!.minimumOrder }} unidaes
+              </span>
+            </div>
+
+            <!-- Botones de acción -->
+            <div
+              class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4"
+            >
+              <button
+                (click)="addToCart()"
+                [disabled]="product()!.stock === 0 || isAddingToCart()"
+                [class]="
+                  'flex-1 flex items-center justify-center space-x-2 px-8 py-4 rounded-xl font-semibold transition-all duration-200 ' +
+                  (product()!.stock === 0
+                    ? 'bg-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105')
+                "
+              >
+                @if (isAddingToCart()) {
+                <div
+                  class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
+                ></div>
+                <span>Agergado...</span>
+                }@else {
+                <ng-icon name="heroShoppingCart" size="20"></ng-icon>
+                <span>{{
+                  product()!.stock === 0 ? "Agotado" : "Agregar al carrito"
+                }}</span>
+                }
+              </button>
+
+              <button
+                (click)="buyNow()"
+                [disabled]="product()!.stock === 0"
+                class="flex-1 px-8 py-4 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transform hover:scale-105 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                Comprar Ahora
+              </button>
+            </div>
+          </div>
+          <!-- Información de entrega -->
+          <div
+            class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-200"
+          >
+            <span class="flex items-center space-x-2">
+              <ng-icon name="heroTruck" size="18"></ng-icon>
+              <span>Entrega: {{ product()!.deliveryTime }} </span>
+            </span>
+            <span class="flex items-center space-x-2">
+              <ng-icon name="heroShieldCheck" size="18"></ng-icon>
+              <span>Garantía de calidad</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selecionde reseñaas -->
+    <div class="mt-12 bg-white rounded-2xl shadow-xl p-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6">Reseñas de Clientes</h2>
+    </div>
+    }
+
+    <!-- Error Satte -->
+    @if (!isLoading() && !product()) {
+    <div class="text-center py-20">
+      <ng-icon
+        name="heroExclamationTriangle"
+        class="text-gray-400 mx-auto mb-4"
+        size="48"
+      ></ng-icon>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">
+        Producto no encontrado
+      </h3>
+      <p class="text-gray-600 mb-6">
+        El producto que buscas no existe o ha sido removido.
+      </p>
+      <button
+        (click)="goBack()"
+        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Volver al catálogo
+      </button>
+    </div>
+    }
+  </div>
+</div>

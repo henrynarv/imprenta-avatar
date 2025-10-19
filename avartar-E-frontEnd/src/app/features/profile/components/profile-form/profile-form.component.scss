@@ -1,0 +1,123 @@
+// Animaciones para el formulario
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+// Clases de animación
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+// Estilos del formulario
+:host {
+  display: block;
+}
+
+// Mejoras para inputs
+input {
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  // Estados de validación
+  &.ng-valid.ng-touched {
+    border-color: #10b981;
+    background-color: rgba(16, 185, 129, 0.05);
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.05);
+  }
+}
+
+// Mejoras para botones
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  // Efecto de pulsación para botones habilitados
+  &:not(:disabled):active {
+    transform: scale(0.98);
+  }
+}
+
+// Loading spinner personalizado
+.loading-spinner {
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-shake,
+  .loading-spinner {
+    animation: none;
+  }
+
+  .transition-all {
+    transition: none;
+  }
+}
+
+// Responsive design
+@media (max-width: 640px) {
+  .grid-cols-1 {
+    grid-template-columns: 1fr;
+  }
+
+  .sm\:flex-row {
+    flex-direction: column;
+  }
+}
+
+// Estados de focus mejorados
+button:focus,
+input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+// Mejoras visuales para mensajes de error
+.text-red-600 {
+  color: #dc2626;
+}
+
+// Transiciones suaves para todos los elementos
+* {
+  transition-property: color, background-color, border-color, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

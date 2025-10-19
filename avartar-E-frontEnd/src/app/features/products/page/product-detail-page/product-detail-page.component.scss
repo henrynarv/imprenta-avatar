@@ -1,0 +1,31 @@
+/* En tu archivo global styles.css o en el componente */
+@view-transition {
+  navigation: auto;
+}
+
+/* Animaciones personalizadas para la transición */
+::view-transition-old(product-image-*),
+::view-transition-new(product-image-*) {
+  animation-duration: 0.5s;
+}
+
+::view-transition-old(product-title-*),
+::view-transition-new(product-title-*) {
+  animation-duration: 0.5s;
+}
+
+/* Estilos para los elementos en transición */
+.view-transition-image {
+  contain: layout;
+}
+
+.view-transition-title {
+  contain: layout;
+}
+
+/* Asegurar que las imágenes mantengan aspect ratio durante la transición */
+::view-transition-old(product-image-*),
+::view-transition-new(product-image-*) {
+  object-fit: cover;
+  height: 100%;
+}

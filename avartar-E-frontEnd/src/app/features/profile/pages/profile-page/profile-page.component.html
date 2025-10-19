@@ -1,0 +1,471 @@
+<!-- Página de Perfil de Usuario -->
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header de la Página -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <!-- Breadcrumb y Título -->
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="goBack()"
+            class="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors duration-200 p-2 rounded-lg hover:bg-gray-100"
+            aria-label="Volver atrás"
+          >
+            <ng-icon name="heroArrowLeft" size="20"></ng-icon>
+          </button>
+
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Mi Perfil</h1>
+            <p class="text-gray-600 mt-1">
+              Gestiona tu información personal y preferencias
+            </p>
+          </div>
+        </div>
+
+        <!-- Badge de Rol -->
+        <div
+          [class]="getRoleBadgeClasses(userRole())"
+          class="flex items-center space-x-2"
+        >
+          <ng-icon name="heroShieldCheck" size="16"></ng-icon>
+          <span>{{ getRoleText(userRole()) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <!-- Sidebar de Navegación -->
+      <div class="lg:col-span-1">
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-2"
+        >
+          <!-- Pestaña Perfil -->
+          <button
+            (click)="setActiveTab('profile')"
+            [class]="getTabClasses('profile')"
+            class="w-full text-left flex items-center space-x-3"
+          >
+            <ng-icon name="heroUser" size="20"></ng-icon>
+            <span>Información Personal</span>
+          </button>
+
+          <!-- Pestaña Seguridad -->
+          <button
+            (click)="setActiveTab('security')"
+            [class]="getTabClasses('security')"
+            class="w-full text-left flex items-center space-x-3"
+          >
+            <ng-icon name="heroShieldCheck" size="20"></ng-icon>
+            <span>Seguridad</span>
+          </button>
+
+          <!-- Pestaña Preferencias -->
+          <button
+            (click)="setActiveTab('preferences')"
+            [class]="getTabClasses('preferences')"
+            class="w-full text-left flex items-center space-x-3"
+          >
+            <ng-icon name="heroCog6Tooth" size="20"></ng-icon>
+            <span>Preferencias</span>
+          </button>
+        </div>
+
+        <!-- Información de Cuenta -->
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mt-6"
+        >
+          <h3 class="font-semibold text-gray-900 mb-4">
+            Información de Cuenta
+          </h3>
+
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Miembro desde:</span>
+              <span class="font-medium text-gray-900">
+                {{ formatDate(currentUser()?.createdAt || "") }}
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-gray-600">Estado:</span>
+              <span class="flex items-center space-x-1">
+                <ng-icon
+                  name="heroCheckBadge"
+                  class="text-green-500"
+                  size="16"
+                ></ng-icon>
+                <span class="font-medium text-green-600">Activo</span>
+              </span>
+            </div>
+
+            <div class="flex justify-between">
+              <span class="text-gray-600">Verificación:</span>
+              <span class="flex items-center space-x-1">
+                <ng-icon
+                  name="heroCheckBadge"
+                  class="text-blue-500"
+                  size="16"
+                ></ng-icon>
+                <span class="font-medium text-blue-600">Verificado</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenido Principal -->
+      <div class="lg:col-span-3">
+        <!-- pestaña información Personal -->
+        @if(activeTab() === 'profile'){
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in"
+        >
+          <!-- Header de la Sección| -->
+          <div
+            class="flex items-center justify-between p-6 border-b border-gray-200"
+          >
+            <div>
+              <h2 class="text-xl font-semibold text-gray-900">
+                Información Personal
+              </h2>
+              <p class="text-gray-600 mt-1">
+                Actualiza tu infomración de contacto y perfil
+              </p>
+            </div>
+
+            <!-- Boton Editar -->
+            @if(!isEditing()){
+            <button
+              (click)="toggleEditMode()"
+              class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              <ng-icon name="heroPencilSquare" size="18"></ng-icon>
+              <span>Editar Perfil</span>
+            </button>
+            }
+          </div>
+
+          <!-- Contenido -->
+          <div class="p-6">
+            @if(isEditing()){
+            <!-- Formmulari de edición -->
+            <app-profile-form
+              [user]="currentUser()!"
+              [isLoading]="isLoading()"
+              (save)="onProfileUpdate($event)"
+              (cancel)="cancelEdit()"
+            ></app-profile-form>
+
+            }@else {
+            <!-- Vista de Solo Lectura -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <!-- Información Básica -->
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900 mb-4">
+                    Información Básica
+                  </h3>
+
+                  <div class="space-y-4">
+                    <!-- Avatar y Nombre -->
+                    <div class="flex items-center space-x-4">
+                      <img
+                        src="/images/user-avatar.png"
+                        [alt]="currentUser()?.name"
+                        class="w-16 h-16 rounded-full border-2 border-gray-200"
+                      />
+                      <div>
+                        <div class="text-xl font-semibold text-gray-900">
+                          {{ currentUser()?.name }}
+                        </div>
+                        <div class="text-gray-600">
+                          {{ currentUser()?.email }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Información de Contacto -->
+                    <div class="space-y-3">
+                      @if (currentUser()?.phone) {
+                      <div class="flex items-center space-x-3">
+                        <ng-icon
+                          name="heroPhone"
+                          class="text-gray-400"
+                          size="20"
+                        ></ng-icon>
+                        <span class="text-gray-900">{{
+                          currentUser()?.phone
+                        }}</span>
+                      </div>
+                      }
+
+                      <div class="flex items-center space-x-3">
+                        <ng-icon
+                          name="heroEnvelope"
+                          class="text-gray-400"
+                          size="20"
+                        ></ng-icon>
+                        <span class="text-gray-900">{{
+                          currentUser()?.email
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Información de Empresa -->
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-lg font-medium text-gray-900 mb-4">
+                    Información de Empresa
+                  </h3>
+
+                  <div class="space-y-4">
+                    @if (currentUser()?.company) {
+                    <div class="flex items-center space-x-3">
+                      <ng-icon
+                        name="heroBuildingOffice"
+                        class="text-gray-400"
+                        size="20"
+                      ></ng-icon>
+                      <span class="text-gray-900">{{
+                        currentUser()?.company
+                      }}</span>
+                    </div>
+                    }
+
+                    <div class="flex items-center space-x-3">
+                      <ng-icon
+                        name="heroCalendar"
+                        class="text-gray-400"
+                        size="20"
+                      ></ng-icon>
+                      <span class="text-gray-900">
+                        Miembro desde
+                        {{ formatDate(currentUser()?.createdAt || "") }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Estadísticas Rápidas -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                  <h4 class="font-medium text-gray-900 mb-3">
+                    Resumen de Actividad
+                  </h4>
+                  <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-blue-600">12</div>
+                      <div class="text-gray-600">Órdenes</div>
+                    </div>
+                    <div class="text-center">
+                      <div class="text-2xl font-bold text-green-600">8</div>
+                      <div class="text-gray-600">Completadas</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- Pestaña seguridad -->
+
+        @if (activeTab() === 'security') {
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in"
+        >
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">
+              Seguridad de la Cuenta
+            </h2>
+            <p class="text-gray-600 mt-1">
+              Gestiona tu contraseña y configuraciones de seguridad
+            </p>
+          </div>
+
+          <div class="p-6">
+            <div class="space-y-6">
+              <!-- Cambio de contraseña -->
+              <div class="border border-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  Cambiar Contraseña
+                </h3>
+                <p class="text-gray-600 mb-4">
+                  Actualiza tu contraseña regularmente para mantener tu cuenta
+                  segura.
+                </p>
+                <button
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Cambiar Contraseña
+                </button>
+              </div>
+
+              <!-- Autenticacion de Dos Factores -->
+              <div class="border border-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  Autenticación de Dos Factores
+                </h3>
+                <p class="text-gray-600 mb-4">
+                  Añade una capa extra de seguridad a tu cuenta
+                </p>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm text-gray-600">No activado</span>
+                  <button
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  >
+                    Activar 2FA
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sesiones Activas -->
+              <div class="border border-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  Aesiones Activas
+                </h3>
+                <p class="text-gray-600 mb-4">
+                  Gestiona tus sesiones activas en diferentes dispositivos
+                </p>
+                <div class="bg-green-50 borer border-green-200 rounded-lg p-4">
+                  <div class="flex items-center space-x-3">
+                    <ng-icon
+                      name="heroCheckBadge"
+                      size="20"
+                      class="text-green-500"
+                    ></ng-icon>
+
+                    <div>
+                      <div class="font-medium text-green-800">
+                        Sesión actual
+                      </div>
+                      <div class="text-sm text-gray-600">
+                        Este dispositivivo - Ahora mismo
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+
+        <!-- Pestaña Preferencias -->
+        @if(activeTab() === 'preferences') {
+        <div
+          class="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in"
+        >
+          <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-900">Preferencias</h2>
+            <p class="text-gray-600 mt-1">
+              Personaliza tu experiencia en la plataforma
+            </p>
+          </div>
+
+          <div class="p-6">
+            <div class="space-y-6">
+              <!-- Preferencias de Notificaciones -->
+              <div class="border border-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  Notificaciones
+                </h3>
+
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="font-medium text-gray-900">
+                        Notificaciones por Email
+                      </div>
+                      <div class="text-sm text-gray-600">
+                        Recibir notificaciones por email
+                      </div>
+                    </div>
+
+                    <label
+                      class="relative inline-flex items-center cursor-pointer"
+                    >
+                      <input type="checkbox" class="sr-only peer" checked />
+                      <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                      ></div>
+                    </label>
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="font-medium text-gray-900">
+                        Notificaciones de Marketing
+                      </div>
+                      <div class="text-sm text-gray-600">
+                        Ofertas especiales y novedades
+                      </div>
+                    </div>
+
+                    <label
+                      class="relative inline-flex items-center cursor-pointer"
+                    >
+                      <input type="checkbox" class="sr-only peer" />
+                      <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"
+                      ></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Preferencias de Idioma -->
+              <div class="border border-gray-200 rounded-xl p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">
+                  Idioma y Región
+                </h3>
+
+                <div class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Idioma</label
+                    >
+                    <select
+                      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="es" selected>Español</option>
+                      <option value="en">English</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2"
+                      >Zona Horaria</label
+                    >
+                    <select
+                      class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="America/Santiago" selected>
+                        Chile Continental (GMT-4)
+                      </option>
+                      <option value="UTC">UTC</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botón Guardar Preferencias -->
+              <div class="flex justify-end">
+                <button
+                  class="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Guardar Preferencias
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

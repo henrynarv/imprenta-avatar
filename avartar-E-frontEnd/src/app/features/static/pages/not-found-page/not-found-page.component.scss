@@ -1,0 +1,192 @@
+// Animaciones personalizadas para la página 404
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes gentleShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// Clases de animación
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-count-up {
+  animation: countUp 1s ease-out forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.animate-shake {
+  animation: gentleShake 0.5s ease-in-out;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Mejoras para el fondo gradiente
+.bg-gradient-to-br {
+  background-attachment: fixed;
+}
+
+// Efectos de glassmorphism mejorados
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}
+
+// Mejoras para botones y estados de hover
+button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  // Efecto de profundidad en hover
+  &:hover:not(:disabled) {
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  // Efecto de pulsación al hacer clic
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-count-up,
+  .animate-shake,
+  .animate-float,
+  .animate-gradient,
+  .animate-ping,
+  .animate-bounce,
+  .animate-pulse {
+    animation: none;
+  }
+
+  .transition-all,
+  .transform {
+    transition: none;
+  }
+}
+
+// Responsive design mejorado
+@media (max-width: 640px) {
+  :host {
+    .text-6xl {
+      font-size: 4rem;
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+
+    .p-8 {
+      padding: 1.5rem;
+    }
+  }
+}
+
+// Mejoras para modo oscuro (opcional)
+@media (prefers-color-scheme: dark) {
+  :host {
+    .bg-white {
+      background-color: rgba(17, 24, 39, 0.8);
+    }
+
+    .text-gray-900 {
+      color: #f9fafb;
+    }
+
+    .text-gray-800 {
+      color: #f3f4f6;
+    }
+
+    .text-gray-600 {
+      color: #d1d5db;
+    }
+
+    .bg-gray-50 {
+      background-color: rgba(31, 41, 55, 0.6);
+    }
+
+    .border-gray-200 {
+      border-color: rgba(55, 65, 81, 0.5);
+    }
+  }
+}
+
+// Loading spinner personalizado
+.loading-spinner {
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Mejoras de rendimiento
+img, svg {
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+}
+
+// Estados de focus mejorados para navegación por teclado
+button:focus-visible {
+  ring-width: 3px;
+  ring-color: rgba(59, 130, 246, 0.5);
+}

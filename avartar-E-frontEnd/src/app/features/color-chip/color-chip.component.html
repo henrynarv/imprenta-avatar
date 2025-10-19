@@ -1,0 +1,43 @@
+<!-- Lista desplegable -->
+<div class="mb-4">
+  <label class="block mb-2 font-semibold">Selecciona un color:</label>
+  <select
+    [(ngModel)]="selectedColor"
+    (ngModelChange)="onSelectChange($event)"
+    class="border p-2 rounded"
+  >
+    <option [ngValue]="null">Seleccione un color</option>
+    <option *ngFor="let color of colors" [ngValue]="color">
+      {{ color.name }}
+    </option>
+  </select>
+</div>
+
+<div class="flex flex-wrap">
+  @for ( color of selectedColors(); track color.hex) {
+  <div
+    class="chip"
+    [ngClass]="getTextColor(color.hex)"
+    [style.background-color]="
+      color.hex === '#FFFFFF' ? '#CCCCCC' : color.hex + '30'
+    "
+  >
+    <!-- [style.border]="'1px solid' + color.hex" -->
+    <span class="font-semibold" [style.color]="color.hex">
+      {{ color.name }}
+    </span>
+    <span
+      class="chip-close font-thin flex justify-center items-center"
+      [style.color]="color.hex"
+      style="opacity: 0.5"
+      (click)="removeColor(color.hex)"
+    >
+      <ng-icon
+        name="heroXMarkSolid"
+        size="15"
+        class="hover:text-gray-700"
+      ></ng-icon>
+    </span>
+  </div>
+  }
+</div>

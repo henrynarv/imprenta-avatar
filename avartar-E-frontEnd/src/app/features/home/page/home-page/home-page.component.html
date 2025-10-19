@@ -1,0 +1,321 @@
+<!-- Página de Inicio - Hero Section -->
+
+<!-- Hero Slider -->
+<section class="relative">
+  <app-slider></app-slider>
+</section>
+<!--
+<section
+  class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden"
+>
+  Background pattern
+  <div class="absolute inset-0 bg-black/10"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      Content
+      <div class="space-y-8 animate-fade-in-up">
+        <div class="space-y-4">
+          <h1 class="text-4xl lg:text-6xl font-bold leading-tight">
+            Impresión de
+            <span
+              class="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent"
+            >
+              Calidad
+            </span>
+            para tu Negocio
+          </h1>
+          <p class="text-xl text-blue-100 leading-relaxed">
+            Transformamos tus ideas en impresiones profesionales. Desde tarjetas
+            de presentación hasta gran formato, tenemos todo lo que necesitas.
+          </p>
+        </div>
+
+        Stats
+        <div class="flex flex-wrap gap-8">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-yellow-400">500+</div>
+            <div class="text-blue-200 text-sm">Clientes Satisfechos</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-yellow-400">24h</div>
+            <div class="text-blue-200 text-sm">Entrega Express</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-yellow-400">99%</div>
+            <div class="text-blue-200 text-sm">Calidad Garantizada</div>
+          </div>
+        </div>
+
+        CTA Buttons
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button
+            (click)="navigateToProducts()"
+            class="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 flex items-center justify-center space-x-2"
+          >
+            <span>Ver Catálogo</span>
+            <ng-icon name="heroArrowRight" size="20"></ng-icon>
+          </button>
+          <button
+            (click)="navigateToContact()"
+            class="px-8 py-4 border-2 border-white text-white rounded-xl font-bold hover:bg-white hover:text-blue-600 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+          >
+            Solicitar Cotización
+          </button>
+        </div>
+      </div>
+
+      Hero Image
+      <div class="relative animate-fade-in-up delay-300">
+        <div class="relative z-9">
+          <img
+            src="/images/print.jpg"
+            alt="Servicios de Imprenta Profesional"
+            class="rounded-2xl shadow-2xl w-full h-96 lg:h-[500px] object-cover"
+          />
+        </div>
+
+        Floating elements
+        <div
+          class="absolute -top-4 -right-4 bg-yellow-400 text-blue-900 px-4 py-2 rounded-lg font-bold shadow-lg"
+        >
+          ¡50% OFF!
+        </div>
+        <div
+          class="absolute -bottom-4 -left-4 bg-white text-blue-600 px-4 py-2 rounded-lg font-bold shadow-lg"
+        >
+          Envío Gratis
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ -->
+
+<!-- Servicios Section -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Ofrecemos una amplia gama de servicios de impresión para satisfacer
+        todas tus necesidades empresariales y personales.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (service of services; track trackByService($index, service)) {
+      <div
+        class="bg-gray-50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group hover:transform hover:scale-105"
+      >
+        <div
+          class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-700 transition-colors duration-300"
+        >
+          <ng-icon [name]="service.icon" class="text-white" size="28"></ng-icon>
+        </div>
+
+        <h3 class="text-2xl font-bold text-gray-900 mb-4">
+          {{ service.title }}
+        </h3>
+
+        <p class="text-gray-600 mb-6 leading-relaxed">
+          {{ service.description }}
+        </p>
+
+        <ul class="space-y-2">
+          @for (feature of service.features; track trackByIndex($index)) {
+          <li class="flex items-center space-x-2 text-gray-700">
+            <ng-icon
+              name="heroCheckBadge"
+              class="text-green-500"
+              size="18"
+            ></ng-icon>
+            <span>{{ feature }}</span>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Productos Destacados Section -->
+<section class="py-20 bg-gray-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-gray-900 mb-4">
+        Productos Destacados
+      </h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+        Descubre nuestros productos más populares y comienza a imprimir tu éxito
+        hoy mismo.
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading() && featuredProducts().length === 0) {
+    <div class="flex justify-center items-center py-12">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+      ></div>
+    </div>
+    }
+
+    <!-- Products Grid -->
+    @if (featuredProducts().length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      @for (product of featuredProducts(); track trackByProductId($index,
+      product)) {
+      <app-product-card
+        [product]="product"
+        [showActions]="true"
+        [showDescription]="true"
+        [size]="'md'"
+        (productClicked)="onProductClick($event)"
+        (addToCartClicked)="onAddToCart($event)"
+        class="animate-fade-in"
+      ></app-product-card>
+      }
+    </div>
+
+    <!-- View All Button -->
+    <div class="text-center mt-12">
+      <button
+        (click)="navigateToProducts()"
+        class="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        Ver Todos los Productos
+      </button>
+    </div>
+    }
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      @for (feature of features; track trackByIndex($index)) {
+      <div class="text-center group">
+        <div
+          class="w-20 h-20 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-600 transition-colors duration-300"
+        >
+          <ng-icon
+            [name]="feature.icon"
+            class="text-blue-600 group-hover:text-white"
+            size="32"
+          ></ng-icon>
+        </div>
+
+        <h3 class="text-xl font-bold text-gray-900 mb-3">
+          {{ feature.title }}
+        </h3>
+
+        <p class="text-gray-600 leading-relaxed">
+          {{ feature.description }}
+        </p>
+      </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20 bg-gradient-to-br from-gray-900 to-blue-900 text-white">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold mb-4">Lo que Dicen Nuestros Clientes</h2>
+      <p class="text-xl text-blue-200">
+        Miles de empresas confían en nosotros para sus necesidades de impresión
+      </p>
+    </div>
+
+    <!-- Testimonials Carousel -->
+    <div class="relative">
+      <div class="overflow-hidden rounded-2xl bg-white/10 backdrop-blur-sm">
+        <div class="relative h-80">
+          @for (testimonial of testimonials; track trackByIndex($index)) {
+          <div
+            [class]="getTestimonialClasses($index)"
+            class="p-8 absolute inset-0"
+          >
+            <div
+              class="flex flex-col items-center text-center h-full justify-center"
+            >
+              <!-- Rating -->
+              <div class="flex space-x-1 mb-6">
+                @for (star of generateStars(testimonial.rating); track
+                trackByIndex($index)) {
+                <ng-icon
+                  name="heroStar"
+                  class="text-yellow-400"
+                  size="24"
+                ></ng-icon>
+                }
+              </div>
+
+              <!-- Comment -->
+              <blockquote class="text-xl italic text-blue-100 mb-6 max-w-2xl">
+                "{{ testimonial.comment }}"
+              </blockquote>
+
+              <!-- Author -->
+              <div class="flex items-center space-x-4">
+                <img
+                  [src]="testimonial.image"
+                  [alt]="testimonial.name"
+                  class="w-12 h-12 rounded-full border-2 border-blue-400"
+                />
+                <div class="text-left">
+                  <div class="font-bold text-white">{{ testimonial.name }}</div>
+                  <div class="text-blue-200 text-sm">
+                    {{ testimonial.company }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Navigation Controls -->
+      <div class="flex justify-center space-x-4 mt-8">
+        @for (testimonial of testimonials; track trackByIndex($index)) {
+        <button
+          (click)="selectTestimonial($index)"
+          [class]="activeTestimonial() === $index ? 'bg-white' : 'bg-white/30'"
+          class="w-3 h-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+          [attr.aria-label]="'Ir al testimonio ' + ($index + 1)"
+        ></button>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-blue-600">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-4xl font-bold text-white mb-6">¿Listo para Comenzar?</h2>
+    <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+      Contáctanos hoy mismo y descubre cómo podemos ayudar a impulsar tu negocio
+      con nuestras soluciones de impresión.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <button
+        (click)="navigateToContact()"
+        class="px-8 py-4 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+      >
+        Solicitar Cotización
+      </button>
+      <button
+        (click)="navigateToProducts()"
+        class="px-8 py-4 border-2 border-white text-white rounded-xl font-bold hover:bg-white hover:text-blue-600 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+      >
+        Ver Catálogo
+      </button>
+    </div>
+  </div>
+</section>

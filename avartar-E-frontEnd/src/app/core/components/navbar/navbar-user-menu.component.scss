@@ -1,0 +1,98 @@
+// Animaciones específicas para el menú de usuario
+@keyframes megaMenuIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-mega-menu-in {
+  animation: megaMenuIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+}
+
+// Mejoras para los mega menus
+.w-screen {
+  margin-left: calc(50% - 50vw);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// Efectos hover para items de menú
+.group:hover {
+  .group-hover\:text-blue-500 {
+    color: #3b82f6;
+  }
+}
+
+// Mejoras para las imágenes de productos
+img {
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-mega-menu-in {
+    animation: none;
+  }
+
+  img:hover {
+    transform: none;
+  }
+}
+
+// Responsive design para mega menus
+@media (max-width: 1024px) {
+  .max-w-6xl {
+    max-width: 90vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-cols-5 {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Estados de focus para navegación por teclado
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+// Mejoras para los badges
+.bg-blue-600 {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+// Efectos de profundidad para cards
+.shadow-2xl {
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+// Transiciones suaves
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

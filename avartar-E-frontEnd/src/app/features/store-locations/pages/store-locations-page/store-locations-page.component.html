@@ -1,0 +1,95 @@
+<div class="min-h-full bg-gradient-to-b from-blue-50 via-white to-white p-4">
+  <div class="max-w-7xl mx-auto animate-fade-in">
+    <div class="text-center mb-4">
+      <!-- <h1 class="text-3xl font-bold text-gray-800 mb-4">Nuestras Sedes</h1> -->
+
+      <hr />
+      <p class="text-lg text-gray-500 max-w-2xl mx-auto mb-3 mt-3">
+        <strong> Sedes Físicas</strong> | Descubre cada uno de nuestros espacios
+      </p>
+      <!-- Línea agregada aquí -->
+      <hr />
+    </div>
+
+    @if(isLoading()){
+    <div class="flex justify-center items-center py-12">
+      <div
+        class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+      ></div>
+      <span class="ml-4 text-gray-600">Cargando ubicaciones...</span>
+    </div>
+    }@else {
+    <div class="flex flex-col lg:flex-row gap-4 h-[calc(100vh-200px)]">
+      <div class="lg:w-2/5 flex flex-col space-y-6">
+        <app-location-list
+          [locations]="locations()"
+          [selectedIndex]="selectedIndex()"
+          [showActions]="false"
+          (locationSelected)="onLocationSelected($event)"
+          (locationCentered)="onLocationCentered($event)"
+        ></app-location-list>
+      </div>
+
+      <div class="relative lg:w-3/5 h-full">
+        <div>
+          <button
+            (click)="togglePhotos()"
+            class="absolute top-4 left-4 z-50 group bg-[#F1F5F9] hover:bg-[#E2E8F0] text-[#475569] px-6 py-3 rounded-2xl flex items-center transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 border border-slate-300 overflow-hidden"
+          >
+            <div
+              class="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            ></div>
+            <ng-icon name="heroEye" class="mr-2" size="20"></ng-icon>
+
+            {{ showPhotos() ? "Mostrar Mapa" : "Mostrar Fotos" }}
+          </button>
+        </div>
+        @if (!showPhotos() && locations().length > 0) {
+        <app-store-map
+          #storeMap
+          class="animate-fade-in"
+          [locations]="locations()"
+          [selectedIndex]="selectedIndex()"
+          [readonly]="false"
+          [initialCenter]="currentMapState().center"
+          [initialZoom]="currentMapState().zoom"
+          (markerClicked)="onMarkerClicked($event)"
+        ></app-store-map>
+        } @else if (!showPhotos()) {
+        <!-- Mapa vacío -->
+        <div
+          class="bg-white rounded-2xl shadow-lg p-6 h-full flex items-center justify-center"
+        >
+          <div class="text-center text-gray-500">
+            <ng-icon
+              name="heroMap"
+              size="48"
+              class="mx-auto mb-4 opacity-50"
+            ></ng-icon>
+            <p class="text-lg">No hay ubicaciones para mostrar</p>
+          </div>
+        </div>
+        }
+
+        <!-- Galería de Fotos -->
+        @if (selectedLocation() && showPhotos()) {
+        <app-photo-gallery
+          class="animate-fade-in"
+          [location]="selectedLocation()"
+          [isAdmin]="false"
+        ></app-photo-gallery>
+        }@else if (showPhotos()) {
+        <!-- Estado vacio -->
+        <div
+          class="bg-white rounded-2xl shadow-lg p-6 min-h-0 flex items-center justify-center"
+        >
+          <div class="text-center text-gray-500">
+            <p class="text-lg mb-2">No hay ubicaciones</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </div>
+</div>

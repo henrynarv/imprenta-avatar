@@ -1,0 +1,178 @@
+/* ========== VIEW TRANSITIONS API STYLES ========== */
+
+
+
+::view-transition-old(slide-item-*) {
+  animation: slide-out-to-right 300ms ease-out forwards;
+}
+
+::view-transition-new(slide-item-*) {
+  animation: slide-in-from-left 300ms ease-out forwards;
+}
+
+::view-transition-group(slide-item-*) {
+  animation: slide-reorder 300ms ease forwards;
+}
+
+::view-transition-old(slide-item-*) {
+  outline: 3px solid red !important;
+  animation: slide-out-to-right 500ms ease forwards;
+}
+
+/* Animación de reordenamiento */
+@keyframes slide-reorder {
+  from {
+    transform: translateY(10px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+
+
+/* Configuración global para View Transitions */
+::view-transition-group(*) {
+  animation-duration: 0.4s;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Animación específica para items que se eliminan */
+::view-transition-old(slide-item):only-child {
+  animation: 0.3s ease-out both slide-out-to-right;
+}
+
+::view-transition-new(slide-item):only-child {
+  animation: 0.3s ease-out both slide-in-from-left;
+}
+
+/* Animaciones para reordenamiento */
+::view-transition-group(slide-item) {
+  animation-duration: 0.5s;
+}
+
+/* Keyframes para eliminación */
+@keyframes slide-out-to-right {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Keyframes para movimiento (reordenamiento) */
+@keyframes move-up-animation {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100px);
+  }
+}
+
+@keyframes move-down-animation {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100px);
+  }
+}
+
+/* ========== ESTADOS DE CARGA ========== */
+.loading-state {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ========== MEJORAS DE ACCESIBILIDAD ========== */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
+  .hover-lift:hover {
+    transform: none !important;
+  }
+}
+
+/* ========== EFECTOS DE HOVER MEJORADOS ========== */
+.hover-lift {
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+/* ========== PREVIEW DE IMAGEN ========== */
+.image-preview {
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+/* ========== ÁREA DE DROP ========== */
+.drop-zone {
+  transition: all 0.2s ease-in-out;
+
+  &.drag-over {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+    transform: scale(1.02);
+  }
+
+  &.has-error {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+  }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .mobile-stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mobile-full {
+    width: 100%;
+  }
+}
+
+/* ========== ESTADOS DESHABILITADOS ========== */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+
+  &:hover {
+    transform: none !important;
+  }
+}

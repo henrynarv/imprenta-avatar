@@ -1,0 +1,283 @@
+<!-- Card del Producto -->
+<div
+  [attr.data-product-id]="product().id"
+  [class]="cardClasses()"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  role="article"
+  [attr.aria-labelledby]="'product-title-' + product().id"
+>
+  <!-- Imagen del Producto -->
+  <div class="relative overflow-hidden bg-gray-100">
+    <!-- Imagen principal -->
+    <img
+      [src]="product().images[0]"
+      [alt]="product().name"
+      [class]="imageClasses()"
+      (click)="onProductClick()"
+      class="cursor-pointer view-transition-image"
+      [style.view-transition-name]="'product-image-' + product().id"
+    />
+
+    <!-- Badges superpuestos -->
+    <div class="absolute top-3 left-3 flex flex-col space-y-2">
+      <!-- Descuento -->
+      @if (hasDiscount()) {
+      <span
+        class="bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse"
+      >
+        -{{ discountPercentage() }}%
+      </span>
+      }
+
+      <!-- Destacado -->
+      @if (product().isFeatured) {
+      <span
+        class="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg"
+      >
+        Destacado
+      </span>
+      }
+
+      <!-- Sin stock -->
+      @if (product().stock === 0) {
+      <span
+        class="bg-gray-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg"
+      >
+        Agotado
+      </span>
+      }
+    </div>
+
+    <!-- Acciones rápidas -->
+    @if (showActions()) {
+    <div
+      class="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 transition-opacity duration-300"
+      [class.opacity-100]="isHovered()"
+    >
+      <!-- Botón Favorito -->
+      <button
+        (click)="onToggleFavorite($event)"
+        [class]="
+          isFavorite()
+            ? 'bg-pink-500 text-white hover:bg-pink-600'
+            : 'bg-white text-gray-700 hover:bg-pink-50 hover:text-pink-500'
+        "
+        class="flex items-center p-2 rounded-full shadow-lg transition-all duration-200 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-pink-500"
+        [attr.aria-label]="
+          isFavorite() ? 'Remover de favoritos' : 'Agregar a favoritos'
+        "
+      >
+        <ng-icon
+          [name]="isFavorite() ? 'heroHeartSolid' : 'heroHeart'"
+          size="18"
+        ></ng-icon>
+      </button>
+
+      <!-- Botón Vista Rápida -->
+      <button
+        (click)="onQuickView($event)"
+        class="flex items-center p-2 rounded-full bg-white text-gray-700 shadow-lg transition-all duration-200 transform hover:scale-110 hover:bg-blue-50 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-label="Vista rápida"
+      >
+        <ng-icon name="heroEye" size="18"></ng-icon>
+      </button>
+    </div>
+    }
+
+    <!-- Overlay de acciones al hover -->
+    @if (showActions() && isHovered()) {
+    <div
+      class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center transition-opacity duration-300"
+    >
+      <button
+        (click)="onAddToCart($event)"
+        [disabled]="product().stock === 0 || isLoading()"
+        [class]="
+          product().stock === 0 || isLoading()
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105'
+        "
+        class="text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all duration-200 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+      >
+        @if (isLoading()) {
+        <svg
+          class="animate-spin h-5 w-5 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span>Agregando...</span>
+        } @else {
+        <ng-icon name="heroShoppingCart" size="20"></ng-icon>
+        <span>{{ product().stock === 0 ? "Agotado" : "Agregar" }}</span>
+        }
+      </button>
+    </div>
+    }
+  </div>
+
+  <!-- Contenido de la Card -->
+  <div class="p-4 space-y-3">
+    <!-- Categoría -->
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-medium text-blue-600 uppercase tracking-wide">
+        {{ formatCategory(product().category) }}
+      </span>
+
+      <!-- Stock -->
+      <span
+        [class]="
+          'px-2 py-1 rounded-full text-xs font-medium ' +
+          getStockColor(product().stock)
+        "
+      >
+        {{ getStockText(product().stock) }}
+      </span>
+    </div>
+
+    <!-- Nombre del Producto -->
+    <h3
+      id="product-title-{{ product().id }}"
+      (click)="onProductClick()"
+      class="text-lg font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors duration-200 line-clamp-2"
+    >
+      {{ product().name }}
+    </h3>
+
+    <!-- Descripción -->
+    @if (showDescription()) {
+    <p class="text-gray-600 text-sm line-clamp-2 leading-relaxed">
+      {{ product().description }}
+    </p>
+    }
+
+    <!-- Rating y Reviews -->
+    <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-1">
+        @for (star of [].constructor(generateStars(product().rating).filled);
+        track trackByIndex($index)) {
+        <ng-icon
+          name="heroStarSolid"
+          class="text-yellow-400"
+          size="16"
+        ></ng-icon>
+        } @if (generateStars(product().rating).half) {
+        <div class="relative">
+          <ng-icon name="heroStar" class="text-yellow-400" size="16"></ng-icon>
+          <div class="absolute inset-0 overflow-hidden" style="width: 50%">
+            <ng-icon
+              name="heroStarSolid"
+              class="text-yellow-400"
+              size="16"
+            ></ng-icon>
+          </div>
+        </div>
+        } @for (star of [].constructor(generateStars(product().rating).empty);
+        track trackByIndex($index)) {
+        <ng-icon name="heroStar" class="text-gray-300" size="16"></ng-icon>
+        }
+      </div>
+      <span class="text-sm text-gray-600"> ({{ product().reviewCount }}) </span>
+    </div>
+
+    <!-- Especificaciones rápidas -->
+    @if (showSpecifications()) {
+    <div class="flex items-center space-x-4 text-xs text-gray-500">
+      @if (product().specifications.paperType) {
+      <span class="flex items-center space-x-1">
+        <ng-icon name="heroDocumentText" size="14"></ng-icon>
+        <span>{{ product().specifications.paperType }}</span>
+      </span>
+      } @if (product().specifications.size) {
+      <span class="flex items-center space-x-1">
+        <ng-icon name="heroArrowsPointingOut" size="14"></ng-icon>
+        <span>{{ product().specifications.size }}</span>
+      </span>
+      }
+    </div>
+    }
+
+    <!-- Información de entrega -->
+    <div class="flex items-center justify-between text-xs text-gray-500">
+      <span class="flex items-center space-x-1">
+        <ng-icon name="heroTruck" size="14"></ng-icon>
+        <span>{{ product().deliveryTime }}</span>
+      </span>
+      <span class="flex items-center space-x-1">
+        <ng-icon name="heroClock" size="14"></ng-icon>
+        <span>Mín. {{ product().minimumOrder }} und.</span>
+      </span>
+    </div>
+
+    <!-- Precio y Acción -->
+    <div class="flex items-center justify-between pt-2">
+      <!-- Precios -->
+      <div class="flex items-center space-x-2">
+        <span class="text-2xl font-bold text-gray-900">
+          {{ product().price | currency : "CLP" : "symbol" : "1.0-0" }}
+        </span>
+
+        @if (hasDiscount()) {
+        <span class="text-lg text-gray-500 line-through">
+          {{ product().originalPrice | currency : "CLP" : "symbol" : "1.0-0" }}
+        </span>
+        }
+      </div>
+
+      <!-- Botón de acción móvil -->
+      @if (showActions()) {
+      <button
+        (click)="onAddToCart($event)"
+        [disabled]="product().stock === 0 || isLoading()"
+        [class]="
+          product().stock === 0 || isLoading()
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105'
+        "
+        class="flex items-center p-2 rounded-full text-white shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        [attr.aria-label]="
+          product().stock === 0 ? 'Producto agotado' : 'Agregar al carrito'
+        "
+      >
+        @if (isLoading()) {
+        <svg
+          class="animate-spin h-5 w-5 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        } @else {
+        <ng-icon name="heroShoppingCart" size="20"></ng-icon>
+        }
+      </button>
+      }
+    </div>
+  </div>
+</div>

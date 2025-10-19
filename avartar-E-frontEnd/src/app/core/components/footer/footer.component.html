@@ -1,0 +1,254 @@
+<footer class="bg-gray-900 text-white pt-12 pb-8" role="contentinfo">
+  <div class="container mx-auto px-6">
+    <!-- ======================
+         SECCIÓN PRINCIPAL
+    ======================= -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <!-- Información de la empresa -->
+      <div class="lg:col-span-1">
+        <div class="flex items-center mb-4" role="heading" aria-level="1">
+          <img
+            [src]="logoUrl_color"
+            alt="Logo E-Imprenta Chile"
+            class="h-10 w-10 mr-3"
+            loading="lazy"
+          />
+          <h3 class="text-2xl font-bold text-white">E-Imprenta</h3>
+        </div>
+
+        <p class="text-gray-300 mb-4 text-sm leading-relaxed">
+          {{ companyInfo().description }}
+        </p>
+
+        <div class="space-y-2 text-sm text-gray-300">
+          <!-- Dirección -->
+          <div class="flex items-center">
+            <ng-icon
+              name="heroMapPinSolid"
+              class="text-blue-400 mr-2"
+              size="18"
+              aria-hidden="true"
+            ></ng-icon>
+            <span>{{ companyInfo().address }}</span>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="flex items-center">
+            <ng-icon
+              name="heroPhoneSolid"
+              class="text-blue-400 mr-2"
+              size="18"
+              aria-hidden="true"
+            ></ng-icon>
+            <a
+              [href]="'tel:' + companyInfo().phone"
+              (click)="onPhoneClick(companyInfo().phone, $event)"
+              class="hover:text-blue-400 transition-colors duration-200 footer-link"
+              [attr.aria-label]="'Llamar a ' + companyInfo().phone"
+            >
+              {{ companyInfo().phone }}
+            </a>
+          </div>
+
+          <!-- Email -->
+          <div class="flex items-center">
+            <ng-icon
+              name="heroEnvelopeSolid"
+              class="text-blue-400 mr-2"
+              size="18"
+              aria-hidden="true"
+            ></ng-icon>
+            <a
+              [href]="'mailto:' + companyInfo().email"
+              (click)="onEmailClick(companyInfo().email, $event)"
+              class="hover:text-blue-400 transition-colors duration-200 footer-link"
+              [attr.aria-label]="'Enviar correo a ' + companyInfo().email"
+            >
+              {{ companyInfo().email }}
+            </a>
+          </div>
+
+          <!-- Horario -->
+          <div class="flex items-start mt-2">
+            <ng-icon
+              name="heroClockSolid"
+              class="text-blue-400 mr-2 mt-1"
+              size="18"
+              aria-hidden="true"
+            ></ng-icon>
+            <span class="text-xs">{{ companyInfo().businessHours }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enlaces rápidos -->
+      @if (hasQuickLinks()) {
+      <div>
+        <h4
+          class="text-lg font-semibold mb-4 text-white border-b-2 border-blue-500 pb-2"
+        >
+          Enlaces Rápidos
+        </h4>
+        <ul class="space-y-2" role="list">
+          @for (link of quickLinks(); track trackByQuickLink($index, link)) {
+          <li role="listitem">
+            <a
+              [routerLink]="link.path"
+              class="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-sm flex items-center group footer-link"
+              [attr.aria-label]="'Ir a ' + link.name"
+            >
+              <ng-icon
+                name="heroChevronRightSolid"
+                class="mr-2 group-hover:translate-x-1 transition-transform"
+                size="14"
+                aria-hidden="true"
+              ></ng-icon>
+              {{ link.name }}
+            </a>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+
+      <!-- Servicios de imprenta -->
+      @if (hasServices()) {
+      <div>
+        <h4
+          class="text-lg font-semibold mb-4 text-white border-b-2 border-blue-500 pb-2"
+        >
+          Nuestros Servicios
+        </h4>
+        <ul class="space-y-2" role="list">
+          @for (service of services(); track trackByIndex($index, service)) {
+          <li role="listitem">
+            <!-- Solo texto (no link de navegación real) -->
+            <span class="text-gray-300 text-sm flex items-center group">
+              <ng-icon
+                name="heroCheckBadgeSolid"
+                class="mr-2 text-green-400"
+                size="14"
+                aria-hidden="true"
+              ></ng-icon>
+              {{ service }}
+            </span>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+
+      <!-- Métodos de pago y envío -->
+      <div>
+        <h4
+          class="text-lg font-semibold mb-4 text-white border-b-2 border-blue-500 pb-2"
+        >
+          Pago y Envío
+        </h4>
+
+        <!-- Métodos de pago -->
+        <div class="mb-4">
+          <h5 class="font-medium text-blue-300 mb-2 text-sm">
+            Métodos de Pago:
+          </h5>
+          <div class="flex flex-wrap gap-2" role="list">
+            @for (method of paymentMethods(); track trackByIndex($index,
+            method)) {
+            <span
+              class="bg-gray-800 px-2 py-1 rounded text-xs hover-lift"
+              role="listitem"
+            >
+              {{ method }}
+            </span>
+            }
+          </div>
+        </div>
+
+        <!-- Métodos de envío -->
+        <div>
+          <h5 class="font-medium text-blue-300 mb-2 text-sm">
+            Envíos a Todo Chile:
+          </h5>
+          <div class="flex flex-wrap gap-2" role="list">
+            @for (method of shippingMethods(); track trackByIndex($index,
+            method)) {
+            <span
+              class="bg-gray-800 px-2 py-1 rounded text-xs hover-lift"
+              role="listitem"
+            >
+              {{ method }}
+            </span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================
+         REDES SOCIALES
+    ======================= -->
+    @if (hasSocialLinks()) {
+    <div class="border-t border-gray-700 pt-6 mb-6">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <h5 class="text-lg font-semibold mb-4 md:mb-0">Síguenos en:</h5>
+        <div class="flex space-x-4" role="list">
+          @for (social of socialLinks(); track trackBySocialLink($index,
+          social)) {
+          <button
+            (click)="openExternalLink(social.url, $event)"
+            class="bg-gray-800 p-2 flex justify-center rounded-full transition-all duration-300 hover-lift {{
+              social.color
+            }}"
+            [title]="'Síguenos en ' + social.name"
+            [attr.aria-label]="'Síguenos en ' + social.name"
+            role="listitem"
+          >
+            <ng-icon
+              [name]="social.icon"
+              size="35"
+              aria-hidden="true"
+            ></ng-icon>
+          </button>
+          }
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- ======================
+         FOOTER INFERIOR
+    ======================= -->
+    <div class="border-t border-gray-700 pt-6">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm mb-4 md:mb-0">
+          © {{ currentYear() }} Imprenta Avatar Chile. Todos los derechos
+          reservados.
+        </p>
+
+        <div class="flex space-x-6 text-sm text-gray-400" role="list">
+          <a
+            [routerLink]="'/privacy'"
+            class="hover:text-blue-400 transition-colors duration-200 footer-link"
+            role="listitem"
+          >
+            Política de Privacidad
+          </a>
+          <a
+            [routerLink]="'/terms'"
+            class="hover:text-blue-400 transition-colors duration-200 footer-link"
+            role="listitem"
+          >
+            Términos de Servicio
+          </a>
+          <a
+            [routerLink]="'/returns'"
+            class="hover:text-blue-400 transition-colors duration-200 footer-link"
+            role="listitem"
+          >
+            Política de Devoluciones
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

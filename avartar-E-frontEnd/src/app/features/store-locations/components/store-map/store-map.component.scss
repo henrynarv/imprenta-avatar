@@ -1,0 +1,33 @@
+/* store-map.component.scss */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+google-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  /* ✅ OPTIMIZACIONES PARA ANIMACIONES FLUIDAS */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Remover transiciones problemáticas de los marcadores */
+map-advanced-marker div {
+  transition: none !important; /* Eliminar transiciones que causan parpadeo */
+}
+
+
+map-advanced-marker {
+  contain: layout paint;  /* Aísla el marker para que CSS global no lo rompa */
+  display: block;
+}
+
+map-advanced-marker * {
+  box-sizing: border-box; /* Evita cambios raros de tamaño */
+}

@@ -1,0 +1,128 @@
+// Animaciones para la página de inicio
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Clases de animación
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+}
+
+// Mejoras para el hero section
+.bg-gradient-to-br {
+  background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+// Efectos hover mejorados
+.group:hover {
+  .group-hover\:scale-105 {
+    transform: scale(1.05);
+  }
+}
+
+// Mejoras para las imágenes
+img {
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+}
+
+// Transiciones suaves
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-fade-in,
+  .animate-slide-in-left,
+  .animate-slide-in-right {
+    animation: none;
+  }
+
+  .group:hover .group-hover\:scale-105 {
+    transform: none;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .text-6xl {
+    font-size: 3rem;
+    line-height: 1.2;
+  }
+
+  .py-28 {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+// Estados de focus para botones
+button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+// Efectos de profundidad
+.shadow-2xl {
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+// Gradientes para textos
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+// Backdrop blur para elementos modernos
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+}

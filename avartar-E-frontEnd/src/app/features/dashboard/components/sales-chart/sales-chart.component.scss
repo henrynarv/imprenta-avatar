@@ -1,0 +1,54 @@
+// Estilos específicos para el componente de gráfico
+:host {
+  display: block;
+  height: 100%;
+}
+
+// Mejoras para el canvas de Chart.js
+canvas {
+  border-radius: 8px;
+}
+
+// Estados de los botones de filtro
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  &:hover:not(.bg-blue-600) {
+    transform: translateY(-1px);
+  }
+}
+
+// Responsive design para el gráfico
+@media (max-width: 640px) {
+  :host {
+    .h-80 {
+      height: 60vh;
+      min-height: 300px;
+    }
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .transition-all {
+    transition: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+}
+
+// Efectos de hover para el contenedor del gráfico
+.bg-white {
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}

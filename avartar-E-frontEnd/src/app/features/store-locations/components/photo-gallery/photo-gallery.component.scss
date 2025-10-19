@@ -1,0 +1,50 @@
+/* ESTILOS CRÍTICOS PARA CDK DRAG & DROP */
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  opacity: 0.8;
+  transform: rotate(5deg);
+  transition: none !important; /* Importante: deshabilitar transiciones durante drag */
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  background: #e5e7eb;
+  border-radius: 8px;
+  border: 2px dashed #3b82f6;
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Cuando se está arrastrando sobre la lista */
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* Estilos para los elementos arrastrables */
+.cdk-drag {
+  transition: transform 200ms ease;
+}
+
+.cdk-drag:not(.cdk-drag-disabled) {
+  cursor: grab;
+}
+
+.cdk-drag:not(.cdk-drag-disabled):active {
+  cursor: grabbing;
+}
+
+/* Mejorar la apariencia visual durante el drag */
+.cdk-drag-preview img {
+  border-radius: 8px;
+}
+
+/* Asegurar que los elementos tengan posición relativa */
+.cdk-drag,
+.cdk-drag-preview {
+  position: relative;
+}

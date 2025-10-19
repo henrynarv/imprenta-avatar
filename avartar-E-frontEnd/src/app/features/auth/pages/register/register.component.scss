@@ -1,0 +1,133 @@
+// Animaciones personalizadas
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+// Clases de animación
+.animate-slide-in {
+  animation: slideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Mejoras para inputs
+input {
+  transition: all 0.2s ease-in-out;
+
+  &::placeholder {
+    color: #9CA3AF;
+    transition: color 0.2s ease;
+  }
+
+  &:focus::placeholder {
+    color: transparent;
+  }
+}
+
+// Botones de toggle de password
+button:not([type="submit"]) {
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+    color: #4B5563;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Efectos para radio buttons personalizados
+input[type="radio"]:checked + div {
+  border-color: #3B82F6;
+  background-color: #EFF6FF;
+}
+
+// Barra de progreso de contraseña
+.password-strength-bar {
+  transition: all 0.3s ease;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .max-w-2xl {
+    margin: 1rem;
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Estados de focus
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+// Loading spinner
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

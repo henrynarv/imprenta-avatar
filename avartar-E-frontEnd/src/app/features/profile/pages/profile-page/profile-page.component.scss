@@ -1,0 +1,109 @@
+// Animaciones para la página de perfil
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Clases de animación
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease-out forwards;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Mejoras para las pestañas
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+// Efectos hover mejorados
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+// Mejoras para los badges
+.bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+.bg-purple-100 {
+  background-color: rgba(139, 92, 246, 0.1);
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-slide-in {
+    animation: none;
+  }
+
+  .transition-all {
+    transition: none;
+  }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Estados de focus para switches
+input[type="checkbox"]:focus + div {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+// Mejoras visuales para borders
+.border-gray-200 {
+  border-color: rgba(229, 231, 235, 0.8);
+}
+
+// Transiciones suaves
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+// Efectos de profundidad
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+// Mejoras para imágenes
+img {
+  image-rendering: -webkit-optimize-contrast;
+  backface-visibility: hidden;
+}

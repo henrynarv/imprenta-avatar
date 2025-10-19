@@ -1,0 +1,42 @@
+<!-- Contenedor del carrito -->
+<button
+  (click)="navigateToCart()"
+  [class]="getContainerClasses()"
+  class="group"
+  aria-label="Carrito de compras"
+  [attr.aria-describedby]="showBadge() ? 'cart-item-count' : null"
+>
+  <!-- Icono del carrito -->
+  <ng-icon
+    name="heroShoppingCartSolid"
+    size="22"
+    class="text-gray-600 group-hover:text-blue-600 transition-colors duration-200"
+  ></ng-icon>
+
+  <!-- Badge con contador -->
+  @if (showBadge()) {
+  <div
+    [class]="getBadgeClasses()"
+    id="cart-item-count"
+    role="status"
+    aria-live="polite"
+  >
+    {{ cartItemCount() > 10 ? "10+" : cartItemCount() }}
+  </div>
+  }
+
+  <!-- Texto para screen readers -->
+  <span class="sr-only">
+    Carrito de compras @if (showBadge()) { , {{ cartItemCount() }} items }
+  </span>
+</button>
+<!--
+
+<div class="cart-container">
+  <ng-icon name="heroShoppingCartSolid" size="22"></ng-icon>
+
+  <div class="cart-badge" [class.animate]="shouldAnimate()">
+    <span class="badge-number">{{ cartCount() }}</span>
+  </div>
+</div>
+-->

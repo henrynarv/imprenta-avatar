@@ -1,0 +1,100 @@
+// Animaciones para el componente
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Clases de animación
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+// Mejoras para la tabla
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+// Efectos hover mejorados
+button {
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+  }
+}
+
+// Loading spinner personalizado
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .max-w-7xl {
+    margin: 1rem;
+  }
+
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .p-6 {
+    padding: 1rem;
+  }
+
+  // Mejoras para tabla en móviles
+  .overflow-x-auto {
+    border-radius: 0.5rem;
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-spin {
+    animation: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+}
+
+// Estados de focus mejorados
+input:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+// Efectos de profundidad
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.rounded-2xl {
+  border-radius: 1rem;
+}

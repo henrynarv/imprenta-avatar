@@ -1,0 +1,119 @@
+// Animaciones para la página de productos
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// Clases de animación
+.animate-page-fade-in {
+  animation: pageFadeIn 0.6s ease-out forwards;
+}
+
+.animate-gradient-shift {
+  background: linear-gradient(-45deg, #3b82f6, #6366f1, #8b5cf6, #a855f7);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+}
+
+// Estilos del componente
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Mejoras para la paginación
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+// Estados de focus para accesibilidad
+button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+// Loading states
+.bg-gray-400 {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .max-w-7xl {
+    padding: 1rem;
+  }
+
+  .py-8 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .p-8 {
+    padding: 1.5rem;
+  }
+
+  // Ajustes para paginación en móviles
+  .space-x-2 {
+    space-x: 0.25rem;
+  }
+}
+
+// Mejoras de accesibilidad
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-fade-in,
+  .animate-gradient-shift {
+    animation: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+
+  .transition-all {
+    transition: none;
+  }
+}
+
+// Efectos de profundidad mejorados
+.rounded-2xl {
+  border-radius: 1rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+// Gradientes sutiles para fondos
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+// Mejoras para textos largos
+.text-balance {
+  text-wrap: balance;
+}
+
+// Estados hover para cards
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
