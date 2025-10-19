@@ -141,6 +141,7 @@ export class ProductCardComponent {
     this._isLoading.set(true);
 
     try {
+      //conetario para probar git
       this.productService.addToCart(this.product().id, 1);
       this.cartService.addItem(this.product(), 1);
       this.addToCartClicked.emit(this.product());
