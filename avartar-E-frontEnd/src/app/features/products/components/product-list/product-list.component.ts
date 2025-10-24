@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { Products, ProductCardComponent } from '../../../../shared/components/product-card/product-card.component';
+import { ProductCardComponent } from '../../../../shared/components/product-card/product-card.component';
 import { CommonModule } from '@angular/common';
 import { Product, ProductFilters } from '../../models/product.interface';
 import { ProductService } from '../../services/product.service';

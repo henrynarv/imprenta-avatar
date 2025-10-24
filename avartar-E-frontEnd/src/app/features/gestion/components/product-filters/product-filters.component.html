@@ -1,0 +1,138 @@
+<div class="bg-white border-b border-gray-200 p-6">
+  <div
+    class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4"
+  >
+    <!-- Búsqueda -->
+    <div class="flex-1 max-w-md">
+      <div class="relative">
+        <div
+          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+        >
+          <ng-icon
+            name="heroMagnifyingGlass"
+            class="text-gray-400"
+            size="20"
+          ></ng-icon>
+        </div>
+        <input
+          type="text"
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+          placeholder="Buscar productos..."
+          class="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+        />
+        @if (searchTerm()) {
+        <button
+          (click)="clearSearch()"
+          class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <ng-icon name="heroXMark" size="16"></ng-icon>
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex flex-wrap gap-3">
+      <!-- Filtro por categoría -->
+      <select
+        [value]="selectedCategory()"
+        (change)="onCategoryChange($event)"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option value="">Todas las categorías</option>
+        @for (category of categories(); track category) {
+        <option [value]="category">{{ formatCategoryName(category) }}</option>
+        }
+      </select>
+
+      <!-- Filtro por estado -->
+      <select
+        [value]="statusFilter()"
+        (change)="onStatusChange($event)"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option value="">Todos los estados</option>
+        <option value="active">Solo activos</option>
+        <option value="inactive">Solo inactivos</option>
+      </select>
+
+      <!-- Filtro por stock -->
+      <select
+        [value]="stockFilter()"
+        (change)="onStockChange($event)"
+        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      >
+        <option value="">Todo el stock</option>
+        <option value="low">Stock bajo</option>
+        <option value="out">Sin stock</option>
+      </select>
+
+      <!-- Botón limpiar filtros -->
+      @if (hasActiveFilters()) {
+      <button
+        (click)="clearAllFilters()"
+        class="flex items-center space-x-2 px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+      >
+        <ng-icon name="heroArrowPath" size="16"></ng-icon>
+        <span>Limpiar</span>
+      </button>
+      }
+    </div>
+  </div>
+
+  <!-- Filtros activos -->
+  @if (hasActiveFilters()) {
+  <div class="mt-4 flex flex-wrap gap-2">
+    @if (searchTerm()) {
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+    >
+      Búsqueda: "{{ searchTerm() }}"
+      <button
+        (click)="clearSearch()"
+        class="ml-1 text-blue-600 hover:text-blue-800"
+      >
+        <ng-icon name="heroXMark" size="12"></ng-icon>
+      </button>
+    </span>
+    } @if (selectedCategory()) {
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+    >
+      Categoría: {{ formatCategoryName(selectedCategory()) }}
+      <button
+        (click)="clearCategory()"
+        class="ml-1 text-green-600 hover:text-green-800"
+      >
+        <ng-icon name="heroXMark" size="12"></ng-icon>
+      </button>
+    </span>
+    } @if (statusFilter()) {
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+    >
+      Estado: {{ statusFilter() === "active" ? "Activos" : "Inactivos" }}
+      <button
+        (click)="clearStatus()"
+        class="ml-1 text-purple-600 hover:text-purple-800"
+      >
+        <ng-icon name="heroXMark" size="12"></ng-icon>
+      </button>
+    </span>
+    } @if (stockFilter()) {
+    <span
+      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800"
+    >
+      Stock: {{ stockFilter() === "low" ? "Bajo" : "Agotado" }}
+      <button
+        (click)="clearStock()"
+        class="ml-1 text-orange-600 hover:text-orange-800"
+      >
+        <ng-icon name="heroXMark" size="12"></ng-icon>
+      </button>
+    </span>
+    }
+  </div>
+  }
+</div>

@@ -1,22 +1,22 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { CartService } from '../../../core/services/cart.service';
+
 import { provideIcons, NgIcon } from '@ng-icons/core';
 import { heroShoppingCartSolid } from '@ng-icons/heroicons/solid';
 import { ProductService } from '../../../features/products/services/product.service';
 import { Router } from '@angular/router';
+import { CartService } from '../../../features/cart/services/cart.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cart-badge',
-  imports: [NgIcon],
+  imports: [NgIcon, CommonModule],
   templateUrl: './cart-badge.component.html',
   styleUrl: './cart-badge.component.scss',
   providers: [provideIcons({ heroShoppingCartSolid })]
 })
 export class CartBadgeComponent {
-
-
   // Inyección de servicios
-  private productService = inject(ProductService);
+  private cartService = inject(CartService);
   private router = inject(Router);
 
 
@@ -25,17 +25,17 @@ export class CartBadgeComponent {
   private _isBouncing = signal<boolean>(false);
 
   // computed propierties  del servicio
-  cartItems = computed(() => this.productService.cartItems());
-  cartItemCount = computed(() => this.productService.getCartItemCount());
+  totalItems = this.cartService.totalItems;
+  total = this.cartService.total;
 
   //commputed: determina so se muestra el badge
-  showBadge = computed(() => this.cartItemCount() > 0);
+  showBadge = computed(() => this.totalItems() > 0);
 
 
   constructor() {
     // Efecto para animar el badge cuando se agregan productos
     effect(() => {
-      const count = this.cartItemCount();
+      const count = this.totalItems();
       if (count > 0) {
         this.triggerBounceAnimation();
       }
@@ -72,14 +72,26 @@ export class CartBadgeComponent {
    * Obtiene las clases CSS para el badge
    */
   getBadgeClasses(): string {
+    //para usar badget dinamico eliminar bg-red-500
     const baseClasses = 'absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs min-w-[18px] h-[18px] flex items-center justify-center font-bold transition-all duration-300';
     const bounceClass = this._isBouncing() ? 'animate-bounce-scale' : '';
 
-    return `${baseClasses} ${bounceClass}`;
+    //color dinamico segun cantidad
+
+    const colorClass = this.getBadgeColor();
+
+    return `${baseClasses} ${bounceClass} ${colorClass}`;
   }
 
 
-
+  //Obtine el color del badge segun cantidad
+  private getBadgeColor(): string {
+    const count = this.totalItems();
+    if (count === 0) return 'hidden';
+    if (count <= 3) return 'bg-green-500';
+    if (count <= 6) return 'bg-blue-500';
+    return 'bg-red-500';
+  }
 
 
   /*

@@ -1,0 +1,91 @@
+/* Animaciones para la gestión de productos */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Mejoras para la tabla */
+.table-row-highlight {
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Estados de stock con colores semánticos */
+.stock-low {
+  background: linear-gradient(90deg, #fed7aa 0%, #fed7aa 100%);
+}
+
+.stock-out {
+  background: linear-gradient(90deg, #fecaca 0%, #fecaca 100%);
+}
+
+.product-inactive {
+  background: linear-gradient(90deg, #f3f4f6 0%, #f3f4f6 100%);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .product-table {
+    font-size: 0.875rem;
+
+    th, td {
+      padding: 0.5rem;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+}
+
+/* Mejoras de accesibilidad */
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 0;
+}

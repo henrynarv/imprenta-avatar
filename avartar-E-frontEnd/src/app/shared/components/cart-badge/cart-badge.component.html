@@ -21,14 +21,23 @@
     role="status"
     aria-live="polite"
   >
-    {{ cartItemCount() > 10 ? "10+" : cartItemCount() }}
+    {{ totalItems() > 10 ? "10+" : totalItems() }}
   </div>
   }
 
   <!-- Texto para screen readers -->
-  <span class="sr-only">
-    Carrito de compras @if (showBadge()) { , {{ cartItemCount() }} items }
-  </span>
+  <!-- Tooltip en hover -->
+  <div
+    class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute top-full right-0 mt-1 w-48 bg-gray-900 text-white text-sm rounded-lg px-3 py-2 z-50 shadow-xl"
+  >
+    <div class="font-medium">Carrito de compras</div>
+    <div class="text-gray-300 mt-1 text-xs">
+      {{ totalItems() }} {{ totalItems() === 1 ? "producto" : "productos" }}
+    </div>
+    <div class="text-green-400 font-medium mt-1">
+      {{ total() | currency : "CLP" : "symbol" : "1.0-0" }}
+    </div>
+  </div>
 </button>
 <!--
 

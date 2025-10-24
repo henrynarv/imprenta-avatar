@@ -1,0 +1,109 @@
+/* Animaciones para la gestión de productos */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+
+
+
+/* Animaciones para el formulario */
+.form-tab-content {
+  animation: fade-in 0.2s ease-in-out;
+}
+
+/* Mejoras para inputs de archivo */
+.file-input-area {
+  transition: all 0.3s ease;
+
+  &.drag-over {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+  }
+}
+
+/* Galería de imágenes */
+.image-gallery {
+  display: grid;
+  gap: 1rem;
+
+  .image-item {
+    position: relative;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    .delete-btn {
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+/* Validaciones visuales mejoradas */
+.input-error {
+  border-color: #ef4444 !important;
+  background-color: #fef2f2 !important;
+
+  &:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  }
+}
+
+.input-success {
+  border-color: #10b981 !important;
+  background-color: #f0fdf4 !important;
+
+  &:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+  }
+}
+
+/* Mejoras responsive para el formulario */
+@media (max-width: 640px) {
+  .form-tabs {
+    flex-wrap: wrap;
+
+    button {
+      flex: 1;
+      min-width: 120px;
+      font-size: 0.75rem;
+    }
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+}

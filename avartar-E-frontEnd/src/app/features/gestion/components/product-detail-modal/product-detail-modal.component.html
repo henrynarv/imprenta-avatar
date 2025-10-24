@@ -1,0 +1,565 @@
+<!-- product-detail-modal.component.html -->
+@if (isOpen()) {
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="bg-white rounded-xl shadow-xl w-full max-w-7xl h-[90vh] flex flex-col animate-scale-in"
+  >
+    <!-- Header Fijo -->
+    <div
+      class="flex-shrink-0 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white"
+    >
+      <div class="flex items-center justify-between p-6">
+        <!-- Información del producto -->
+        <div class="flex items-center space-x-4">
+          <img
+            [src]="product().images[0] || '/images/placeholder.jpg'"
+            [alt]="product().name"
+            class="h-16 w-16 rounded-xl object-cover border border-gray-200 shadow-sm"
+          />
+          <div>
+            <h1 class="text-2xl font-bold text-gray-900">
+              {{ product().name }}
+            </h1>
+            <div class="flex items-center space-x-2 mt-1">
+              <!-- Badge Estado -->
+              @if (product().isActive) {
+              <span
+                class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium"
+              >
+                Activo
+              </span>
+              } @else {
+              <span
+                class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium"
+              >
+                Inactivo
+              </span>
+              }
+
+              <!-- Badge Destacado -->
+              @if (product().isFeatured) {
+              <span
+                class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium"
+              >
+                Destacado
+              </span>
+              }
+
+              <!-- Badge Stock -->
+              <span [class]="getStockBadgeClass()">
+                {{ getStockBadgeText() }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones del header -->
+        <div class="flex items-center space-x-2">
+          <button
+            (click)="onDuplicate()"
+            class="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+            title="Duplicar producto"
+          >
+            <ng-icon name="heroDocumentDuplicate" size="20"></ng-icon>
+          </button>
+          <button
+            (click)="onEdit()"
+            class="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+            title="Editar producto"
+          >
+            <ng-icon name="heroPencil" size="20"></ng-icon>
+          </button>
+          <button
+            (click)="onClose()"
+            class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Cerrar"
+          >
+            <ng-icon name="heroXMark" size="20"></ng-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="flex flex-1 overflow-hidden">
+      <!-- Navegación Lateral -->
+      <div
+        class="w-64 bg-gray-50 border-r border-gray-200 flex-shrink-0 overflow-y-auto"
+      >
+        <nav class="p-4 space-y-1">
+          @for (section of sections; track section.id) {
+          <button
+            (click)="setActiveSection(section.id)"
+            [class]="
+              activeSection() === section.id
+                ? 'bg-white text-blue-700 shadow-sm border border-blue-200'
+                : 'text-gray-700 hover:bg-gray-100'
+            "
+            class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+          >
+            <ng-icon [name]="section.icon" size="18"></ng-icon>
+            <span>{{ section.name }}</span>
+          </button>
+          }
+        </nav>
+      </div>
+
+      <!-- Contenido Scrollable -->
+      <div class="flex-1 overflow-y-auto" #scrollContainer>
+        <div class="p-6 space-y-8">
+          <!-- Sección: Información General -->
+          <section id="info" class="scroll-mt-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2"
+            >
+              <ng-icon
+                name="heroInformationCircle"
+                class="text-blue-600"
+                size="24"
+              ></ng-icon>
+              <span>Información General</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Descripción -->
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Descripción</label
+                >
+                <p
+                  class="text-gray-600 bg-gray-50 rounded-lg p-4 border border-gray-200"
+                >
+                  {{ product().description }}
+                </p>
+              </div>
+
+              <!-- Categoría y Tags -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Categoría</label
+                >
+                <p class="text-gray-900 font-medium">
+                  {{ formatCategory(product().category) }}
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Etiquetas</label
+                >
+                <div class="flex flex-wrap gap-1">
+                  @for (tag of product().tags; track tag) {
+                  <span
+                    class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs"
+                  >
+                    {{ tag }}
+                  </span>
+                  } @if (product().tags.length === 0) {
+                  <span class="text-gray-500 text-sm">Sin etiquetas</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Rating y Reviews -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Calificación</label
+                >
+                <div class="flex items-center space-x-2">
+                  <div class="flex items-center">
+                    <ng-icon
+                      name="heroStar"
+                      class="text-yellow-400"
+                      size="16"
+                    ></ng-icon>
+                    <span class="ml-1 text-sm font-medium text-gray-900">{{
+                      product().rating
+                    }}</span>
+                  </div>
+                  <span class="text-sm text-gray-500"
+                    >({{ product().reviewCount }} reviews)</span
+                  >
+                </div>
+              </div>
+
+              <!-- Tiempo de Entrega -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Tiempo de Entrega</label
+                >
+                <div class="flex items-center space-x-2 text-gray-600">
+                  <ng-icon name="heroTruck" size="16"></ng-icon>
+                  <span>{{ product().deliveryTime }}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sección: Precios -->
+          <section id="pricing" class="scroll-mt-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2"
+            >
+              <ng-icon
+                name="heroTag"
+                class="text-green-600"
+                size="24"
+              ></ng-icon>
+              <span>Precios y Costos</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Precio Actual -->
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Precio de Venta</label
+                >
+                <p class="text-2xl font-bold text-gray-900">
+                  {{ product().price | currency : "CLP" : "symbol" : "1.0-0" }}
+                </p>
+              </div>
+
+              <!-- Precio Original -->
+              @if (product().originalPrice) {
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Precio Original</label
+                >
+                <p class="text-xl font-semibold text-gray-500 line-through">
+                  {{
+                    product().originalPrice
+                      | currency : "CLP" : "symbol" : "1.0-0"
+                  }}
+                </p>
+                <p class="text-sm text-green-600 font-medium mt-1">
+                  {{ discountPercentage() }}% DE DESCUENTO
+                </p>
+              </div>
+              }
+
+              <!-- Margen Estimado -->
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Margen Estimado</label
+                >
+                <p class="text-xl font-bold text-blue-600">
+                  {{ profitMargin() }}%
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                  Basado en costo estimado
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sección: Inventario -->
+          <section id="inventory" class="scroll-mt-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2"
+            >
+              <ng-icon
+                name="heroShoppingBag"
+                class="text-purple-600"
+                size="24"
+              ></ng-icon>
+              <span>Inventario y Estadísticas</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <!-- Stock Actual -->
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Stock Actual</label
+                >
+                <p class="text-2xl font-bold text-gray-900">
+                  {{ product().stock }}
+                </p>
+                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                  <div
+                    [class]="
+                      stockStatus() === 'out-of-stock'
+                        ? 'bg-red-500'
+                        : stockStatus() === 'low-stock'
+                        ? 'bg-orange-500'
+                        : 'bg-green-500'
+                    "
+                    class="h-2 rounded-full transition-all duration-500"
+                    [style.width.%]="getStockPercentage()"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Mínimo de Pedido -->
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Mínimo de Pedido</label
+                >
+                <p class="text-2xl font-bold text-gray-900">
+                  {{ product().minimumOrder }} und.
+                </p>
+              </div>
+
+              <!-- Estado -->
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Estado</label
+                >
+                <div class="flex items-center space-x-2">
+                  @if (product().isActive) {
+                  <ng-icon
+                    name="heroCheckCircle"
+                    class="text-green-500"
+                    size="20"
+                  ></ng-icon>
+                  <span class="text-green-700 font-medium">Activo</span>
+                  } @else {
+                  <ng-icon
+                    name="heroXCircle"
+                    class="text-red-500"
+                    size="20"
+                  ></ng-icon>
+                  <span class="text-red-700 font-medium">Inactivo</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Destacado -->
+              <div class="bg-white border border-gray-200 rounded-lg p-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Destacado</label
+                >
+                <div class="flex items-center space-x-2">
+                  @if (product().isFeatured) {
+                  <ng-icon
+                    name="heroCheckCircle"
+                    class="text-blue-500"
+                    size="20"
+                  ></ng-icon>
+                  <span class="text-blue-700 font-medium">Sí</span>
+                  } @else {
+                  <ng-icon
+                    name="heroXCircle"
+                    class="text-gray-400"
+                    size="20"
+                  ></ng-icon>
+                  <span class="text-gray-500">No</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sección: Especificaciones -->
+          <section id="specs" class="scroll-mt-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2"
+            >
+              <ng-icon
+                name="heroChartBar"
+                class="text-orange-600"
+                size="24"
+              ></ng-icon>
+              <span>Especificaciones Técnicas</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              @if (product().specifications.paperType) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Tipo de Papel</label
+                >
+                <p class="text-gray-900">
+                  {{ product().specifications.paperType }}
+                </p>
+              </div>
+              } @if (product().specifications.size) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Tamaño</label
+                >
+                <p class="text-gray-900">{{ product().specifications.size }}</p>
+              </div>
+              } @if (product().specifications.color) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Color</label
+                >
+                <p class="text-gray-900">
+                  {{ product().specifications.color }}
+                </p>
+              </div>
+              } @if (product().specifications.finish) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Acabado</label
+                >
+                <p class="text-gray-900">
+                  {{ product().specifications.finish }}
+                </p>
+              </div>
+              } @if (product().specifications.material) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Material</label
+                >
+                <p class="text-gray-900">
+                  {{ product().specifications.material }}
+                </p>
+              </div>
+              } @if (product().specifications.printingMethod) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Método de Impresión</label
+                >
+                <p class="text-gray-900">
+                  {{ product().specifications.printingMethod }}
+                </p>
+              </div>
+              } @if (product().specifications.packaging) {
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Embalaje</label
+                >
+                <p class="text-gray-900">
+                  {{ product().specifications.packaging }}
+                </p>
+              </div>
+              }
+            </div>
+
+            @if (!hasSpecifications()) {
+            <div class="text-center py-8 text-gray-500">
+              <ng-icon
+                name="heroChartBar"
+                size="32"
+                class="mx-auto mb-2"
+              ></ng-icon>
+              <p>No hay especificaciones técnicas definidas</p>
+            </div>
+            }
+          </section>
+
+          <!-- Sección: Imágenes -->
+          <section id="media" class="scroll-mt-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2"
+            >
+              <ng-icon
+                name="heroPhoto"
+                class="text-indigo-600"
+                size="24"
+              ></ng-icon>
+              <span>Galería de Imágenes</span>
+            </h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              @for (image of product().images; track image; let i = $index) {
+              <div class="relative group">
+                <img
+                  [src]="image"
+                  [alt]="product().name + ' ' + (i + 1)"
+                  class="w-full h-32 object-cover rounded-lg border border-gray-200 shadow-sm"
+                />
+                @if (i === 0) {
+                <span
+                  class="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium"
+                >
+                  Principal
+                </span>
+                }
+              </div>
+              } @if (product().images.length === 0) {
+              <div class="col-span-full text-center py-8 text-gray-500">
+                <ng-icon
+                  name="heroPhoto"
+                  size="32"
+                  class="mx-auto mb-2"
+                ></ng-icon>
+                <p>No hay imágenes disponibles</p>
+              </div>
+              }
+            </div>
+          </section>
+
+          <!-- Sección: Metadatos -->
+          <section id="metadata" class="scroll-mt-6">
+            <h2
+              class="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2"
+            >
+              <ng-icon
+                name="heroCalendar"
+                class="text-gray-600"
+                size="24"
+              ></ng-icon>
+              <span>Metadatos</span>
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Creado</label
+                >
+                <div class="flex items-center space-x-2 text-gray-600">
+                  <ng-icon name="heroCalendar" size="16"></ng-icon>
+                  <span>{{ formatDate(product().createdAt) }}</span>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Última Modificación</label
+                >
+                <div class="flex items-center space-x-2 text-gray-600">
+                  <ng-icon name="heroClock" size="16"></ng-icon>
+                  <span>{{ formatDate(product().updatedAt) }}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Fijo con Acciones -->
+    <div class="flex-shrink-0 border-t border-gray-200 bg-gray-50 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="text-sm text-gray-500">
+          ID: {{ product().id }} • Última actualización:
+          {{ formatDate(product().updatedAt) }}
+        </div>
+        <div class="flex items-center space-x-3">
+          <button
+            (click)="onToggleStatus()"
+            [class]="
+              product().isActive
+                ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            "
+            class="px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
+          >
+            <ng-icon
+              [name]="
+                product().isActive ? 'heroArchiveBoxXMark' : 'heroArchiveBox'
+              "
+              size="18"
+            ></ng-icon>
+            <span>{{ product().isActive ? "Desactivar" : "Activar" }}</span>
+          </button>
+
+          <button
+            (click)="onDelete()"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors flex items-center space-x-2"
+          >
+            <ng-icon name="heroTrash" size="18"></ng-icon>
+            <span>Eliminar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+}

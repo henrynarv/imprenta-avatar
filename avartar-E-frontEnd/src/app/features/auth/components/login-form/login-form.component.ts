@@ -92,7 +92,7 @@ export class LoginFormComponent {
     const baseClasses = 'w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all duration-200 ';
 
     if (field.invalid && field.touched) {
-      return baseClasses + 'border-red-500 focus:border-red-500 focus:ring-red-200 bg-red-50';
+      return baseClasses + 'border-red-500 focus:22border-red-500 focus:ring-red-200 bg-red-50';
     } else if (field.valid && field.touched) {
       return baseClasses + 'border-green-500 focus:border-green-500 focus:ring-green-200 bg-green-50';
     }

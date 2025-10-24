@@ -11,8 +11,8 @@ export class ProductService {
   private http = inject(HttpClient)
 
   //estado del carrito usando signals
-  private _cartItems = signal<CartItem[]>([]);
-  cartItems = this._cartItems.asReadonly();
+  // private _cartItems = signal<CartItem[]>([]);
+  // cartItems = this._cartItems.asReadonly();
 
   /**
    * Obtiene productos paginados con filtros
@@ -62,49 +62,49 @@ export class ProductService {
   /**
    * Agrega un producto al carrito
    */
-  addToCart(productId: number, quantity: number = 1, specifications?: any): void {
-    const currentItems = this._cartItems();
-    const existingItemIndex = currentItems.findIndex(item => item.productId === productId);
+  // addToCart(productId: number, quantity: number = 1, specifications?: any): void {
+  //   const currentItems = this._cartItems();
+  //   const existingItemIndex = currentItems.findIndex(item => item.productId === productId);
 
-    if (existingItemIndex > -1) {
-      // Actualizar cantidad si ya existe
-      const updatedItems = [...currentItems];
-      updatedItems[existingItemIndex] = {
-        ...updatedItems[existingItemIndex],
-        quantity: updatedItems[existingItemIndex].quantity + quantity
-      };
-      this._cartItems.set(updatedItems);
-    } else {
-      // Agregar nuevo item
-      this._cartItems.set([
-        ...currentItems,
-        { productId, quantity, specifications }
-      ]);
-    }
-  }
+  //   if (existingItemIndex > -1) {
+  //     // Actualizar cantidad si ya existe
+  //     const updatedItems = [...currentItems];
+  //     updatedItems[existingItemIndex] = {
+  //       ...updatedItems[existingItemIndex],
+  //       quantity: updatedItems[existingItemIndex].quantity + quantity
+  //     };
+  //     this._cartItems.set(updatedItems);
+  //   } else {
+  //     // Agregar nuevo item
+  //     this._cartItems.set([
+  //       ...currentItems,
+  //       { productId, quantity, specifications }
+  //     ]);
+  //   }
+  // }
 
   /**
    * Remueve un producto del carrito
    */
-  removeFromCart(productId: number): void {
-    this._cartItems.set(
-      this._cartItems().filter(item => item.productId !== productId)
-    );
-  }
+  // removeFromCart(productId: number): void {
+  //   this._cartItems.set(
+  //     this._cartItems().filter(item => item.productId !== productId)
+  //   );
+  // }
 
   /**
    * Limpia el carrito
    */
-  clearCart(): void {
-    this._cartItems.set([]);
-  }
+  // clearCart(): void {
+  //   this._cartItems.set([]);
+  // }
 
   /**
    * Obtiene el total de items en el carrito
    */
-  getCartItemCount(): number {
-    return this._cartItems().reduce((total, item) => total + item.quantity, 0);
-  }
+  // getCartItemCount(): number {
+  //   return this._cartItems().reduce((total, item) => total + item.quantity, 0);
+  // }
 
   /**
  * Actualiza la cantidad de un producto en el carrito
@@ -112,27 +112,27 @@ export class ProductService {
   /**
    * Actualiza la cantidad de un producto en el carrito
    */
-  updateCartItemQuantity(productId: number, quantity: number): void {
-    if (quantity <= 0) {
-      this.removeFromCart(productId);
-      return;
-    }
+  // updateCartItemQuantity(productId: number, quantity: number): void {
+  //   if (quantity <= 0) {
+  //     this.removeFromCart(productId);
+  //     return;
+  //   }
 
-    const currentItems = this._cartItems();
-    const updatedItems = currentItems.map(item =>
-      item.productId === productId ? { ...item, quantity } : item
-    );
+  //   const currentItems = this._cartItems();
+  //   const updatedItems = currentItems.map(item =>
+  //     item.productId === productId ? { ...item, quantity } : item
+  //   );
 
-    this._cartItems.set(updatedItems);
-  }
+  //   this._cartItems.set(updatedItems);
+  // }
 
   /**
    * Obtiene el total del carrito
    */
-  getCartTotal(): number {
-    // En una implementación real, aquí calcularías el total basado en los precios de los productos
-    return this._cartItems().reduce((total, item) => total + (item.quantity * 1000), 0); // Precio mock
-  }
+  // getCartTotal(): number {
+  //   // En una implementación real, aquí calcularías el total basado en los precios de los productos
+  //   return this._cartItems().reduce((total, item) => total + (item.quantity * 1000), 0); // Precio mock
+  // }
 
   // ==========================================================================
   // MÉTODOS DE SIMULACIÓN - REEMPLAZAR CON LLAMADAS REALES A LA API

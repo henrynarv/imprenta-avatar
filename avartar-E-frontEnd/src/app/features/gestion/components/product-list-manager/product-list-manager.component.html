@@ -1,0 +1,337 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-200">
+  <!-- Header con estadísticas -->
+  <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+    <div
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+    >
+      <!-- Título y estadísticas -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900">
+          Gestión de Productos
+        </h2>
+        <div class="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+          <span>
+            <span class="font-semibold">{{ stats().total }}</span> productos
+            total
+          </span>
+          <span class="text-green-600">
+            <span class="font-semibold">{{ stats().active }}</span> activos
+          </span>
+          <span class="text-orange-600">
+            <span class="font-semibold">{{ stats().lowStock }}</span> stock bajo
+          </span>
+          <span class="text-red-600">
+            <span class="font-semibold">{{ stats().outOfStock }}</span> agotados
+          </span>
+        </div>
+      </div>
+
+      <!-- Botón de acción principal -->
+      <button
+        (click)="createProduct()"
+        class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      >
+        <ng-icon name="heroPlus" size="18"></ng-icon>
+        <span class="font-medium">Nuevo Producto</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Componente de filtros -->
+  <app-product-filters
+    (filtersChanged)="onFiltersChanged($event)"
+  ></app-product-filters>
+
+  <!-- Tabla de productos -->
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Producto
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Especificaciones
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Precio
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Stock
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Estado
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Acciones
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        <!-- Loading State -->
+        @if (isLoading()) { @for (i of [1,2,3]; track i) {
+        <tr>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-3">
+              <div class="h-10 w-10 bg-gray-200 rounded-lg animate-pulse"></div>
+              <div class="space-y-2">
+                <div class="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                <div class="h-3 bg-gray-200 rounded w-24 animate-pulse"></div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="h-6 bg-gray-200 rounded-full w-20 animate-pulse"></div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="h-6 bg-gray-200 rounded-full w-16 animate-pulse"></div>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex space-x-2">
+              <div class="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+              <div class="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+              <div class="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </td>
+        </tr>
+        } }
+
+        <!-- Empty State -->
+        @if (!isLoading() && displayedProducts().length === 0) {
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center">
+            <div class="max-w-md mx-auto">
+              <ng-icon
+                name="heroArchiveBox"
+                class="text-gray-400 mx-auto mb-4"
+                size="48"
+              ></ng-icon>
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                No hay productos
+              </h3>
+              <p class="text-gray-600 mb-6">
+                No se encontraron productos que coincidan con los filtros
+                aplicados.
+              </p>
+              <button
+                (click)="createProduct()"
+                class="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <ng-icon name="heroPlus" size="18"></ng-icon>
+                <span>Crear Primer Producto</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+
+        <!-- Productos -->
+        @for (product of displayedProducts(); track product.id) {
+        <tr [class]="getRowClasses(product)">
+          <!-- Columna Producto -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-3">
+              <img
+                [src]="product.images[0]"
+                [alt]="product.name"
+                class="h-10 w-10 rounded-lg object-cover border border-gray-200"
+              />
+              <div class="min-w-0 flex-1">
+                <div class="text-sm font-medium text-gray-900 truncate">
+                  {{ product.name }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  {{ formatCategory(product.category) }}
+                </div>
+                @if (product.isFeatured) {
+                <app-product-status-badge
+                  type="featured"
+                ></app-product-status-badge>
+                }
+              </div>
+            </div>
+          </td>
+
+          <!-- Especificaciones -->
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+            {{ getSpecificationsText(product) }}
+          </td>
+
+          <!-- Precio -->
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <div class="font-medium">
+              {{ product.price | currency : "CLP" : "symbol" : "1.0-0" }}
+            </div>
+            @if (product.originalPrice) {
+            <div class="text-xs text-gray-500 line-through">
+              {{
+                product.originalPrice | currency : "CLP" : "symbol" : "1.0-0"
+              }}
+            </div>
+            }
+          </td>
+
+          <!-- Stock -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <app-product-status-badge
+              type="stock"
+              [stock]="product.stock"
+            ></app-product-status-badge>
+            <div class="text-xs text-gray-500 mt-1">
+              Mín. {{ product.minimumOrder }} und.
+            </div>
+          </td>
+
+          <!-- Estado -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <app-product-status-badge
+              type="status"
+              [status]="product.isActive"
+            ></app-product-status-badge>
+          </td>
+
+          <!-- Acciones -->
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex items-center space-x-1">
+              <!-- Ver Detalle -->
+              <button
+                (click)="viewProductDetails(product)"
+                class="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                title="Ver detalle"
+              >
+                <ng-icon name="heroEye" size="16"></ng-icon>
+              </button>
+
+              <!-- Editar -->
+              <button
+                (click)="editProduct(product)"
+                class="p-1.5 text-green-600 hover:text-green-800 hover:bg-green-50 rounded transition-colors"
+                title="Editar producto"
+              >
+                <ng-icon name="heroPencil" size="16"></ng-icon>
+              </button>
+
+              <!-- Duplicar -->
+              <button
+                (click)="duplicateProduct(product)"
+                class="p-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded transition-colors"
+                title="Duplicar producto"
+              >
+                <ng-icon name="heroDocumentDuplicate" size="16"></ng-icon>
+              </button>
+
+              <!-- Activar/Desactivar -->
+              <button
+                (click)="toggleProductStatus(product)"
+                [class]="
+                  product.isActive
+                    ? 'text-orange-600 hover:text-orange-800 hover:bg-orange-50'
+                    : 'text-green-600 hover:text-green-800 hover:bg-green-50'
+                "
+                class="p-1.5 rounded transition-colors"
+                [title]="
+                  product.isActive ? 'Desactivar producto' : 'Activar producto'
+                "
+              >
+                <ng-icon
+                  [name]="
+                    product.isActive ? 'heroArchiveBoxXMark' : 'heroArchiveBox'
+                  "
+                  size="16"
+                ></ng-icon>
+              </button>
+
+              <!-- Eliminar -->
+              <button
+                (click)="confirmDelete(product)"
+                class="p-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                title="Eliminar producto"
+              >
+                <ng-icon name="heroTrash" size="16"></ng-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+@if (showDeleteConfirm()) {
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in"
+>
+  <div
+    class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-scale-in"
+  >
+    <div class="text-center">
+      <ng-icon
+        name="heroTrash"
+        class="text-red-500 mx-auto mb-4"
+        size="48"
+      ></ng-icon>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">
+        ¿Eliminar producto?
+      </h3>
+      <p class="text-gray-600 mb-6">
+        ¿Estás seguro de que quieres eliminar
+        <span class="font-semibold">"{{ selectedProduct()?.name }}"</span>? Esta
+        acción no se puede deshacer.
+      </p>
+      <div class="flex space-x-3 justify-center">
+        <button
+          (click)="closeDeleteConfirm()"
+          class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="deleteProduct()"
+          class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+        >
+          Sí, Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Modal de Formulario de Producto -->
+@if (showProductForm()) {
+<app-product-form
+  [product]="selectedProduct()"
+  (save)="onProductSaved($event)"
+  (cancel)="closeProductForm()"
+></app-product-form>
+} @if (showProductDetail()) {
+<app-product-detail-modal
+  [product]="detailProduct()!"
+  [isOpen]="showProductDetail()"
+  (close)="closeProductDetail()"
+  (edit)="onEditFromDetail($event)"
+  (duplicate)="onDuplicateFromDetail($event)"
+  (toggleStatus)="onToggleStatusFromDetail($event)"
+  (delete)="onDeleteFromDetail($event)"
+></app-product-detail-modal>
+}

@@ -1,0 +1,565 @@
+<!-- Modal del formulario -->
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-fade-in"
+>
+  <div
+    class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h[90vh] overflow-hidden animate-scale-in"
+  >
+    <!-- Header -->
+    <div
+      class="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50"
+    >
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900">
+          {{ isEditing() ? "Editar Producto" : "Nuevo Producto" }}
+
+          <!-- Muestar el nombre si estas en modo edición -->
+          @if(isEditing() && product()?.name) {
+          <span class="text-blue-600">- {{ product()?.name }}</span>
+          }
+        </h2>
+        <p class="text-sm text-gray-600 mt-1">
+          {{
+            isEditing()
+              ? "Modifica la información del producto"
+              : "Crea un nuevo producto"
+          }}
+        </p>
+      </div>
+
+      <button
+        (click)="cancel.emit()"
+        class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+      >
+        <ng-icon name="heroXMark" size="24"></ng-icon>
+      </button>
+    </div>
+
+    <!-- Navegación por pestañas -->
+    <div class="border-b border-gray-200">
+      <nav class="flex space-x-8 px-6" arial-label="Tabs">
+        <button
+          (click)="setActiveTab('basic')"
+          [class]="
+            activeTab() === 'basic'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          Información Basica
+        </button>
+
+        <button
+          (click)="setActiveTab('pricing')"
+          [class]="
+            activeTab() === 'pricing'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          Precios
+        </button>
+
+        <button
+          (click)="setActiveTab('inventory')"
+          [class]="
+            activeTab() === 'inventory'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          Inventario
+        </button>
+
+        <button
+          (click)="setActiveTab('media')"
+          [class]="
+            activeTab() === 'media'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          Imágenes
+        </button>
+
+        <button
+          (click)="setActiveTab('specs')"
+          [class]="
+            activeTab() === 'specs'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm transition-colors"
+        >
+          Especificaciones
+        </button>
+      </nav>
+    </div>
+
+    <!-- Contenido del formulario -->
+    <form
+      [formGroup]="productForm"
+      (ngSubmit)="onSubmit()"
+      class="p-6 overflow-y-auto max-h-[60vh]"
+    >
+      <!-- Pestaña: Información Basica -->
+      @if (activeTab() === 'basic') {
+      <div class="space-y-6">
+        <div formGroupName="basic">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Nombre del Producto *
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            [class]="getInputClasses(basicControls.name)"
+            placeholder="Ej: Tarjetas de Presentación Premium"
+          />
+
+          @if (basicControls.name.touched && basicControls.name.invalid) {
+          <p class="mt-1 text-sm text-red-600">
+            {{ getErrorMessage(basicControls.name, "name") }}
+          </p>
+          }
+        </div>
+
+        <div formGroupName="basic">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Descripción *
+          </label>
+          <textarea
+            formControlName="description"
+            [class]="getInputClasses(basicControls.description)"
+            rows="4"
+            placeholder="Describe el producto, sus caracteristicas y beneficios..."
+          ></textarea>
+
+          @if (basicControls.description.touched &&
+          basicControls.description.invalid) {
+          <p class="mt-1 text-sm text-red-600">
+            {{ getErrorMessage(basicControls.description, "description") }}
+          </p>
+          }
+        </div>
+
+        <div formGroupName="basic">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Categoría *
+          </label>
+
+          <select
+            formControlName="category"
+            [class]="getInputClasses(basicControls.category)"
+          >
+            <option value="">Selecciona una categoria</option>
+            @for (category of categories; track category) {
+            <option [value]="category">
+              {{ formatCategoryName(category) }}
+            </option>
+            }
+          </select>
+          @if (basicControls.category.touched && basicControls.category.invalid)
+          {
+          <p class="mt-1 text-sm text-red-600">
+            {{ getErrorMessage(basicControls.category, "category") }}
+          </p>
+          }
+        </div>
+
+        <div formGroupName="basic">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Etiquetas (Tags)
+          </label>
+          <input
+            type="text"
+            formControlName="tags"
+            [class]="getInputClasses(basicControls.tags)"
+            placeholder="Ej: Separadas por comas: imprenta, profesional, calidad"
+          />
+          <p class="mt-1 text-sm text-gray-500">
+            Separa las etiquetas con comas. Ayudan a mejorar la búsqueda.
+          </p>
+        </div>
+      </div>
+      }
+
+      <!-- Pestaña: precios -->
+      @if(activeTab() === 'pricing') {
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div formGroupName="pricing">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Precio Actual (CLP) *
+            </label>
+
+            <input
+              type="number"
+              formControlName="price"
+              [class]="getInputClasses(pricingControls.price)"
+              min="0"
+              step="100"
+            />
+
+            @if (pricingControls.price.touched && pricingControls.price.invalid)
+            {
+            <p class="mt-1 text-sm text-red-600">
+              {{ getErrorMessage(pricingControls.price, "price") }}
+            </p>
+            }
+          </div>
+
+          <div class="flex items-center space-x-3 pt-6" formGroupName="pricing">
+            <input
+              type="checkbox"
+              id="hasDiscount"
+              formControlName="hasDiscount"
+              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label for="hasDiscount" class="text-sm text-gray-600">
+              Mostrar precio de descuento
+            </label>
+          </div>
+        </div>
+
+        @if (pricingControls.hasDiscount.value) {
+        <div formGroupName="pricing">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Precio Original (CLP) *
+          </label>
+
+          <input
+            type="number"
+            formControlName="originalPrice"
+            [class]="getInputClasses(pricingControls.originalPrice)"
+            min="0"
+            step="100"
+          />
+
+          @if (pricingControls.originalPrice.touched &&
+          pricingControls.originalPrice.invalid) {
+          <p class="mt-1 text-sm text-red-600">
+            {{
+              getErrorMessage(pricingControls.originalPrice, "originalPrice")
+            }}
+          </p>
+          } @if (getDiscountPercentage() > 0 ) {
+          <p class="mt-1 text-sm text-green-600 font-medium">
+            {{ getDiscountPercentage() }} % de descuento
+          </p>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Pestaña inventario -->
+      @if (activeTab() === 'inventory') {
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div formGroupName="inventory">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Stock Disponible *
+            </label>
+
+            <input
+              type="number"
+              formControlName="stock"
+              [class]="getInputClasses(inventoryControls.stock)"
+              min="0"
+            />
+            @if (inventoryControls.stock.touched &&
+            inventoryControls.stock.invalid) {
+            <p class="mt-1 text-sm text-red-600">
+              {{ getErrorMessage(inventoryControls.stock, "stock") }}
+            </p>
+            }
+          </div>
+
+          <div formGroupName="inventory">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Pedido Mínimo *
+            </label>
+
+            <input
+              type="number"
+              formControlName="minimumOrder"
+              [class]="getInputClasses(inventoryControls.minimumOrder)"
+              min="1"
+            />
+            @if (inventoryControls.minimumOrder.touched &&
+            inventoryControls.minimumOrder.invalid){
+            <p class="mt-1 text-sm text-red-600">
+              {{
+                getErrorMessage(inventoryControls.minimumOrder, "minimumOrder")
+              }}
+            </p>
+            }
+          </div>
+        </div>
+
+        <div formGroupName="inventory">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Tiempo de Entrega *
+          </label>
+          <input
+            formControlName="deliveryTime"
+            [class]="getInputClasses(inventoryControls.deliveryTime)"
+            placeholder="Ej: 3 días hábiles"
+          />
+          @if (inventoryControls.deliveryTime.touched &&
+          inventoryControls.deliveryTime.invalid ) {
+          <p class="mt-1 text-sm text-red-600">
+            {{
+              getErrorMessage(inventoryControls.deliveryTime, "deliveryTime")
+            }}
+          </p>
+          }
+        </div>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-6"
+          formGroupName="inventory"
+        >
+          <div class="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="isAvailable"
+              formControlName="isActive"
+              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label for="isActive" class="text-sm font-medium text-gray-700">
+              Producto Activo
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              id="isFeatured"
+              formControlName="isFeatured"
+              class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <label for="isFeatured" class="text-sm font-medium text-gray-700">
+              Producto Destacado
+            </label>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Pestaña Imágenes -->
+      @if (activeTab() === 'media') {
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-4">
+            Imagenes del producto
+          </label>
+
+          <!-- Área de upload -->
+          <div
+            class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors"
+          >
+            <ng-icon
+              name="heroPhoto"
+              size="32"
+              class="text-gray-400 mx-auto mb-3"
+            ></ng-icon>
+            <p class="text-sm text-gray-600 mb-2">
+              Arrastra imágenes aqui o has click ara seleccionar
+            </p>
+            <input
+              type="file"
+              #fileInput
+              (change)="onImageSelect($event)"
+              multiple
+              accept="image/*"
+              class="hidden"
+            />
+            <button
+              type="button"
+              (click)="fileInput.click()"
+              class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+            >
+              Seleccionar imágenes
+            </button>
+          </div>
+        </div>
+
+        <!-- Galería de imagenes seleccionadas -->
+        @if (selectImages().length > 0) {
+        <div>
+          <h4 class="text-sm font-medium text-gray-700 mb-3">
+            Imágenes seleccionadas ({{ selectImages().length }})
+          </h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            @for (image of selectImages(); track $index) {
+            <div class="relative group">
+              <img
+                [src]="image"
+                alt="Preview"
+                class="w-full h-24 object-cover rounded-lg border border-gray-20"
+              />
+
+              <button
+                type="button"
+                (click)="removeImage($index)"
+                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <ng-icon name="heroXMark" size="12"></ng-icon>
+              </button>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Pestaña Especificaciones -->
+      @if(activeTab() === 'specs') {
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div formGroupName="specs">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Tipo de Papel
+            </label>
+
+            <input
+              type="text"
+              formControlName="paperType"
+              [class]="getInputClasses(specsControls.paperType)"
+              placeholder="Ej: Cartlina Premium 300gr"
+            />
+          </div>
+
+          <div formGroupName="specs">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Tamaño
+            </label>
+            <input
+              type="text"
+              formControlName="size"
+              [class]="getInputClasses(specsControls.size)"
+              placeholder="Ej: A4, 8.5x5.5cm"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div formGroupName="specs">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Color
+            </label>
+            <select
+              formArrayName="color"
+              [class]="getInputClasses(specsControls.color)"
+            >
+              <option value="Full Color">Full Color</option>
+              <option value="Blanco y Negro">Blanco y Negro</option>
+              <option value="1 Color">1 Color</option>
+              <option value="2 Colores">2 Colores</option>
+              <option value="4 Colores">4 Colores</option>
+            </select>
+          </div>
+
+          <div formGroupName="specs">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Acabado
+            </label>
+            <input
+              type="text"
+              formControlName="finish"
+              [class]="getInputClasses(specsControls.finish)"
+              placeholder="Ej: Matte, Gloss, Satin"
+            />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div formGroupName="specs">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Material
+            </label>
+
+            <input
+              type="text"
+              formControlName="material"
+              [class]="getInputClasses(specsControls.material)"
+              placeholder="Ej: Carton, Papel, Lona"
+            />
+          </div>
+
+          <div formGroupName="specs">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Metodo de Impresión
+            </label>
+            <input
+              type="text"
+              formControlName="printingMethod"
+              [class]="getInputClasses(specsControls.printingMethod)"
+              placeholder="Ej: Digital, Offset, Lser"
+            />
+          </div>
+        </div>
+
+        <div formGroupName="specs">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Empaque
+          </label>
+
+          <input
+            type="text"
+            formControlName="packaging"
+            [class]="getInputClasses(specsControls.packaging)"
+            placeholder="Ej: Caja Personalizada, Bolsa"
+          />
+        </div>
+      </div>
+      }
+    </form>
+
+    <!-- Foorter de accioenes -->
+    <div
+      class="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50"
+    >
+      <div class="text-sm text-gray-500">
+        Los campos marcados con * son obligatorios
+      </div>
+      <div class="flex space-x-3">
+        <button
+          type="button"
+          (click)="cancel.emit()"
+          class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          (click)="onSubmit()"
+          [disabled]="isSubmitting() || productForm.invalid"
+          [class]="
+            isSubmitting()
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+          "
+          class="flex items-center space-x-2 px-4 py-2 border border-transparent rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50"
+        >
+          @if (isSubmitting()) {
+          <div
+            class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+          ></div>
+          <span>Guardando...</span>
+          }@else {
+          <ng-icon name="heroCheck" size="18"></ng-icon>
+          <span>{{ isEditing() ? "Actualizar" : "Crear" }} Producto</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

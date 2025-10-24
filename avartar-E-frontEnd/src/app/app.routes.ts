@@ -1,6 +1,7 @@
 import { Routes, CanActivateFn } from '@angular/router';
 import { authGuard } from './features/auth/guard/auth.guard';
 import { roleGuard } from './features/auth/guard/role.guard';
+import { ProductManagerPageComponent } from './features/gestion/pages/product-manager-page/product-manager-page.component';
 
 export const routes: Routes = [
 
@@ -85,6 +86,12 @@ export const routes: Routes = [
     path: 'locations',
     loadComponent: () => import('./features/gestion/pages/locations-page/locations-page.component').then(m => m.LocationsPageComponent),
     title: 'Gestion de tiendas'
+  },
+
+  {
+    path: 'admin-products',
+    loadComponent: () => import('./features/gestion/pages/product-manager-page/product-manager-page.component').then(m => m.ProductManagerPageComponent),
+    title: 'Gestion de productos'
   },
   //Ruta 404 - página no encontrada
   {

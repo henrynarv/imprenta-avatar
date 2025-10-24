@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
-import { CartService } from '../../../../core/services/cart.service';
+
 import { AlertService } from '../../../../shared/service/alert.service';
 import { Product } from '../../models/product.interface';
 import { firstValueFrom } from 'rxjs';
@@ -9,6 +9,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroArrowsPointingOut, heroDocumentText, heroExclamationTriangle, heroHeart, heroMinus, heroPlus, heroShieldCheck, heroShoppingCart, heroSparkles, heroStar, heroTruck } from '@ng-icons/heroicons/outline';
 import { heroHeartSolid, heroStarSolid } from '@ng-icons/heroicons/solid';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../../../cart/services/cart.service';
 
 
 @Component({
@@ -161,7 +162,7 @@ export class ProductDetailPageComponent {
   private addToCartInternal(): boolean {
     const product = this.product();
     if (!product || product.stock === 0) return false;
-    this.productService.addToCart(product.id, this.quantity());
+    this.cartService.addItem(product, this.quantity());
     return true;
   }
 

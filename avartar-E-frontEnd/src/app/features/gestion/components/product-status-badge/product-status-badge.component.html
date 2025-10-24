@@ -1,0 +1,16 @@
+@switch (type()) { @case ('status'){
+<span [class]="getStatusClasses()">
+  <ng-icon [name]="getStatusIcon()" size="14" class="mr-1"></ng-icon>
+  {{ getStatusText() }}
+</span>
+} @case ('stock') {
+<span [class]="getStockClasses()">
+  <ng-icon [name]="getStockIcon()" size="14" class="mr-1"></ng-icon>
+  {{ getStockText() }}
+</span>
+} @case ('featured') {
+<span [class]="getFeaturedClasses()">
+  <ng-icon name="heroStar" size="14" class="mr-1"></ng-icon>
+  Destacado
+</span>
+} }

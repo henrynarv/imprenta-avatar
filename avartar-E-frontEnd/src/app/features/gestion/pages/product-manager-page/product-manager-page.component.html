@@ -1,0 +1,181 @@
+<!-- Página principal de gestión de productos -->
+
+<div class="min-h-screen bg-gray-50 py-8 animate-fade-in">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <div
+        class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+      >
+        <!-- Título y breadcrumb -->
+        <div class="flex items-center space-x-4">
+          <button
+            (click)="navigateToCatalogo()"
+            class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 transition-colors duration-200"
+          >
+            <ng-icon name="heroArrowLeft" size="20"></ng-icon>
+            Volver al Catálogo
+          </button>
+
+          <div class="h-6 w-px bg-gray-300"></div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">
+              Gestión de Productos
+            </h1>
+            <p class="text-gray-500 text-sm mt-1">
+              Administra y gestiona todos los productos de tu imprenta
+            </p>
+          </div>
+        </div>
+
+        <!-- Acciones globales -->
+        <div class="flex items-center space-x-4">
+          <!-- Bonton exportar -->
+          <button
+            (click)="exportProducts()"
+            class="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+          >
+            <ng-icon name="heroChartBar" size="18"></ng-icon>
+            <span class="font-medium">Export CSV</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjetas Estadisticas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <!-- Total Productos  -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div
+              class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-blue-600 text-xl font-bold">{{
+                stats().total
+              }}</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-900">Total Productos</h3>
+            <p class="text-2xl font-bold text-gray-900">{{ stats().total }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prodcutos activos -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div
+              class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-green-600 text-xl font-bold">{{
+                stats().active
+              }}</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-900">Productos Activos</h3>
+            <p class="text-2xl font-bold text-gray-900">{{ stats().active }}</p>
+            <p class="text-sm text-gray-500 mt-1">
+              {{
+                (stats().active / stats().total) * 100 || 0 | number : "1.0-0"
+              }}% del total
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock bajo -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div
+              class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-orange-600 text-xl font-bold">{{
+                stats().lowStock
+              }}</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-900">Stock Bajo</h3>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ stats().lowStock }}
+            </p>
+            <p class="text-sm text-gray-500 mt-1 font-medium">
+              @if (stats().lowStock > 0) { Necesita atención }@else{ Todo en
+              order }
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- productos agotados -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <div
+              class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center"
+            >
+              <span class="text-red-600 text-xl font-bold">{{
+                stats().outOfStock
+              }}</span>
+            </div>
+          </div>
+          <div class="ml-4">
+            <h3 class="text-sm font-medium text-gray-900">
+              Productos Agotados
+            </h3>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ stats().outOfStock }}
+            </p>
+            <p class="text-sm text-red-600 mt-1 font-medium">
+              @if (stats().outOfStock > 0) { requiere re-stock }@else { Todo
+              disponible }
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Componente principal de gestión -->
+    <app-product-list-manager
+      (filtersChanged)="onFiltersChanged($event)"
+    ></app-product-list-manager>
+
+    <!-- Información adicional -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+      <div class="flex items-start space-x-4">
+        <div class="flex-shrink-0">
+          <div
+            class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center"
+          >
+            <span class="text-blue-600 text-sm font-bold">i</span>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium text-blue-900 mb-2">
+            Consejos para la gestión de productos
+          </h3>
+          <ul class="text-blue-800 space-y-2 text-sm">
+            <li>• Mantén actualizado el stock para evitar ventas perdidas</li>
+            <li>
+              • Usa productos destacados para promocionar tus mejores trabajos
+            </li>
+            <li>
+              • Las especificaciones técnicas ayudan a los clientes a tomar
+              decisiones
+            </li>
+            <li>• Las imágenes de calidad mejoran la conversión de ventas</li>
+            <li>• Exporta regularmente para tener backup de tu inventario</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <app-product-status-badge></app-product-status-badge> -->
+<!-- <app-product-filters></app-product-filters> -->

@@ -12,15 +12,15 @@ import { AlertService } from '../../service/alert.service';
 import { heroClock, heroEye, heroHeart, heroShoppingCart, heroStar, heroTruck } from '@ng-icons/heroicons/outline';
 import { CartService } from '../../../features/cart/services/cart.service';
 
-export interface Products {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  stock: number;
-  rating?: number
-}
+// export interface Products {
+//   id: number;
+//   name: string;
+//   description: string;
+//   price: number;
+//   image: string;
+//   stock: number;
+//   rating?: number
+// }
 
 @Component({
   selector: 'app-product-card',
@@ -142,15 +142,15 @@ export class ProductCardComponent {
 
     try {
       //conetario para probar git
-      this.productService.addToCart(this.product().id, 1);
+      // this.productService.addToCart(this.product().id, 1);
       this.cartService.addItem(this.product(), 1);
       this.addToCartClicked.emit(this.product());
 
       // Mostrar alerta de éxito
-      this.alertService.success(
-        'Producto agregado',
-        `${this.product().name} se agregó al carrito`
-      );
+      // this.alertService.success(
+      //   'Producto agregado',
+      //   `${this.product().name} se agregó al carrito`
+      // );
     } catch (error) {
       this.alertService.error(
         'Error',

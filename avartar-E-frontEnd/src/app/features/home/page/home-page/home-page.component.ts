@@ -8,6 +8,7 @@ import { Product } from '../../../products/models/product.interface';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { ProductCardComponent } from "../../../../shared/components/product-card/product-card.component";
 import { SliderComponent } from "../../components/slider/slider.component";
+import { CartService } from '../../../cart/services/cart.service';
 
 @Component({
   selector: 'app-home-page',
@@ -31,6 +32,7 @@ import { SliderComponent } from "../../components/slider/slider.component";
 export class HomePageComponent {
 
   private productService = inject(ProductService);
+  private cartSerivce = inject(CartService);
   private loadingService = inject(LoadingService);
   private router = inject(Router);
   private alertService = inject(AlertService)
@@ -198,8 +200,8 @@ export class HomePageComponent {
 
   //Maneja el agregar al carrito desde productos destacados
   onAddToCart(product: Product): void {
-    this.productService.addToCart(product.id, 1);
-    this.alertService.success('Producto agregado', 'El producto se agrego al carrito');
+    this.cartSerivce.addItem(product, 1);
+    // this.alertService.success('Producto agregado', 'El producto se agrego al carrito');
   }
 
 
