@@ -1,0 +1,344 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 554,
+      "max": [2.8933331966400146, 5.122175216674805, 2.8933334350585938],
+      "min": [-2.893334150314331, -5.115000247955322, -2.8933353424072266],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 6648,
+      "componentType": 5126,
+      "count": 554,
+      "max": [0.9986327290534973, 1.0, 0.9986327290534973],
+      "min": [-0.9986327290534973, -1.0, -0.9986327290534973],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 554,
+      "max": [1.0440704822540283, 1.0028184652328491],
+      "min": [-0.010705411434173584, -0.017932649701833725],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 2160,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 13296,
+      "componentType": 5126,
+      "count": 1755,
+      "max": [3.0377321243286133, 0.150177001953125, 3.037731170654297],
+      "min": [-3.0377330780029297, -0.14931535720825195, -3.0377349853515625],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 34356,
+      "componentType": 5126,
+      "count": 1755,
+      "max": [1.0, 1.0, 1.0],
+      "min": [-1.0, -0.9999229907989502, -1.0],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4432,
+      "componentType": 5126,
+      "count": 1755,
+      "max": [0.65625, 1.0],
+      "min": [0.3437499403953552, 0.3125],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 8640,
+      "componentType": 5125,
+      "count": 6480,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 55416,
+      "componentType": 5126,
+      "count": 74,
+      "max": [0.1525000035762787, 2.0841684341430664, 0.15219879150390625],
+      "min": [-0.15250009298324585, -2.0841665267944336, -0.15220069885253906],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 56304,
+      "componentType": 5126,
+      "count": 74,
+      "max": [1.0, 1.9571514542349178e-7, 0.9980250597000122],
+      "min": [-1.0, -4.3521873749341466e-7, -0.9980266690254211],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 18472,
+      "componentType": 5126,
+      "count": 74,
+      "max": [0.6249997615814209, 0.6884398460388184],
+      "min": [0.375, 0.3125],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 34560,
+      "componentType": 5125,
+      "count": 144,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 57192,
+      "componentType": 5126,
+      "count": 331,
+      "max": [0.1525000035762787, 2.084169387817383, 0.15219879150390625],
+      "min": [-0.15250009298324585, -2.0841665267944336, -0.15220069885253906],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 61164,
+      "componentType": 5126,
+      "count": 331,
+      "max": [1.0, 1.0, 0.9980277419090271],
+      "min": [-1.0, -1.0, -0.998029351234436],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 19064,
+      "componentType": 5126,
+      "count": 331,
+      "max": [0.65625, 0.6884398460388184],
+      "min": [0.3437499403953552, 0.0003082007169723511],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 35136,
+      "componentType": 5125,
+      "count": 1056,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "arctiem (https://sketchfab.com/arctiem)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/soda-fountain-fast-food-cup-c1b4b95dd16546ffa7a12ca27f8f2e34",
+      "title": "Soda Fountain Fast Food Cup"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 39360,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 21712,
+      "byteOffset": 39360,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 65136,
+      "byteOffset": 61072,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 126208,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "name": "aiStandardSurface3",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [1.0, 0.0, 0.0, 1.0],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": true,
+      "name": "material",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5095204199525644, 0.5095204199525644, 0.5095204199525644,
+          0.840809731123299
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "lambert1",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [0.5, 0.5, 0.5, 1.0],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Cup_aiStandardSurface3_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Lid_lid_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 4,
+            "TEXCOORD_0": 6
+          },
+          "indices": 7,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Straw_aiStandardSurface3_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 8,
+            "TEXCOORD_0": 10
+          },
+          "indices": 11,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Straw_lambert1_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 12,
+            "TEXCOORD_0": 14
+          },
+          "indices": 15,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [1],
+      "matrix": [
+        1.0, 0.0, 0.0, 0.0, 0.0, 2.220446049250313e-16, -1.0, 0.0, 0.0, 1.0,
+        2.220446049250313e-16, 0.0, 0.0, 0.0, 0.0, 1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [2],
+      "matrix": [
+        1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0,
+        0.0, 1.0
+      ],
+      "name": "39f9cf048c224c8bbec33805f7cef103.fbx"
+    },
+    {
+      "children": [3, 5, 7],
+      "name": "RootNode"
+    },
+    {
+      "children": [4],
+      "matrix": [
+        1.0, 0.0, 0.0, 0.0, 0.0, 0.9555729031562805, 0.0, 0.0, 0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0, 17.055978775024414, 1.0
+      ],
+      "name": "Cup"
+    },
+    {
+      "mesh": 0,
+      "name": "Cup_aiStandardSurface3_0"
+    },
+    {
+      "children": [6],
+      "matrix": [
+        1.0208967924118042, 0.0, 0.0, 0.0, 0.0, 1.0208967924118042, 0.0, 0.0,
+        0.0, 0.0, 1.0208967924118042, 0.0, 0.0, 4.810497760772705,
+        17.065584182739258, 1.0
+      ],
+      "name": "Lid"
+    },
+    {
+      "mesh": 1,
+      "name": "Lid_lid_0"
+    },
+    {
+      "children": [8, 9],
+      "matrix": [
+        0.058775496758107226, 0.11775747696168806, 0.9913014766459572, 0.0,
+        1.0894063429134349e-15, 0.9930181804981277, -0.1179614055536297, 0.0,
+        -0.9982712261609256, 0.006933240209700223, 0.05836513684860911, 0.0,
+        -9.941016969605698e-7, 5.851601600646973, 16.982572555541992, 1.0
+      ],
+      "name": "Straw"
+    },
+    {
+      "mesh": 2,
+      "name": "Straw_aiStandardSurface3_0"
+    },
+    {
+      "mesh": 3,
+      "name": "Straw_lambert1_0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [0]
+    }
+  ]
+}

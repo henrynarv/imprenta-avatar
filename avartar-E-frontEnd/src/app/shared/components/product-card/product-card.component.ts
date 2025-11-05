@@ -9,8 +9,11 @@ import { ProductService } from '../../../features/products/services/product.serv
 
 import { Product } from '../../../features/products/models/product.interface';
 import { AlertService } from '../../service/alert.service';
-import { heroClock, heroEye, heroHeart, heroShoppingCart, heroStar, heroTruck } from '@ng-icons/heroicons/outline';
+import { heroClock, heroCube, heroEye, heroHeart, heroShoppingCart, heroStar, heroTruck } from '@ng-icons/heroicons/outline';
 import { CartService } from '../../../features/cart/services/cart.service';
+import { Product3dService } from '../../../features/products/services/product-3d.service';
+import { Product3DModalComponent } from "../../../features/products/components/product-three-d-modal/product-three-d-modal.component";
+import { ProductManagerService } from '../../../features/products/services/product-manager.service';
 
 // export interface Products {
 //   id: number;
@@ -24,12 +27,12 @@ import { CartService } from '../../../features/cart/services/cart.service';
 
 @Component({
   selector: 'app-product-card',
-  imports: [FormsModule, CommonModule, NgIcon, CurrencyPipe],
+  imports: [FormsModule, CommonModule, NgIcon, CurrencyPipe, Product3DModalComponent],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss',
   providers: [provideIcons({
     heroStarSolid, heroShoppingCart, heroEye, heroHeart, heroHeartSolid,
-    heroStar, heroTruck, heroClock
+    heroStar, heroTruck, heroClock, heroCube
   })]
 })
 
@@ -52,18 +55,47 @@ export class ProductCardComponent {
 
   //Inyeccionde servicios
   private router = inject(Router);
-  private productService = inject(ProductService);
+  // private productService = inject(ProductManagerService);
   private alertService = inject(AlertService);
+
+  private product3DService = inject(Product3dService);
 
   // Signals del componente
   private _isHovered = signal<boolean>(false);
   private _isFavorite = signal<boolean>(false);
   private _isLoading = signal<boolean>(false);
+  private _show3DModal = signal<boolean>(false);
 
   // computed properties
   isHovered = computed(() => this._isHovered());
   isFavorite = computed(() => this._isFavorite());
   isLoading = computed(() => this._isLoading());
+  show3DModal = this._show3DModal.asReadonly();
+
+  /**
+   * Abre el modal 3D para este producto
+   */
+  onView3D(event: Event): void {
+    event.stopPropagation();
+
+    if (this.product().has3DModel) {
+      this.product3DService.openViewer(this.product());
+      this._show3DModal.set(true);
+      console.log('🔮 Abriendo modal 3D para:', this.product().name);
+    } else {
+      console.warn('⚠️ Producto no tiene modelo 3D:', this.product().name);
+    }
+  }
+
+  /**
+   * Cierra el modal 3D
+   */
+  close3DModal(): void {
+    this._show3DModal.set(false);
+    this.product3DService.closeViewer();
+    console.log('🔮 Cerrando modal 3D');
+  }
+
 
   //Computed: Determina si el producto tiene descuento
   hasDiscount = computed(() => {
@@ -118,6 +150,7 @@ export class ProductCardComponent {
   onProductClick(): void {
     console.log('🎯 Product ID:', this.product().id);
     this.productClicked.emit(this.product()); // ✅ Solo emite el evento
+    this.router.navigate(['/products', this.product().id]);
   }
 
 

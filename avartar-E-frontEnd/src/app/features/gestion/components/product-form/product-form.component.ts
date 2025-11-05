@@ -7,10 +7,11 @@ import { AlertService } from '../../../../shared/service/alert.service';
 import { Product, ProductCategory } from '../../../products/models/product.interface';
 import { min } from 'rxjs';
 import { CdkDropList } from "@angular/cdk/drag-drop";
+import { Product3DData, Product3DUploadComponent } from '../../../products/components/product-three-d-upload/product-three-d-upload.component';
 
 @Component({
   selector: 'app-product-form',
-  imports: [ReactiveFormsModule, NgIcon, CommonModule],
+  imports: [ReactiveFormsModule, NgIcon, CommonModule, Product3DUploadComponent],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.component.scss',
   providers: [provideIcons({
@@ -33,7 +34,19 @@ export class ProductFormComponent {
   //señales del componente
   private _isSubmitting = signal<boolean>(false);
   private _selectedImages = signal<string[]>([]);
-  private _activeTab = signal<'basic' | 'pricing' | 'inventory' | 'media' | 'specs'>('basic')
+  private _activeTab = signal<'basic' | 'pricing' | 'inventory' | 'media' | 'specs' | '3d'>('basic')
+
+
+  private initial3DData: Product3DData | null = null;
+
+  //señales para datos 3D
+  private _product3DData = signal<Product3DData | null>(null)
+  private _has3DChanges = signal<boolean>(false);
+
+  // computes para datis 3D
+  product3DData = this._product3DData.asReadonly();
+  has3DChanges = this._has3DChanges.asReadonly();
+
 
 
   //computed properties
@@ -119,9 +132,21 @@ export class ProductFormComponent {
     if (currentProduct) {
       this.loadProductData(currentProduct);
     }
-
     //configurar validaciones cruzadas
     this.setupCrossFieldValidation()
+
+    //cargar datos 3D existentessi estamos editando
+    if (currentProduct?.model3D) {
+      this._product3DData.set({
+        gltfUrl: currentProduct.model3D.gltfUrl,
+        defaultColor: currentProduct.model3D.defaultColor,
+        colorableParts: currentProduct.model3D.colorableParts,
+        format: currentProduct.model3D.format,
+        fileSize: currentProduct.model3D.fileSize,
+      })
+
+      this.initial3DData = { ...currentProduct.model3D }
+    }
   }
 
   //carga los datos del producto en el formulario
@@ -160,6 +185,40 @@ export class ProductFormComponent {
     //imágenes
     this._selectedImages.set(product.images || []);
 
+    //argar datos 3D existentes
+    if (product.model3D) {
+      this._product3DData.set({
+        gltfUrl: product.model3D.gltfUrl,
+        defaultColor: product.model3D.defaultColor,
+        colorableParts: product.model3D.colorableParts,
+        format: product.model3D.format,
+        fileSize: product.model3D.fileSize
+      });
+
+      this.initial3DData = { ...product.model3D }
+    }
+
+  }
+
+  //maneja la subida exisosa del modelo 3D
+  on3DModelUpload(modelData: Product3DData): void {
+    console.log('🎯 Modelo 3D recibido en padre:', modelData);
+    this._product3DData.set(modelData);
+    this._has3DChanges.set(true);
+    console.log('Modelo 3D subido:', modelData);
+  }
+
+  //maneja la eliminación del modeo 3D
+  on3DModelRemoved(): void {
+    this._product3DData.set(null);
+    this._has3DChanges.set(true);
+    console.log('Modelo 3D removido');
+  }
+
+  //manjea cambios en los datos 3D
+  on3DModelChanged(hasChanged: boolean): void {
+    this._has3DChanges.set(hasChanged);
+    console.log('🔄 Cambios 3D:', hasChanged);
   }
 
 
@@ -191,7 +250,7 @@ export class ProductFormComponent {
   }
 
   //cambia la pestaña activa
-  setActiveTab(tab: 'basic' | 'pricing' | 'inventory' | 'media' | 'specs'): void {
+  setActiveTab(tab: 'basic' | 'pricing' | 'inventory' | 'media' | 'specs' | '3d'): void {
     this._activeTab.set(tab);
   }
 
@@ -218,7 +277,16 @@ export class ProductFormComponent {
   onSubmit(): void {
     this.markAllAsTouched();
 
-    if (this.productForm.valid) {
+    //validacion especifica para la estaña 3D
+    if (this.activeTab() === '3d' && this._has3DChanges() && this.markAllAsTouched()) {
+      this.alertService.warning(
+        'Modelo 3D incompleto',
+        'Hay cambios pendientes en el modelo 3D. Completa la subida o cancela los cambios.'
+      );
+      return;
+    }
+
+    if (this.productForm.valid && this.validate3DModel()) {
       this._isSubmitting.set(true);
 
       try {
@@ -227,6 +295,10 @@ export class ProductFormComponent {
         setTimeout(() => {
           this.save.emit(formData);
           this._isSubmitting.set(false);
+
+
+          //Resetear bandera de cambios después de guardar
+          this._has3DChanges.set(false);
         }, 2000); // 2 segundos para probar el estado "Guardando..."
       } catch (error) {
         this.alertService.error('Error', 'No se pudo guardar el producto');
@@ -236,7 +308,8 @@ export class ProductFormComponent {
       this.alertService.warning(
         'Formualrio inválido',
         'Por favor, corrige los errores en el formulario'
-      )
+      );
+
     }
   }
 
@@ -249,7 +322,43 @@ export class ProductFormComponent {
     const specs = this.productForm.value.specs!;
 
 
-    return {
+
+    // return {
+    //   name: basic.name!.trim(),
+    //   description: basic.description!.trim(),
+    //   category: basic.category as ProductCategory,
+    //   tags: basic.tags ? basic.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean) : [],
+
+    //   price: Number(pricing.price),
+    //   originalPrice: pricing.hasDiscount ? Number(pricing.originalPrice) : undefined,
+
+    //   stock: Number(inventory.stock),
+    //   minimumOrder: Number(inventory.minimumOrder),
+    //   deliveryTime: inventory.deliveryTime!,
+    //   isActive: inventory.isActive!,
+    //   isFeatured: inventory.isFeatured!,
+
+    //   images: this._selectedImages(),
+
+    //   specifications: {
+    //     paperType: specs.paperType || undefined,
+    //     size: specs.size || undefined,
+    //     color: specs.color || undefined,
+    //     finish: specs.finish || undefined,
+    //     material: specs.material || undefined,
+    //     printingMethod: specs.printingMethod || undefined,
+    //     packaging: specs.packaging || undefined
+    //   },
+
+    //   //campos que se generan automaticamente
+    //   rating: this.product()?.rating || 0,
+    //   reviewCount: this.product()?.reviewCount || 0,
+
+
+
+    // }
+    const formData: any = {
+      // ... datos existentes ...
       name: basic.name!.trim(),
       description: basic.description!.trim(),
       category: basic.category as ProductCategory,
@@ -276,12 +385,55 @@ export class ProductFormComponent {
         packaging: specs.packaging || undefined
       },
 
-      //campos que se generan automaticamente
+      // Campos automáticos
       rating: this.product()?.rating || 0,
       reviewCount: this.product()?.reviewCount || 0
+    };
+
+    // ✅ MEJORAR: Lógica mejorada para datos 3D
+    const current3DData = this._product3DData();
+    const has3DChanges = this._has3DChanges();
+
+    // Solo incluir datos 3D si hay cambios o es un nuevo modelo
+    if (has3DChanges) {
+      if (current3DData) {
+        // Modelo subido o modificado
+        formData.model3D = {
+          gltfUrl: current3DData.gltfUrl,
+          defaultColor: current3DData.defaultColor,
+          colorableParts: current3DData.colorableParts,
+          format: current3DData.format,
+          fileSize: current3DData.fileSize,
+          createdAt: this.product()?.model3D?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        formData.has3DModel = true;
+      } else {
+        // Modelo eliminado
+        formData.model3D = null;
+        formData.has3DModel = false;
+      }
+    } else if (this.isEditing() && this.product()?.model3D) {
+      // En edición sin cambios, mantener datos existentes
+      formData.model3D = this.product()!.model3D;
+      formData.has3DModel = true;
     }
 
+    // ✅ AGREGAR: Incluir ID si estamos editando
+    if (this.isEditing() && this.product()) {
+      formData.id = this.product()!.id;
+    }
+
+    console.log('📦 Datos preparados para enviar:', {
+      tieneModelo3D: !!formData.model3D,
+      hayCambios3D: has3DChanges,
+      datos3D: formData.model3D
+    });
+
+    return formData;
   }
+
+
 
 
 
@@ -351,5 +503,78 @@ export class ProductFormComponent {
       return Math.round(((originalPrice - price) / originalPrice) * 100)
     }
     return 0
+  }
+
+
+
+
+  //============ NUEVOS METODOS
+  // ✅ AGREGAR: Método para debug del estado 3D
+  debug3DState(): void {
+    console.log('🐛 Estado 3D actual:', {
+      product3DData: this._product3DData(),
+      has3DChanges: this._has3DChanges(),
+      initial3DData: this.initial3DData,
+      isEditing: this.isEditing(),
+      activeTab: this.activeTab()
+    });
+  }
+
+  // ✅ AGREGAR: Validación del modelo 3D
+  private validate3DModel(): boolean {
+    // Si estamos en la pestaña 3D y hay cambios, validar
+    if (this.activeTab() === '3d' && this._has3DChanges()) {
+      if (this._product3DData()) {
+        const modelData = this._product3DData()!;
+        // Validar que tenga los campos mínimos requeridos
+        return !!(modelData.gltfUrl && modelData.format);
+      }
+      return false; // Hay cambios pero no hay datos
+    }
+    return true; // No hay cambios en 3D o no estamos en esa pestaña
+  }
+
+  // ✅ AGREGAR: Cambiar a pestaña con errores
+  private switchToFirstInvalidTab(): void {
+    const tabs = ['basic', 'pricing', 'inventory', 'media', 'specs', '3d'] as const;
+
+    for (const tab of tabs) {
+      if (this.isTabInvalid(tab)) {
+        this.setActiveTab(tab);
+        this.alertService.info(
+          'Revisa esta pestaña',
+          `Hay errores que corregir en la sección ${tab}`
+        );
+        break;
+      }
+    }
+  }
+
+  // ✅ AGREGAR: Verificar si una pestaña tiene errores
+  private isTabInvalid(tab: string): boolean {
+    switch (tab) {
+      case 'basic':
+        return this.productForm.get('basic')?.invalid ?? false;
+      case 'pricing':
+        return this.productForm.get('pricing')?.invalid ?? false;
+      case 'inventory':
+        return this.productForm.get('inventory')?.invalid ?? false;
+      case 'specs':
+        return this.productForm.get('specs')?.invalid ?? false;
+      case '3d':
+        return this._has3DChanges() && !this.validate3DModel();
+      default:
+        return false;
+    }
+  }
+
+
+  ngOnDestroy() {
+    // Limpiar URLs de imágenes para evitar memory leaks
+    this._selectedImages().forEach(url => {
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
   }
 }

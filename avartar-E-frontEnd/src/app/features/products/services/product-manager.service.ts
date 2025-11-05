@@ -1,6 +1,7 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { AlertService } from '../../../shared/service/alert.service';
 import { Product } from '../models/product.interface';
+import { filter } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,54 @@ export class ProductManagerService {
   readonly isLoading = this._isLoading.asReadonly();
   readonly searchTerm = this._serchTerm.asReadonly();
   readonly selectedCategory = this._selectedCategory.asReadonly();
+
+
+
+  // =====================================
+  // Inicio Métodos para vista pública
+  // =====================================
+
+  //Obtiene productos activos para vista pública
+  //Filtra solo productos activos y con stock
+  readonly publicProducts = computed(() => {
+    return this.products().filter(product =>
+      product.isActive && product.stock > 0
+    )
+  });
+
+  //Obtiene prodyctos destacados para la ista publica
+  readonly featuredProdcuts = computed(() => {
+    return this.publicProducts().filter(product => product.isFeatured);
+  });
+
+  //obtiene un producto por ID para vista publica
+  //solo retorna productos activos
+  getPublicProductById(id: number): Product | undefined {
+    const product = this.products().find(p => p.id === id);
+    return product && product.isActive ? product : undefined;
+  }
+
+  //filtra productos públicos por categoría
+  getPublicProductsByCategory(category: string): Product[] {
+    return this.publicProducts().filter(product => product.category === category);
+  }
+
+  //buscar productos publicos por término
+  searchPublicProducts(term: string): Product[] {
+    if (!term.trim()) return this.publicProducts();
+
+    const searchLower = term.toLowerCase();
+    return this.publicProducts().filter(product =>
+      product.name.toLowerCase().includes(searchLower) ||
+      product.description.toLowerCase().includes(searchLower) ||
+      product.tags.some(tag => tag.toLowerCase().includes(searchLower))
+    )
+  }
+
+  // =====================================
+  // Fin Métodos para vista pública
+  // =====================================
+
 
   //computed para filtrra segun la busqueda(nombre,descripcion,tect) y category
   readonly filteredProducts = computed(() => {
@@ -86,6 +135,10 @@ export class ProductManagerService {
       this._products.update(products => [...products, newProduct]);
       this.alertService.success('Producto creado',
         `${newProduct.name} se ha creado correctamente`);
+
+      //El producto aparece AUTOMÁTICAMENTE en la vista pública si está activo
+      console.log('✅ Nuevo producto creado. Disponible en vista pública:', newProduct.isActive);
+
 
     } catch (error) {
       this.alertService.error('Error', 'No se pudo crear el producto');
@@ -309,6 +362,112 @@ export class ProductManagerService {
         reviewCount: 31,
         deliveryTime: '4 días hábiles',
         minimumOrder: 25
+      },
+      {
+        id: 4,
+        name: 'Taza Personalizada Premium',
+        description: 'Taza de cerámica de alta calidad con diseño personalizable.',
+        price: 15990,
+        category: 'impresion-digital',
+        images: ['/images/taza.jpg'],
+        specifications: {
+          paperType: 'Cerámica',
+          size: '11oz',
+          color: 'Personalizable',
+          finish: 'Brillo',
+          deliveryDays: 5
+        },
+        stock: 25,
+        isActive: true,
+        isFeatured: true,
+        tags: ['taza', 'personalizable', 'regalo'],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        rating: 4.8,
+        reviewCount: 34,
+        deliveryTime: '5 días hábiles',
+        minimumOrder: 1,
+        // NUEVO: Configuración 3D
+        has3DModel: true,
+        model3D: {
+          gltfUrl: 'scene.gltf', // Tu archivo en public/scene.gltf
+          defaultColor: '',
+          colorableParts: ['Object_2'],
+          // initialRotation: { x: 0, y: 0, z: 0 },
+          format: 'gltf',
+          createdAt: new Date().toISOString(),
+        }
+      },
+      {
+        id: 5,
+        name: 'Taza Personalizada Basica',
+        description: 'Taza de cerámica de alta calidad con diseño personalizable.',
+        price: 15990,
+        category: 'impresion-digital',
+        images: ['/images/taza.jpg'],
+        specifications: {
+          paperType: 'Cerámica',
+          size: '11oz',
+          color: 'Personalizable',
+          finish: 'Brillo',
+          deliveryDays: 5
+        },
+        stock: 9,
+        isActive: true,
+        isFeatured: true,
+        tags: ['taza', 'personalizable', 'regalo'],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        rating: 4.8,
+        reviewCount: 34,
+        deliveryTime: '5 días hábiles',
+        minimumOrder: 1,
+        // NUEVO: Configuración 3D
+        has3DModel: true,
+        model3D: {
+          gltfUrl: 'lapicero.glb', // Tu archivo en public/cup.glb
+          defaultColor: '',
+          colorableParts: ['Object_2'],
+          // initialRotation: { x: 0, y: 0, z: 0 },
+          format: 'glb',
+          createdAt: new Date().toISOString(),
+        }
+      },
+      {
+        id: 6,
+        name: 'Vaso Térmico Personalizado',
+        description: 'Vaso térmico de acero inoxidable para bebidas calientes y frías.',
+        price: 24990,
+        originalPrice: 29990,
+        category: 'impresion-digital',
+        images: ['/images/taza.jpg'],
+        specifications: {
+          material: 'Acero inoxidable',
+          size: '16oz',
+          color: 'Plateado',
+          finish: 'Mate',
+          deliveryDays: 6
+        },
+        stock: 12,
+        isActive: true,
+        isFeatured: true,
+        tags: ['vaso', 'termico', 'acero', 'personalizable'],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        rating: 4.9,
+        reviewCount: 47,
+        deliveryTime: '6 días hábiles',
+        minimumOrder: 1,
+        // ✅ MODELO 3D ACTIVADO
+        has3DModel: true,
+        model3D: {
+          gltfUrl: 't.glb',
+          defaultColor: '#c0c0c0',
+          colorableParts: [''],
+          format: 'glb',
+          fileSize: 2048576,
+          createdAt: new Date().toISOString()
+        }
       }
     ];
 

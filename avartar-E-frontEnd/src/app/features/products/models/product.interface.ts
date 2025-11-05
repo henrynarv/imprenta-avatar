@@ -17,6 +17,16 @@ export interface Product {
   reviewCount: number;
   deliveryTime: string;
   minimumOrder: number;
+  has3DModel?: boolean;
+  model3D?: {
+    gltfUrl: string;                // URL del archivo .gltf/.glb
+    defaultColor: string;           // Color por defecto (#b3478c)
+    colorableParts: string[];       // Nombres de mallas para colorear
+    // initialRotation?: { x: number; y: number; z: number };
+    fileSize?: number;              // Tamaño para validación
+    format?: 'gltf' | 'glb';        // Formato del modelo
+    createdAt?: string
+  }
 }
 
 export interface ProductSpecifications {

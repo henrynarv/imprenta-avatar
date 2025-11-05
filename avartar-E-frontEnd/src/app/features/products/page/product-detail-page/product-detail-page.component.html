@@ -1,9 +1,6 @@
 <!-- View Transition para la página completa -->
-
-<div
-  class="min-h-screen bg-gray-50 animate-fade-in"
-  style="view-transition-name: product-detail-page"
->
+<div class="min-h-screen bg-gray-50 animate-fade-in">
+  <!-- style="view-transition-name: product-detail-page" -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Navegación -->
     <nav class="mb-8">
@@ -28,75 +25,212 @@
     </div>
     }
 
-    <!-- Contenido pricipal -->
+    <!-- Contenido principal -->
     @if(!isLoading() && product()) {
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
-        <!-- Galieria de imagenes -->
+        <!-- Sección de Visualización (Imágenes + 3D) -->
         <div class="space-y-4">
-          <!-- Imagen principal con View Transition -->
-          <div
-            class="relative overflow-hidden rounded-xl bg-gray-100 cursor-zoom-in"
-            (click)="zoomImage()"
-          >
-            <img
-              [src]="selectedImage() || product()!.images[0]"
-              [alt]="product()!.name"
-              class="w-full h-96 object-cover transition-transform duration-300"
-              [class.scale-110]="isZoomed()"
-              [style.view-transition-name]="'product-image-' + product()!.id"
-            />
-
-            <!-- Badges -->
-            <div class="absolute top-4 left-4 flex flex-col space-y-2">
-              @if (hasDiscount()) {
-              <span
-                class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg animate-pulse"
-              >
-                -{{ discountPercentage() }}%
-              </span>
-              } @if (product()!.isFeatured) {
-              <span
-                class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
-              >
-                Destacado
-              </span>
-              }
-            </div>
-            <!-- Boton Favorito -->
+          <!-- Selector de Vista (Imágenes vs 3D) -->
+          @if (has3DModel()) {
+          <div class="flex items-center justify-center space-x-2 mb-4">
             <button
-              (click)="toggleFavorite($event)"
-              class="absolute h-12 w-12 top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-200 hover:scale-110"
-              [class.text-pink-500]="isFavorite()"
-              [class.text-gray-700]="!isFavorite()"
-            >
-              <ng-icon
-                [name]="isFavorite() ? 'heroHeartSolid' : 'heroHeart'"
-                size="24"
-              ></ng-icon>
-            </button>
-          </div>
-
-          <!-- Miniaturas -->
-          @if (product()!.images.length > 1) {
-          <div class="flex space-x-2 overflow-x-auto pb-2">
-            @for (image of product()!.images; track $index) {
-            <button
-              (click)="selectImage(image)"
+              class="flex items-center"
+              #imageTab
+              (click)="selectViewMode('images')"
               [class]="
-                'flex-shrink-0 w-20 h-20 rounded-lg border-2 transition-all duration-200 ' +
-                (selectedImage() === image
-                  ? 'border-blue-500 ring-2 ring-blue-200'
-                  : 'border-gray-200')
+                'px-4 py-2 rounded-lg font-medium transition-colors ' +
+                (selectedViewMode() === 'images'
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-gray-50 text-gray-500 hover:bg-gray-200')
               "
             >
-              <img
-                [src]="image"
-                [alt]="'Miniatura ' + ($index + 1)"
-                class="w-full h-full object-cover rounded"
-              />
+              <ng-icon name="heroPhoto" size="18" class="mr-2"></ng-icon>
+              <span>Imágenes</span>
             </button>
+            <button
+              class="flex items-center"
+              #threeDTab
+              (click)="selectViewMode('3d')"
+              [class]="
+                'px-4 py-2 rounded-lg font-medium transition-colors ' +
+                (selectedViewMode() === '3d'
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-gray-50 text-gray-500 hover:bg-gray-200')
+              "
+            >
+              <ng-icon name="heroCube" size="18" class="mr-2"></ng-icon>
+              Vista 3D
+            </button>
+          </div>
+          }
+
+          <!-- Vista de Imágenes -->
+          @if (!has3DModel() || selectedViewMode() === 'images') {
+          <div class="space-y-4">
+            <!-- Imagen principal con View Transition -->
+            <div
+              class="relative overflow-hidden rounded-xl bg-gray-100 cursor-zoom-in"
+              (click)="zoomImage()"
+            >
+              <img
+                [src]="selectedImage() || product()!.images[0]"
+                [alt]="product()!.name"
+                class="w-full h-96 object-cover transition-transform duration-300"
+                [class.scale-110]="isZoomed()"
+                [style.view-transition-name]="'product-image-' + product()!.id"
+              />
+
+              <!-- Badges -->
+              <div class="absolute top-4 left-4 flex flex-col space-y-2">
+                @if (hasDiscount()) {
+                <span
+                  class="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg animate-pulse"
+                >
+                  -{{ discountPercentage() }}%
+                </span>
+                } @if (product()!.isFeatured) {
+                <span
+                  class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
+                >
+                  Destacado
+                </span>
+                } @if (has3DModel()) {
+                <span
+                  class="flex items-center bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
+                >
+                  <ng-icon name="heroCube" size="18" class="mr-2"></ng-icon>
+                  3D
+                </span>
+                }
+              </div>
+
+              <!-- Botón Favorito -->
+              <button
+                (click)="toggleFavorite($event)"
+                class="absolute h-12 w-12 top-4 right-4 p-3 rounded-full bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-200 hover:scale-110"
+                [class.text-pink-500]="isFavorite()"
+                [class.text-gray-700]="!isFavorite()"
+              >
+                <ng-icon
+                  [name]="isFavorite() ? 'heroHeartSolid' : 'heroHeart'"
+                  size="24"
+                ></ng-icon>
+              </button>
+            </div>
+
+            <!-- Miniaturas -->
+            @if (product()!.images.length > 1) {
+            <div class="flex space-x-2 overflow-x-auto pb-2">
+              @for (image of product()!.images; track $index) {
+              <button
+                (click)="selectImage(image)"
+                [class]="
+                  'flex-shrink-0 w-20 h-20 rounded-lg border-2 transition-all duration-200 ' +
+                  (selectedImage() === image
+                    ? 'border-blue-500 ring-2 ring-blue-200'
+                    : 'border-gray-200')
+                "
+              >
+                <img
+                  [src]="image"
+                  [alt]="'Miniatura ' + ($index + 1)"
+                  class="w-full h-full object-cover rounded"
+                />
+              </button>
+              }
+            </div>
             }
+          </div>
+          }
+
+          <!-- Vista 3D -->
+          @if (has3DModel() && selectedViewMode() === '3d') {
+          <div class="space-y-4">
+            <!-- Visor 3D -->
+            <div class="relative rounded-xl bg-gray-200 overflow-hidden">
+              <div class="w-full h-96">
+                <!-- ✅ Mismo tamaño que la imagen -->
+                <app-product-3d-viewer
+                  [modelUrl]="product()!.model3D!.gltfUrl"
+                  [defaultColor]="product()!.model3D!.defaultColor"
+                  [colorableParts]="product()!.model3D!.colorableParts"
+                  [product]="product()"
+                  class="w-full h-full"
+                ></app-product-3d-viewer>
+              </div>
+
+              <!-- Badge 3D -->
+              <div class="absolute top-4 left-4">
+                <span
+                  class="flex items-center bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg"
+                >
+                  <ng-icon name="heroCube" size="18" class="mr-2"></ng-icon>
+                  Vista 3D Interactiva
+                </span>
+              </div>
+            </div>
+
+            <!-- Controles de Color 3D -->
+            <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-gray-700">
+                  Color del modelo:
+                </label>
+                <span class="text-sm text-gray-600 font-mono">
+                  {{ selected3DColor() }}
+                </span>
+              </div>
+
+              <div class="flex items-center space-x-4">
+                <input
+                  type="color"
+                  [value]="selected3DColor()"
+                  (input)="on3DColorChange($event)"
+                  class="w-12 h-12 rounded-lg cursor-pointer border border-gray-300"
+                  title="Seleccionar color"
+                />
+
+                <button
+                  (click)="reset3DColor()"
+                  class="flex items-center px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <ng-icon
+                    name="heroArrowPath"
+                    size="18"
+                    class="mr-2"
+                  ></ng-icon>
+                  <span>Restablecer</span>
+                </button>
+
+                <div class="flex-1 text-xs text-gray-500">
+                  Puedes personalizar el color del modelo interactivo
+                </div>
+              </div>
+            </div>
+
+            <!-- Información del Modelo 3D -->
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div
+                class="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg"
+              >
+                <span class="text-gray-700"
+                  >Formato:
+                  {{ product()!.model3D!.format?.toUpperCase() }}</span
+                >
+              </div>
+              @if (product()!.model3D!.fileSize) {
+              <div
+                class="flex items-center space-x-2 p-3 bg-green-50 rounded-lg"
+              >
+                <span class="text-gray-700">
+                  Tamaño:
+                  {{ (product()!.model3D!.fileSize! / 1024 / 1024).toFixed(1) }}
+                  MB
+                </span>
+              </div>
+              }
+            </div>
           </div>
           }
         </div>
@@ -126,6 +260,7 @@
             >
               {{ product()!.name }}
             </h1>
+
             <!-- Rating -->
             <div class="flex items-center space-x-4">
               <div class="flex items-center space-x-1">
@@ -145,20 +280,17 @@
                   height="20"
                   class="text-yellow-400"
                 >
-                  <!-- Estrella exterior gris -->
                   <path
                     fill="currentColor"
                     d="M12 17.27L18.18 21l-1.64-7.03
-               L22 9.24l-7.19-.61L12 2 9.19 8.63
-               2 9.24l5.46 4.73L5.82 21z"
+                   L22 9.24l-7.19-.61L12 2 9.19 8.63
+                   2 9.24l5.46 4.73L5.82 21z"
                     class="text-gray-300"
                   ></path>
-
-                  <!-- Media parte izquierda amarilla -->
                   <path
                     fill="currentColor"
                     d="M12 17.27V2L9.19 8.63
-               2 9.24l5.46 4.73L5.82 21z"
+                   2 9.24l5.46 4.73L5.82 21z"
                     class="text-yellow-400"
                   ></path>
                 </svg>
@@ -191,7 +323,15 @@
           </div>
 
           <!-- Descripción -->
-          <div class="space-x-3">
+          <div class="space-y-3">
+            <h3 class="text-lg font-semibold text-gray-900">Descripción</h3>
+            <p class="text-gray-600 leading-relaxed">
+              {{ product()!.description }}
+            </p>
+          </div>
+
+          <!-- Especificaciones -->
+          <div class="space-y-3">
             <h3 class="text-lg font-semibold text-gray-900">
               Especificaciones
             </h3>
@@ -219,7 +359,7 @@
                   >Tamaño: {{ product()!.specifications.size }}</span
                 >
               </div>
-              } @if (product!()?.specifications?.finish) {
+              } @if (product()!.specifications.finish) {
               <div class="flex items-center space-x-2">
                 <ng-icon
                   name="heroSparkles"
@@ -230,11 +370,18 @@
                   >Acabado: {{ product()!.specifications.finish }}</span
                 >
               </div>
+              } @if (product()!.specifications.material) {
+              <div class="flex items-center space-x-2">
+                <span class="text-gray-400">📦</span>
+                <span class="text-gray-600"
+                  >Material: {{ product()!.specifications.material }}</span
+                >
+              </div>
               }
             </div>
           </div>
 
-          <!-- Controles de compta -->
+          <!-- Controles de compra -->
           <div class="space-y-4 pt-4 border-t border-gray-200">
             <!-- Cantidad -->
             <div class="flex items-center space-x-4">
@@ -282,7 +429,7 @@
                 <div
                   class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
                 ></div>
-                <span>Agergado...</span>
+                <span>Agregando...</span>
                 }@else {
                 <ng-icon name="heroShoppingCart" size="20"></ng-icon>
                 <span>{{
@@ -300,6 +447,7 @@
               </button>
             </div>
           </div>
+
           <!-- Información de entrega -->
           <div
             class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-200"
@@ -317,13 +465,17 @@
       </div>
     </div>
 
-    <!-- Selecionde reseñaas -->
+    <!-- Sección de reseñas -->
     <div class="mt-12 bg-white rounded-2xl shadow-xl p-8">
       <h2 class="text-2xl font-bold text-gray-900 mb-6">Reseñas de Clientes</h2>
+      <div class="text-center py-8 text-gray-500">
+        <ng-icon name="heroStar" size="32" class="mx-auto mb-2"></ng-icon>
+        <p>Este producto aún no tiene reseñas</p>
+      </div>
     </div>
     }
 
-    <!-- Error Satte -->
+    <!-- Error State -->
     @if (!isLoading() && !product()) {
     <div class="text-center py-20">
       <ng-icon

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroArchiveBox, heroArchiveBoxXMark, heroDocumentDuplicate, heroEye, heroPencil, heroPlus, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroArchiveBox, heroArchiveBoxXMark, heroCube, heroDocumentDuplicate, heroEye, heroPencil, heroPlus, heroTrash } from '@ng-icons/heroicons/outline';
 import { ProductManagerService } from '../../../products/services/product-manager.service';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { Router } from '@angular/router';
@@ -10,10 +10,13 @@ import { ProductFiltersComponent } from "../product-filters/product-filters.comp
 import { ProductStatusBadgeComponent } from "../product-status-badge/product-status-badge.component";
 import { ProductFormComponent } from "../product-form/product-form.component";
 import { ProductDetailModalComponent } from "../product-detail-modal/product-detail-modal.component";
+import { Product3dService } from '../../../products/services/product-3d.service';
+import { Product3DModalComponent } from "../../../products/components/product-three-d-modal/product-three-d-modal.component";
+import { Product3DUploadComponent } from "../../../products/components/product-three-d-upload/product-three-d-upload.component";
 
 @Component({
   selector: 'app-product-list-manager',
-  imports: [CommonModule, NgIcon, ProductFiltersComponent, ProductStatusBadgeComponent, ProductFormComponent, ProductDetailModalComponent],
+  imports: [CommonModule, NgIcon, ProductFiltersComponent, ProductStatusBadgeComponent, ProductFormComponent, ProductDetailModalComponent, Product3DModalComponent, Product3DUploadComponent],
   templateUrl: './product-list-manager.component.html',
   styleUrl: './product-list-manager.component.scss',
   providers: [provideIcons({
@@ -23,7 +26,8 @@ import { ProductDetailModalComponent } from "../product-detail-modal/product-det
     heroDocumentDuplicate,
     heroPlus,
     heroArchiveBox,
-    heroArchiveBoxXMark
+    heroArchiveBoxXMark,
+    heroCube
   })]
 })
 export class ProductListManagerComponent {
@@ -32,6 +36,7 @@ export class ProductListManagerComponent {
   private productManagerService = inject(ProductManagerService);
   private alerService = inject(AlertService);
   private router = inject(Router);
+  private product3DService = inject(Product3dService);
 
   // Output para comunicar filtros internos al padre (status, stock)
   filtersChanged = output<{ status: string; stock: string }>();
@@ -243,5 +248,10 @@ export class ProductListManagerComponent {
     if (spects.paperType) parts.push(spects.paperType);
     if (spects) parts.push(spects.size);
     return parts.join('•') || 'Sin especificaciones';
+  }
+
+  //abre el visor 3D para un prodcuto
+  open3DViewer(product: Product): void {
+    this.product3DService.openViewer(product);
   }
 }

@@ -418,7 +418,7 @@ export class AuthService {
             company: 'Imprenta Creativa S.A.',
             isActive: true,
             createdAt: '2024-01-15',
-            updateAt: '2024-02-15'
+            updatedAt: '2024-02-15'
           },
           tokens: {
             accessToken: 'mock-jwt-token-angular-dev',
@@ -440,7 +440,7 @@ export class AuthService {
             role: 'admin',
             isActive: true,
             createdAt: '2024-01-10',
-            updateAt: '2024-02-10'
+            updatedAt: '2024-02-10'
           },
           tokens: {
             accessToken: 'mock_admin_jwt_token',
@@ -482,7 +482,7 @@ export class AuthService {
           company: userData.company,
           isActive: true,
           createdAt: new Date().toISOString(),
-          updateAt: new Date().toISOString()
+          updatedAt: new Date().toISOString()
         },
         tokens: {
           accessToken: 'mock-jwt-token-new-user',
@@ -520,7 +520,7 @@ export class AuthService {
           role: 'user',
           isActive: true,
           createdAt: '2025-01-15',
-          updateAt: '2025-02-15'
+          updatedAt: '2025-02-15'
         },
         tokens: {
           accessToken: 'mock_jwt_token_here',

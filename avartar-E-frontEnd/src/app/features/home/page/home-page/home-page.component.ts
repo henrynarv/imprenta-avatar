@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowRight, heroChatBubbleLeftRight, heroCheckBadge, heroDocumentText, heroPhoto, heroPrinter, heroShieldCheck, heroStar, heroTruck } from '@ng-icons/heroicons/outline';
 import { ProductService } from '../../../products/services/product.service';
@@ -9,6 +9,7 @@ import { AlertService } from '../../../../shared/service/alert.service';
 import { ProductCardComponent } from "../../../../shared/components/product-card/product-card.component";
 import { SliderComponent } from "../../components/slider/slider.component";
 import { CartService } from '../../../cart/services/cart.service';
+import { Product3dService } from '../../../products/services/product-3d.service';
 
 @Component({
   selector: 'app-home-page',

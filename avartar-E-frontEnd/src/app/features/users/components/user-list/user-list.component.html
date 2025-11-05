@@ -1,0 +1,381 @@
+<div
+  class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in"
+>
+  <!-- Header de la tabla -->
+
+  <div class="px-6 border-b border-gray-200 bg-gray-50">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-800">Lista de Usuarios</h3>
+      <div class="text-sm text-gray-600">
+        Mostrando {{ paginationInfo().startIndex + 1 }}-{{
+          paginationInfo().endIndex
+        }}
+        de {{ paginationInfo().totalUsers }} usuarios
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading()) {
+  <div class="p-8">
+    <div class="flex items-center justify-center">
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+      ></div>
+      <span class="ml-3 text-gray-600">Cargando usuarios...</span>
+    </div>
+  </div>
+  }
+
+  <!-- Empty state -->
+  @else if(users().length === 0){
+  <div class="pt-12 text-center">
+    <ng-icon
+      name="heroUserGroup"
+      size="48"
+      class="text-gray-300 mb-4 mx-auto"
+    ></ng-icon>
+    <h4 class="text-lg font-medium text-gray-700 mb-2">
+      No se encontraron usuarios
+    </h4>
+    <p class="text-gray-500 max-w-md mx-auto">
+      No hay usuarios que coincidan con los filtros aplicados. Intenta ajustar
+      los criterios de búsqueda.
+    </p>
+  </div>
+  }
+
+  <!-- Tabla de usuario -->
+  @else {
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-gray-50 border-b border-gray-200">
+          <!-- Checkbox para seleccióon múltiple -->
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12"
+          >
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                [checked]="areAllUsersSelected()"
+                (change)="toggleSelectAll()"
+              />
+            </div>
+          </th>
+
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Usuario
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Contacto
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Estado
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Actividad
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase w-40"
+          >
+            Acciones
+          </th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-200">
+        @for (user of users(); track user.id ; let i = $index) {
+        <tr
+          class="transition-all duration-200 hover:bg-gray-50 group"
+          [class.bg-blue-50]="isUserSelected(user.id)"
+        >
+          <!-- Checkbox de seleccióon  -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <input
+              type="checkbox"
+              class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-all duration-200"
+              [checked]="isUserSelected(user.id)"
+              (change)="toggleUserSelection(user.id)"
+            />
+          </td>
+
+          <!-- informacion del usuario -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <!-- Avatar -->
+              <div
+                class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold shadow-sm group-hover:shadow-md transition-shadow duration-200"
+              >
+                {{ user.name.charAt(0) }}{{ user.lastName.charAt(0) }}
+              </div>
+
+              <div class="ml-4">
+                <!-- Nombre -->
+                <div class="flex items-center gap-2">
+                  <button
+                    (click)="toggleUserDetails(user.id)"
+                    class="text-sm font-medium text-gray-900 hover:text-blue-600 transition-colors duration-200 flex items-center gap-1"
+                  >
+                    {{ user.name }} {{ user.lastName }}
+                    <ng-icon
+                      name="heroChevronDown"
+                      size="12"
+                      class="transition-transform duration-200"
+                      [class.rotate-180]="expandedUserId() === user.id"
+                    ></ng-icon>
+                  </button>
+                </div>
+
+                <!-- Informacion adicional -->
+                <div class="flex items-center gap-3 mt-1">
+                  <!-- Rol -->
+                  <span [class]="getRoleBadgeClass(user.role)" class="text-xs">
+                    <ng-icon
+                      name="heroShieldCheck"
+                      size="12"
+                      class="mr-1"
+                    ></ng-icon>
+                    {{ user.role === "admin" ? "Administrador" : "Usuario" }}
+                  </span>
+
+                  <!-- Email verificado -->
+                  <span class="flex items-center gap-1 text-xs text-gray-500">
+                    <ng-icon
+                      [name]="getEmailVerificationIcon(user)"
+                      size="12"
+                      [class]="getEmailVerificationColor(user)"
+                    ></ng-icon>
+                    {{ getEmailVerificationText(user) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </td>
+
+          <!-- Inforamción de contacto -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900 mb-1">{{ user.email }}</div>
+            @if (user.phone) {
+            <div class="text-sm text-gray-500">
+              <ng-icon name="heroPhone" size="16" class="mr-2"></ng-icon>
+              {{ user.phone }}
+            </div>
+            } @if (user.company) {
+            <div class="text-sm text-gray-500">
+              <ng-icon
+                name="heroBuildingOffice"
+                size="16"
+                class="mr-2"
+              ></ng-icon>
+              {{ user.company }}
+            </div>
+            }
+          </td>
+
+          <!-- Estado -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex flex-col gap-2">
+              <!-- Estado de cuenta -->
+              <span
+                [class]="getStatusBadgeClass(user.isActive)"
+                class="text-xs w-fit"
+              >
+                <ng-icon
+                  name="heroCheck"
+                  size="12"
+                  class="mr-1"
+                  [class]="user.isActive ? 'text-green-500' : 'text-red-500'"
+                ></ng-icon>
+                {{ user.isActive ? "Activo" : "Inactivo" }}
+              </span>
+
+              <!-- Fecha de registro -->
+              <div class="text-xs text-gray-500">
+                Registrado: {{ user.createdAt | date : "dd/MM/yyyy" }}
+              </div>
+            </div>
+          </td>
+
+          <!-- Actividad -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              {{ getLastLoginText(user) }}
+            </div>
+
+            <div class="text-xs text-gray-500">
+              {{ user.loginCount || 0 }} inicios de sisión
+            </div>
+          </td>
+
+          <!-- Acciones -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <app-user-actions
+              [user]="user"
+              [loading]="loading()"
+              (editUser)="onUserEdit($event)"
+              (toggleStatus)="onUserStatusToggle($event)"
+              (changeRole)="onUserRoleChange($event)"
+              (viewDetails)="onUserViewDetails($event)"
+            ></app-user-actions>
+          </td>
+        </tr>
+
+        <!-- Detalles Expamdidos -->
+        @if (expandedUserId() === user.id) {
+        <tr class="bg-blue-50/50 border-b border-blue-100 animate-slide-down">
+          <td colspan="6" class="px-6 py-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+              <!-- Información Personla -->
+              <div>
+                <h5
+                  class="font-semibold text-gray-700 mb-2 flex items-center gap-2"
+                >
+                  <ng-icon
+                    name="heroUser"
+                    size="16"
+                    class="text-blue-500"
+                  ></ng-icon>
+                  Informacion Personal
+                </h5>
+                <div class="space-y-1 text-gray-600">
+                  <div>
+                    <strong>Nombre:</strong>{{ user.email }} {{ user.lastName }}
+                  </div>
+
+                  <div><strong>Email:</strong>{{ user.email }}</div>
+
+                  @if(user.phone) {
+                  <div><strong>Telefono:</strong>{{ user.phone }}</div>
+                  } @if(user.company) {
+                  <div><strong>Empresa:</strong>{{ user.company }}</div>
+                  }
+                </div>
+              </div>
+
+              <!-- Información de la cuenta -->
+              <div>
+                <h5
+                  class="font-semibold text-gray-700 mb-2 flex items-center gap-2"
+                >
+                  <ng-icon
+                    name="heroCog"
+                    size="16"
+                    class="text-green-500"
+                  ></ng-icon>
+                  Información de la cuenta
+                </h5>
+                <div class="space-y-1 text-gray-600">
+                  <div>
+                    <strong>Rol:</strong>
+                    {{ user.role === "admin" ? "Administrador" : "Usuario" }}
+                  </div>
+                  <div>
+                    <strong>Estado:</strong>
+                    {{ user.isActive ? "Activa" : "Inactiva" }}
+                  </div>
+                  <div>
+                    <strong>Email:</strong>
+                    {{ user.emailVerified ? "Verificado" : "No verificado" }}
+                  </div>
+                  <div>
+                    <strong>Registrado:</strong>
+                    {{ user.createdAt | date : "medium" }}
+                  </div>
+                </div>
+              </div>
+              <!-- actividad Reciente -->
+              <div>
+                <h5
+                  class="font-semibold text-gray-700 mb-2 flex items-center gap-2"
+                >
+                  <ng-icon
+                    name="heroChartBar"
+                    size="16"
+                    class="text-purple-500"
+                  ></ng-icon>
+                  Actividad
+                </h5>
+
+                <div class="space-y-1 text-gray-600">
+                  <div>
+                    <strong>Último login</strong>{{ getLastLoginText(user) }}
+                  </div>
+                  <div>
+                    <strong>Total logins:</strong> {{ user.loginCount || 0 }}
+                  </div>
+                  <div>
+                    <strong>Última actualización:</strong>
+                    {{ user.updatedAt | date : "medium" }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        } }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  @if (paginationInfo().totalPages >1) {
+  <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-gray-700">
+        Página {{ paginationInfo().currentPage }} de
+        {{ paginationInfo().totalPages }}
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Boton anterior -->
+        <button
+          (click)="updateFilters({ page: paginationInfo().currentPage - 1 })"
+          [disabled]="!paginationInfo().hasPrev"
+          class="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <ng-icon name="heroChevronLeft" size="16" class="mr-1"></ng-icon>
+          Anterior
+        </button>
+
+        <!-- Números de página -->
+        <div class="flex items-center gap-1">
+          @for (page of getPageNumbers(); track page) { @if (page === '...') {
+          <span class="px-3 py-1 text-gray-500">...</span>
+          } @else {
+          <button
+            (click)="updateFilters({ page: page })"
+            [class]="
+              page === paginationInfo().currentPage
+                ? 'px-3 py-1 text-sm bg-blue-600 text-white rounded-lg'
+                : 'px-3 py-1 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50'
+            "
+          >
+            {{ page }}
+          </button>
+          } }
+        </div>
+
+        <!-- boton siguinete -->
+        <button
+          (click)="updateFilters({ page: paginationInfo().currentPage + 1 })"
+          [disabled]="!paginationInfo().hasNext"
+          class="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Siguiente
+          <ng-icon name="heroChevronRight" size="16" class="ml-1"></ng-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  } }
+</div>

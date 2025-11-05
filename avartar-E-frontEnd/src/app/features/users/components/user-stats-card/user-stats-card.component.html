@@ -1,0 +1,231 @@
+<div
+  class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-fade-in"
+>
+  <!-- Header de tarjeta -->
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-xl font-bold text-gray-800">Estadisticas de Usuarios</h2>
+      <p class="text-gray-600 text-sm mt-1">
+        Resumen en tiempo real del estado de los usuarios
+      </p>
+    </div>
+
+    <!-- Información de actualización automática -->
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+      <ng-icon name="heroClock" size="16"></ng-icon>
+      <span>Tiempo real</span>
+    </div>
+
+    <!-- Botón de actualizar -->
+    <!-- <button
+      (click)="onRefreshClick()"
+      [disabled]="loading()"
+      class="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-200"
+    >
+      <ng-icon
+        name="heroArrowPath"
+        size="16"
+        [class.animate-spin]="loading()"
+      ></ng-icon>
+      <span class="text-sm font-medium">{{
+        loading() ? "Actualizando..." : "Actualizar"
+      }}</span>
+    </button> -->
+  </div>
+
+  <!-- Grid de estadísticas -->
+  @if (loading() && !stats()) {
+  <!-- Laoding states -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    @for (item of [1,2,3,4,5,6,7]; track $index) {
+    <div class="animate-pulse">
+      <div class="bg-gray-200 rounded-lg h-24"></div>
+    </div>
+    }
+  </div>
+  }@else if (stats()) {
+  <!-- estadisticas cargadas -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- tarjeta de toa de usuarios -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+        {{ getCardColorClass('totalUsers') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()?.totalUsers || 0 }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Total Usuarios</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('totalUsers').name"
+          [class]="getCardIconClass('totalUsers').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 pt-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("totalUsers") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Tarjetas de usuarios activos -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+     {{ getCardColorClass('activeUsers') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()!.activeUsers }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Activos</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('activeUsers').name"
+          [class]="getCardIconClass('activeUsers').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 p-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("activeUsers") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Tarjetas de adminsttadores -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+     {{ getCardColorClass('adminUsers') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()!.adminUsers }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Adminstradores</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('adminUsers').name"
+          [class]="getCardIconClass('adminUsers').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 p-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("adminUsers") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Tarjeta de uevos este Mes -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+     {{ getCardColorClass('newUsersThisMonth') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()!.newUsersThisMonth }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Nuevos Este Mes</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('newUsersThisMonth').name"
+          [class]="getCardIconClass('newUsersThisMonth').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 p-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("newUsersThisMonth") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- segunda fila de estadisricas -->
+    <!-- tarjeta de emails verificados -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+     {{ getCardColorClass('verifiedUsers') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()!.verifiedUsers }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Emails Verificados</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('verifiedUsers').name"
+          [class]="getCardIconClass('verifiedUsers').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 p-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("verifiedUsers") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- tarjeta de usuarios inactivos -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+     {{ getCardColorClass('inactiveUsers') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()!.inactiveUsers }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Inactivos</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('inactiveUsers').name"
+          [class]="getCardIconClass('inactiveUsers').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 p-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("inactiveUsers") }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Tarjeta de total de Logins -->
+    <div
+      class="rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-md hover:scale-105
+     {{ getCardColorClass('totalLogins') }}"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-2xl font-bold text-gray-800">
+            {{ stats()!.totalLogins }}
+          </p>
+          <p class="text-sm text-gray-600 mt-1">Total Logins</p>
+        </div>
+        <ng-icon
+          [name]="getCardIconClass('totalLogins').name"
+          [class]="getCardIconClass('totalLogins').class"
+          class="text-2xl opacity-80"
+        ></ng-icon>
+      </div>
+      <div class="mt-3 p-3 border-t border-gray-200">
+        <p class="text-xs text-gray-500">
+          {{ getStatDescription("totalLogins") }}
+        </p>
+      </div>
+    </div>
+  </div>
+  }@else {
+  <div class="text-center py-8">
+    <ng-icon name="heroChartBar" size="40" class="text-gray-300 mb-4"></ng-icon>
+    <p class="text-gray-500">No hay estadisticas disponibles.</p>
+  </div>
+  }
+</div>

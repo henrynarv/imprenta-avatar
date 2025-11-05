@@ -149,11 +149,22 @@
           <!-- Columna Producto -->
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center space-x-3">
-              <img
-                [src]="product.images[0]"
-                [alt]="product.name"
-                class="h-10 w-10 rounded-lg object-cover border border-gray-200"
-              />
+              <div class="realtive">
+                <img
+                  [src]="product.images[0]"
+                  [alt]="product.name"
+                  class="h-10 w-10 rounded-lg object-cover border border-gray-200"
+                />
+                @if (product.has3DModel) {
+                <div
+                  class="absolute -top-1 bg-blue-600 text-white rounded-full shadow-lg"
+                >
+                  <title>Disponible en 3D</title>
+                  <ng-icon name="heroCube" size="16"></ng-icon>
+                </div>
+                }
+              </div>
+
               <div class="min-w-0 flex-1">
                 <div class="text-sm font-medium text-gray-900 truncate">
                   {{ product.name }}
@@ -211,6 +222,17 @@
           <!-- Acciones -->
           <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
             <div class="flex items-center space-x-1">
+              <!-- Boton ver en 3D -->
+              @if (product.has3DModel) {
+              <button
+                (click)="open3DViewer(product)"
+                class="p-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded transition-colors"
+                title="Ver en 3D"
+              >
+                <ng-icon name="heroCube" size="16"></ng-icon>
+              </button>
+              }
+
               <!-- Ver Detalle -->
               <button
                 (click)="viewProductDetails(product)"
@@ -271,6 +293,12 @@
           </td>
         </tr>
         }
+
+        <!-- Modal 3D Global -->
+        <app-product-3d-modal
+          [product]="selectedProduct()!"
+          [isOpen]="true"
+        ></app-product-3d-modal>
       </tbody>
     </table>
   </div>

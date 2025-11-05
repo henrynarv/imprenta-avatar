@@ -1,0 +1,164 @@
+<!-- src/app/features/products/components/product-3d-upload/product-3d-upload.component.html -->
+<div class="space-y-6">
+  <!-- Encabezado -->
+  <div class="flex items-center space-x-3 pb-4 border-b border-gray-200">
+    <ng-icon name="heroCube" class="text-blue-600" size="24"></ng-icon>
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900">Modelo 3D</h3>
+      <p class="text-sm text-gray-600">
+        Agrega un modelo 3D interactivo para este producto
+      </p>
+    </div>
+  </div>
+
+  <!-- Estado: Modelo Existente -->
+  @if (hasExistingModel() && !hasNewFile()) {
+  <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <ng-icon
+          name="heroCheckCircle"
+          class="text-green-600"
+          size="20"
+        ></ng-icon>
+        <div>
+          <p class="font-medium text-green-800">Modelo 3D configurado</p>
+          <p class="text-sm text-green-700">{{ getFileName() }}</p>
+        </div>
+      </div>
+      <button
+        (click)="removeFile()"
+        class="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+        title="Eliminar modelo 3D"
+      >
+        <ng-icon name="heroXMark" size="18"></ng-icon>
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Área de Subida -->
+  @if (!hasExistingModel() || hasNewFile()) {
+  <div
+    class="border-2 border-dashed rounded-lg transition-all duration-200"
+    [class]="
+      isDragOver()
+        ? 'border-blue-400 bg-blue-50'
+        : 'border-gray-300 hover:border-gray-400'
+    "
+    (drop)="onFileDrop($event)"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+  >
+    <div class="p-8 text-center">
+      <ng-icon
+        name="heroDocumentArrowUp"
+        class="text-gray-400 mx-auto mb-3"
+        size="32"
+      ></ng-icon>
+
+      <div class="space-y-2">
+        <p class="text-sm font-medium text-gray-900">
+          Arrastra tu modelo 3D aquí o haz clic para seleccionar
+        </p>
+        <p class="text-xs text-gray-500">
+          Formatos soportados: GLTF, GLB (Máximo 20MB)
+        </p>
+      </div>
+
+      <input
+        type="file"
+        (change)="onFileSelected($event)"
+        accept=".gltf,.glb"
+        class="hidden"
+        #fileInput
+      />
+
+      <button
+        type="button"
+        (click)="fileInput.click()"
+        class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+      >
+        Seleccionar Archivo
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- Archivo Seleccionado -->
+  @if (hasNewFile()) {
+  <div class="bg-gray-50 rounded-lg p-4 space-y-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <ng-icon name="heroPhoto" class="text-blue-600" size="20"></ng-icon>
+        <div>
+          <p class="font-medium text-gray-900">{{ getFileName() }}</p>
+          <p class="text-sm text-gray-600">{{ getFileSize() }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button
+          type="button"
+          (click)="uploadFile()"
+          [disabled]="isUploading()"
+          class="px-3 py-1.5 bg-green-600 text-white rounded text-sm font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          @if (isUploading()) {
+          <span class="flex items-center space-x-1">
+            <div
+              class="animate-spin rounded-full h-3 w-3 border-b-2 border-white"
+            ></div>
+            <span>Subiendo...</span>
+          </span>
+          } @else {
+          <span>Subir Modelo</span>
+          }
+        </button>
+
+        <button
+          type="button"
+          (click)="removeFile()"
+          class="p-1.5 text-gray-600 hover:text-red-600 rounded transition-colors"
+          title="Cancelar"
+        >
+          <ng-icon name="heroXMark" size="16"></ng-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Selector de Color -->
+    <div class="flex items-center space-x-3 pt-3 border-t border-gray-200">
+      <label class="text-sm font-medium text-gray-700 whitespace-nowrap">
+        Color por defecto:
+      </label>
+      <input
+        type="color"
+        [value]="defaultColor()"
+        (input)="onColorChange($event)"
+        class="w-8 h-8 rounded cursor-pointer border border-gray-300"
+      />
+      <span class="text-sm text-gray-600 font-mono">{{ defaultColor() }}</span>
+    </div>
+  </div>
+  }
+
+  <!-- Información de Formatos -->
+  <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+    <div class="flex items-start space-x-3">
+      <ng-icon
+        name="heroExclamationTriangle"
+        class="text-blue-600 mt-0.5"
+        size="16"
+      ></ng-icon>
+      <div class="text-sm text-blue-800">
+        <p class="font-medium">Recomendación</p>
+        <p class="mt-1">
+          Usa formato <strong>GLB</strong> cuando sea posible. Es un único
+          archivo que incluye geometría, texturas y animaciones, evitando
+          problemas con archivos externos.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

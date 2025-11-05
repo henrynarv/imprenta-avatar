@@ -93,6 +93,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/gestion/pages/product-manager-page/product-manager-page.component').then(m => m.ProductManagerPageComponent),
     title: 'Gestion de productos'
   },
+  {
+    path: 'admin-users',
+    loadComponent: () => import('./features/users/pages/user-management-page/user-management-page.component').then(m => m.UserManagementPageComponent),
+    title: 'Gestion de usuarios',
+    canActivate: [roleGuard],
+    data: { role: 'admin' }
+  },
+  {
+    path: 'unauthorized',
+    loadComponent: () => import('./features/unauthorized-page/unauthorized-page.component').then(m => m.UnauthorizedPageComponent),
+    title: 'Acceso No Autorizado'
+  },
   //Ruta 404 - página no encontrada
   {
     path: '**',

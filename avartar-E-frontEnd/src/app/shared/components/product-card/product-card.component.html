@@ -49,6 +49,20 @@
       }
     </div>
 
+    <!-- ========================================================================== -->
+    <!-- NUEVO: BADGE 3D - Solo si el producto tiene modelo 3D -->
+    <!-- ========================================================================== -->
+    <!-- @if (product().has3DModel) {
+    <div
+      class="absolute top-3 right-12 bg-purple-600 text-white p-2 rounded-full shadow-lg cursor-pointer hover:bg-purple-700 transition-colors z-10 transform hover:scale-110"
+      (click)="onView3D($event)"
+      title="Ver en 3D"
+      aria-label="Ver producto en 3D"
+    >
+      <ng-icon name="heroCube" size="14"></ng-icon>
+    </div>
+    } -->
+
     <!-- Acciones rápidas -->
     @if (showActions()) {
     <div
@@ -90,42 +104,59 @@
     <div
       class="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center transition-opacity duration-300"
     >
-      <button
-        (click)="onAddToCart($event)"
-        [disabled]="product().stock === 0 || isLoading()"
-        [class]="
-          product().stock === 0 || isLoading()
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105'
-        "
-        class="text-white px-6 py-3 rounded-full font-semibold shadow-lg transition-all duration-200 flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
-      >
-        @if (isLoading()) {
-        <svg
-          class="animate-spin h-5 w-5 text-white"
-          fill="none"
-          viewBox="0 0 24 24"
+      <div class="flex space-x-3">
+        <!-- ========================================================================== -->
+        <!-- NUEVO: BOTÓN VER EN 3D EN OVERLAY - Solo si tiene modelo 3D -->
+        <!-- ========================================================================== -->
+        <!-- @if (product().has3DModel) {
+        <button
+          (click)="onView3D($event)"
+          class="flex items-center space-x-2 px-4 py-3 bg-purple-600 text-white rounded-full font-semibold shadow-lg transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-purple-600"
+          aria-label="Ver producto en 3D"
         >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        <span>Agregando...</span>
-        } @else {
-        <ng-icon name="heroShoppingCart" size="20"></ng-icon>
-        <span>{{ product().stock === 0 ? "Agotado" : "Agregar" }}</span>
-        }
-      </button>
+          <ng-icon name="heroCube" size="18"></ng-icon>
+          <span>Ver en 3D</span>
+        </button>
+        } -->
+
+        <!-- Botón Agregar al Carrito -->
+        <button
+          (click)="onAddToCart($event)"
+          [disabled]="product().stock === 0 || isLoading()"
+          [class]="
+            product().stock === 0 || isLoading()
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105'
+          "
+          class="flex items-center space-x-2 px-4 py-3 text-white rounded-full font-semibold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600"
+        >
+          @if (isLoading()) {
+          <svg
+            class="animate-spin h-5 w-5 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <span>Agregando...</span>
+          } @else {
+          <ng-icon name="heroShoppingCart" size="18"></ng-icon>
+          <span>{{ product().stock === 0 ? "Agotado" : "Agregar" }}</span>
+          }
+        </button>
+      </div>
     </div>
     }
   </div>
@@ -208,6 +239,16 @@
         <span>{{ product().specifications.size }}</span>
       </span>
       }
+
+      <!-- ========================================================================== -->
+      <!-- NUEVO: INDICADOR 3D EN ESPECIFICACIONES -->
+      <!-- ========================================================================== -->
+      @if (product().has3DModel) {
+      <span class="flex items-center space-x-1 text-purple-600 font-medium">
+        <ng-icon name="heroCube" size="14"></ng-icon>
+        <span>3D</span>
+      </span>
+      }
     </div>
     }
 
@@ -238,46 +279,73 @@
         }
       </div>
 
-      <!-- Botón de acción móvil -->
+      <!-- Botones de acción móvil -->
       @if (showActions()) {
-      <button
-        (click)="onAddToCart($event)"
-        [disabled]="product().stock === 0 || isLoading()"
-        [class]="
-          product().stock === 0 || isLoading()
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105'
-        "
-        class="flex items-center p-2 rounded-full text-white shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        [attr.aria-label]="
-          product().stock === 0 ? 'Producto agotado' : 'Agregar al carrito'
-        "
-      >
-        @if (isLoading()) {
-        <svg
-          class="animate-spin h-5 w-5 text-white"
-          fill="none"
-          viewBox="0 0 24 24"
+      <div class="flex space-x-2">
+        <!-- ========================================================================== -->
+        <!-- NUEVO: BOTÓN 3D MÓVIL - Solo si tiene modelo 3D -->
+        <!-- ========================================================================== -->
+        @if (product().has3DModel) {
+        <!-- (click)="onView3D($event)" -->
+        <span
+          class="flex items-center p-2 rounded-full bg-purple-600 text-white shadow-lg transition-all duration-200 transform focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          aria-label="Ver producto en 3D"
         >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          ></circle>
-          <path
-            class="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
-        </svg>
-        } @else {
-        <ng-icon name="heroShoppingCart" size="20"></ng-icon>
+          <ng-icon name="heroCube" size="16"></ng-icon>
+        </span>
         }
-      </button>
+
+        <!-- Botón de agregar al carrito móvil -->
+        <button
+          (click)="onAddToCart($event)"
+          [disabled]="product().stock === 0 || isLoading()"
+          [class]="
+            product().stock === 0 || isLoading()
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 transform hover:scale-105'
+          "
+          class="flex items-center p-2 rounded-full text-white shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          [attr.aria-label]="
+            product().stock === 0 ? 'Producto agotado' : 'Agregar al carrito'
+          "
+        >
+          @if (isLoading()) {
+          <svg
+            class="animate-spin h-5 w-5 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          } @else {
+          <ng-icon name="heroShoppingCart" size="16"></ng-icon>
+          }
+        </button>
+      </div>
       }
     </div>
   </div>
+
+  <!-- ========================================================================== -->
+  <!-- NUEVO: MODAL 3D - Se muestra cuando show3DModal() es true -->
+  <!-- ========================================================================== -->
+  @if (show3DModal()) {
+  <app-product-3d-modal
+    [product]="product()"
+    [isOpen]="true"
+    (close)="close3DModal()"
+  ></app-product-3d-modal>
+  }
 </div>

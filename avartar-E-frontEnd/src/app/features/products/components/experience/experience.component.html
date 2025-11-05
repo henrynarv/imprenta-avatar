@@ -1,0 +1,40 @@
+<!-- <ngt-ambient-light [intensity]="2" />
+<ngt-directional-light [position]="[0, 0, 1]" [intensity]="2" />
+<ngt-directional-light [position]="[0, 0, -1]" [intensity]="2" />
+<ngt-point-light [position]="[1, 1, 0]" [intensity]="0.5" />
+
+<ng-container *ngIf="model" as modelScene>
+  <ngt-primitive *args="[model]" [position]="[0, -0.7, -0.1]"></ngt-primitive>
+</ng-container>
+
+<ngt-orbit-controls
+  #orbitControls
+  *args="[camera(), glDomElement()]"
+  [autoRotate]="true"
+  [enableZoom]="true"
+  [autorotateSpeed]="3"
+/> -->
+
+<!-- experience.component.html - Versión más simple -->
+<ngt-ambient-light [intensity]="2" />
+<ngt-directional-light [position]="[0, 0, 1]" [intensity]="2" />
+<ngt-directional-light [position]="[0, 0, -1]" [intensity]="2" />
+<ngt-point-light [position]="[1, 1, 0]" [intensity]="0.5" />
+
+<!-- Cubo de referencia -->
+<!-- <ngt-mesh [position]="[0, 0, 0]">
+  <ngt-box-geometry [args]="[1, 1, 1]" />
+  <ngt-mesh-basic-material [color]="'#00ff00'" wireframe />
+</ngt-mesh> -->
+
+<!-- 🔥 SIMPLIFICADO: Sin posición para evitar problemas -->
+<ng-container *ngIf="model() as modelScene">
+  <ngt-primitive *args="[modelScene]"></ngt-primitive>
+</ng-container>
+
+<ngt-orbit-controls
+  *args="[camera(), glDomElement()]"
+  [autoRotate]="true"
+  [enableZoom]="true"
+  [autorotateSpeed]="3"
+/>

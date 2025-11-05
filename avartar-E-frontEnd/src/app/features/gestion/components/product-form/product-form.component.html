@@ -97,6 +97,23 @@
         >
           Especificaciones
         </button>
+
+        <!-- Pestaña 3D -->
+        <button
+          (click)="setActiveTab('3d')"
+          [class]="
+            activeTab() === '3d'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          class="flex items-center space-x-2 py-4 px-3 border-b-2 font-medium text-sm transition-colors"
+        >
+          <ng-icon name="heroCube" size="18"></ng-icon>
+          <span>Modelo 3D</span>
+          @if (has3DChanges()) {
+          <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+          }
+        </button>
       </nav>
     </div>
 
@@ -518,6 +535,19 @@
             placeholder="Ej: Caja Personalizada, Bolsa"
           />
         </div>
+      </div>
+      }
+
+      <!-- Contenido de pestaña 3D -->
+      @if (activeTab() === '3d') {
+      <div class="space-y-6">
+        <app-product-3d-upload
+          [productId]="product()?.id || 0"
+          [existing3DData]="product3DData()"
+          (modelUploaded)="on3DModelUpload($event)"
+          (modelRemoved)="on3DModelRemoved()"
+          (modelChanged)="on3DModelChanged($event)"
+        ></app-product-3d-upload>
       </div>
       }
     </form>

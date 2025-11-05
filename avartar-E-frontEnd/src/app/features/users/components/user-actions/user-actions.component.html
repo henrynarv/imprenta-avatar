@@ -1,0 +1,101 @@
+<div class="flex items-center gap-2">
+  <!-- boton detalles -->
+  <button
+    (click)="onViewDetails()"
+    [disabled]="loading()"
+    class="flex items-center justify-center p-2 border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+    title="Ver detalles del usuario"
+  >
+    <ng-icon
+      name="heroEye"
+      size="16"
+      class="group-hover:scale-110 transition-transform duration-200"
+    ></ng-icon>
+  </button>
+
+  <!-- Boton editar -->
+  <button
+    (click)="onEditUser()"
+    [disabled]="loading()"
+    class="flex items-center justify-center p-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+    title="Editar usuario"
+  >
+    <ng-icon
+      name="heroPencil"
+      size="16"
+      class="group-hover:scale-110 transition-transform duration-200"
+    ></ng-icon>
+  </button>
+
+  <!-- Dropdows de camnio de rol -->
+  <div class="relative" #dropdownContainer>
+    <button
+      (click)="toggleRoleDropdown()"
+      [disabled]="loading()"
+      class="flex items-center justify-center p-2 border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-50 hover:border-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+    >
+      <ng-icon
+        name="heroShieldCheck"
+        size="16"
+        class="group-hover:scale-110 transition-transform duration-200"
+      ></ng-icon>
+      <ng-icon name="heroChevronDown" size="12" class="ml-1"></ng-icon>
+    </button>
+
+    <!-- Dropdown menu -->
+    @if (isRoleDropdownOpen) {
+    <div
+      class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 animate-fade-in"
+    >
+      <button
+        (click)="onChangeRole('user')"
+        class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+        [class.bg-gray-100]="user().role === 'user'"
+      >
+        <ng-icon name="heroUser" size="16" class="text-blue-500 mr-2"></ng-icon>
+        Usuario normal @if (user().role === 'user') {
+        <ng-icon
+          name="heroCheck"
+          size="16"
+          class="text-green-500 ml-auto"
+        ></ng-icon>
+        }
+      </button>
+
+      <button
+        (click)="onChangeRole('admin')"
+        class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+        [class.bg-gray-100]="user().role === 'admin'"
+      >
+        <ng-icon
+          name="heroShieldCheck"
+          size="16"
+          class="text-purple-500 mr-2"
+        ></ng-icon>
+        Administrador @if (user().role === 'admin') {
+        <ng-icon
+          name="heroCheck"
+          size="16"
+          class="text-green-500 ml-auto"
+        ></ng-icon>
+        }
+      </button>
+    </div>
+    }
+  </div>
+
+  <!-- botón de acrivar/desactivar -->
+  <button
+    (click)="onToggleStatus()"
+    [disabled]="loading() || !canModifyUser()"
+    class="flex items-center justify-center p-2 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 group"
+    [class]="getStatusButtonClass()"
+    [title]="getStatusButtonText() + ' usuario'"
+  >
+    <ng-icon
+      [name]="getStatusButtonIcon()"
+      size="16"
+      class="group-hover:scale-110 transition-transform duration-200"
+    ></ng-icon>
+  </button>
+</div>

@@ -64,7 +64,7 @@ export interface User {
   company?: string;
   isActive: boolean
   createdAt: string;
-  updateAt: string
+  updatedAt: string
 }
 
 export interface Tokens {
