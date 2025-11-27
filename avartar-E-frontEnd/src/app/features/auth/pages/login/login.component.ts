@@ -3,9 +3,15 @@ import { LoginFormComponent } from "../../components/login-form/login-form.compo
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { LoginRequest, SocialLoginRequest } from '../../interfaces/auth-interface';
+import { LoginRequest, SocialLoginRequest } from '../../models/auth-interface';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { heroPrinter } from '@ng-icons/heroicons/outline';
+import { AuthStateService } from '../../services/auth-state.service';
+import { StorageService } from '../../services/storage.service';
+import { UserMapperService } from '../../services/user-mapper.service';
+import { NavigationService } from '../../services/navigation.service';
+import { ErrorHandlerService } from '../../services/error-handler.service';
+import { sign } from 'chart.js/helpers';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +21,59 @@ import { heroPrinter } from '@ng-icons/heroicons/outline';
   providers: [provideIcons({ heroPrinter })]
 })
 export class LoginComponent {
+
+  year = signal<number>(new Date().getFullYear());
+
+  //inyectar servicios especificos
+  private authApiService = inject(AuthService);
+  private authStateService = inject(AuthStateService);
+  private storageService = inject(StorageService);
+  private mapperService = inject(UserMapperService);
+  private navigationService = inject(NavigationService);
+  private errorHandlerService = inject(ErrorHandlerService);
+
+  private destroy$ = new Subject<void>();
+
+  isLoading = signal<boolean>(false);
+  errorMessage = signal<string | null>('');
+
+  onLoginSubmit(credentials: LoginRequest) {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.authApiService.login(credentials)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          const user = this.mapperService.mapAuthResponseToUser(response);
+          this.storageService.saveAuthData({
+            user,
+            token: response.token,
+            tokenType: response.tokenType,
+            expiresAt: response.expiresAt
+          });
+
+          this.authStateService.setUser(user);
+          this.errorMessage.set(null);
+          this.navigationService.navigateToHome();
+        },
+        error: (error) => {
+          const errorMessage = this.errorHandlerService.handleAuthError(error);
+          this.errorMessage.set(errorMessage);
+          this.isLoading.set(false);
+        }
+      })
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
+  }
+
+
+  /*
+
 
   year = signal<number>(new Date().getFullYear());
   private authService = inject(AuthService);
@@ -91,5 +150,5 @@ export class LoginComponent {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
+*/
 }

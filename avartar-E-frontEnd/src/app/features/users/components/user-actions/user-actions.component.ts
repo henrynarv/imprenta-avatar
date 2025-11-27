@@ -3,6 +3,7 @@ import { AdminUser } from '../../models/user-management.interface';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroCheck, heroCheckCircle, heroChevronDown, heroEye, heroNoSymbol, heroPencil, heroShieldCheck, heroUser } from '@ng-icons/heroicons/outline';
 import { CdkDropList } from "@angular/cdk/drag-drop";
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 @Component({
   selector: 'app-user-actions',
@@ -23,6 +24,10 @@ import { CdkDropList } from "@angular/cdk/drag-drop";
 })
 export class UserActionsComponent {
 
+  // Exponemos solo los valores necesarios
+  userRoleUser = UserRole.ROLE_USER;
+  userRoleAdmin = UserRole.ROLE_ADMIN;
+
   //Inputs
   user = input.required<AdminUser>();
   loading = input<boolean>(false);
@@ -30,7 +35,7 @@ export class UserActionsComponent {
   //outputs para las acciones
   editUser = output<AdminUser>();
   toggleStatus = output<number>();
-  changeRole = output<{ userId: number; newRole: 'user' | 'admin' }>();
+  changeRole = output<{ userId: number; newRole: UserRole }>();
   viewDetails = output<AdminUser>();
 
 
@@ -63,7 +68,7 @@ export class UserActionsComponent {
   }
 
   //manejo cambio de rol
-  onChangeRole(newRole: 'user' | 'admin'): void {
+  onChangeRole(newRole: UserRole): void {
     if (!this.loading() && this.user().role !== newRole) {
       this.changeRole.emit({ userId: this.user().id, newRole })
     }
@@ -90,18 +95,18 @@ export class UserActionsComponent {
   // }
   getStatusButtonText = computed(() => {
     const user = this.user(); // lee el valor actual de la signal
-    return user.isActive ? 'Desactivar' : 'Activar';
+    return user.active ? 'Desactivar' : 'Activar';
   });
 
   getStatusButtonClass(): string {
-    return this.user().isActive
+    return this.user().active
       ? 'bg-orange-400 text-white font-medium px-4 py-2 rounded hover:bg-orange-500 transition-colors'
       : 'bg-green-500 text-white font-medium px-4 py-2 rounded hover:bg-green-600 transition-colors';
   }
 
   //Obtine el icono del botonde estado
   getStatusButtonIcon(): string {
-    return this.user().isActive ? 'heroNoSymbol' : 'heroCheckCircle';
+    return this.user().active ? 'heroNoSymbol' : 'heroCheckCircle';
   }
 
   /**

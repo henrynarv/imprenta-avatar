@@ -48,12 +48,12 @@
       class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20 animate-fade-in"
     >
       <button
-        (click)="onChangeRole('user')"
+        (click)="onChangeRole(userRoleUser)"
         class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-        [class.bg-gray-100]="user().role === 'user'"
+        [class.bg-gray-100]="user().role === 'ROLE_USER'"
       >
         <ng-icon name="heroUser" size="16" class="text-blue-500 mr-2"></ng-icon>
-        Usuario normal @if (user().role === 'user') {
+        Usuario normal @if (user().role === userRoleUser) {
         <ng-icon
           name="heroCheck"
           size="16"
@@ -63,16 +63,16 @@
       </button>
 
       <button
-        (click)="onChangeRole('admin')"
+        (click)="onChangeRole(userRoleAdmin)"
         class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-        [class.bg-gray-100]="user().role === 'admin'"
+        [class.bg-gray-100]="user().role === userRoleAdmin"
       >
         <ng-icon
           name="heroShieldCheck"
           size="16"
           class="text-purple-500 mr-2"
         ></ng-icon>
-        Administrador @if (user().role === 'admin') {
+        Administrador @if (user().role === userRoleAdmin) {
         <ng-icon
           name="heroCheck"
           size="16"

@@ -152,9 +152,9 @@
             <app-profile-form
               [user]="currentUser()!"
               [isLoading]="isLoading()"
-              (save)="onProfileUpdate($event)"
               (cancel)="cancelEdit()"
             ></app-profile-form>
+            <!-- (save)="onProfileUpdate($event)" -->
 
             }@else {
             <!-- Vista de Solo Lectura -->
@@ -171,12 +171,12 @@
                     <div class="flex items-center space-x-4">
                       <img
                         src="/images/user-avatar.png"
-                        [alt]="currentUser()?.name"
+                        [alt]="currentUser()?.firstName"
                         class="w-16 h-16 rounded-full border-2 border-gray-200"
                       />
                       <div>
                         <div class="text-xl font-semibold text-gray-900">
-                          {{ currentUser()?.name }}
+                          {{ currentUser()?.firstName }}
                         </div>
                         <div class="text-gray-600">
                           {{ currentUser()?.email }}
@@ -186,7 +186,7 @@
 
                     <!-- Información de Contacto -->
                     <div class="space-y-3">
-                      @if (currentUser()?.phone) {
+                      @if (currentUser()?.phoneNumber) {
                       <div class="flex items-center space-x-3">
                         <ng-icon
                           name="heroPhone"
@@ -194,7 +194,7 @@
                           size="20"
                         ></ng-icon>
                         <span class="text-gray-900">{{
-                          currentUser()?.phone
+                          currentUser()?.phoneNumber
                         }}</span>
                       </div>
                       }
@@ -222,7 +222,7 @@
                   </h3>
 
                   <div class="space-y-4">
-                    @if (currentUser()?.company) {
+                    @if (currentUser()?.businessName) {
                     <div class="flex items-center space-x-3">
                       <ng-icon
                         name="heroBuildingOffice"
@@ -230,7 +230,7 @@
                         size="20"
                       ></ng-icon>
                       <span class="text-gray-900">{{
-                        currentUser()?.company
+                        currentUser()?.businessName
                       }}</span>
                     </div>
                     }

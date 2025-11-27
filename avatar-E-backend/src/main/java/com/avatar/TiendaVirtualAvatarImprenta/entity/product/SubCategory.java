@@ -29,7 +29,7 @@ public class SubCategory extends Auditable {
     private Category category;
 
     //relacion con los productos
-    @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "subcategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
     @Override

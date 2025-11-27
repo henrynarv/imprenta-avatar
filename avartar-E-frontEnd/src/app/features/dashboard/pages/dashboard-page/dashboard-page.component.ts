@@ -13,6 +13,7 @@ import { SalesChartComponent } from "../../components/sales-chart/sales-chart.co
 import { TopProductsChartComponent } from '../../components/top-products-chart/top-products-chart.component';
 import { OrderStatusChartComponent } from '../../components/orders-status-chart/orders-status-chart.component';
 import { ActiveChartTab } from '../../models/active-chart-tab.type';
+import { AuthStateService } from '../../../auth/services/auth-state.service';
 
 
 
@@ -47,7 +48,7 @@ export class DashboardPageComponent {
 
   private alertService = inject(AlertService);
   private dashboardService = inject(DashboardService);
-  private authService = inject(AuthService);
+  private authStateService = inject(AuthStateService);
 
   // Signals para el estado del dashboard
   private _kpis = signal<KPI[]>([]);
@@ -73,8 +74,8 @@ export class DashboardPageComponent {
   isLoading = this._isLoading.asReadonly();
   isRefreshing = this._isRefreshing.asReadonly();
   lastUpdated = this._lastUpdated.asReadonly();
-  currentUser = this.authService.currentUser;
-  userRole = this.authService.userRole;
+  currentUser = this.authStateService.currentUser;
+  userRole = this.authStateService.userRole;
   selectedDateRange = this._selectedDateRange.asReadonly();
   activeChartTab = this._activeChartTab.asReadonly();
   chartLoading = this._chartLoading.asReadonly();

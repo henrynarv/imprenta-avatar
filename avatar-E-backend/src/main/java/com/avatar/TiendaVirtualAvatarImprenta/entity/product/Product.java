@@ -3,6 +3,7 @@ package com.avatar.TiendaVirtualAvatarImprenta.entity.product;
 import com.avatar.TiendaVirtualAvatarImprenta.enums.CommercializationType;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -12,9 +13,9 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)//estrategia JOINED para herencia
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@SuperBuilder
 @Table(name = "products")
 public abstract class Product {
 
@@ -32,14 +33,17 @@ public abstract class Product {
     //tamaño en cm
     private String size;
 
+    @Builder.Default
     private BigDecimal price = BigDecimal.ZERO;
 
     // Relación: un producto puede tener varios patrones de comercialización
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProductCommercialQuantity> commercialQuantities = new ArrayList<>(); //cada producto puede tener varias cantidades>
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private CommercializationType commercializationType = CommercializationType.PER_UNIT;
 
     /*@ManyToMany
@@ -60,6 +64,7 @@ public abstract class Product {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "color_id")
     )
+    @Builder.Default
     private List<ColorOption> colorOptions = new ArrayList<>();
 
 

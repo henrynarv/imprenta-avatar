@@ -139,7 +139,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     //dtealle de una orden especifica
     @Query("""
             SELECT new com.avatar.TiendaVirtualAvatarImprenta.dto.report.OrderItemDTO(
-            p.name, o.quantity, i.price
+            p.name, o.quantity, o.price
             )
             FROM OrderItem o
             JOIN o.product p

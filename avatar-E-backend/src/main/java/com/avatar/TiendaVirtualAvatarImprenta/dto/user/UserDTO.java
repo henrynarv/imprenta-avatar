@@ -1,6 +1,8 @@
 package com.avatar.TiendaVirtualAvatarImprenta.dto.user;
 
 import com.avatar.TiendaVirtualAvatarImprenta.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Email;
@@ -11,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 @Data
@@ -21,8 +24,8 @@ import java.time.ZonedDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDTO {
 
-    @NotNull(message = "El id de usuario es requerido")
-    private Long id;
+    //@NotNull(message = "El id de usuario es requerido")
+    private Long id; // Solo presente en respuestas, no en creación
 
     @NotBlank(message = "La cédula es requerida")
     private String cedula;
@@ -40,7 +43,7 @@ public class UserDTO {
     @NotBlank(message = "La teléfono es requerida")
     private String phoneNumber;
 
-    @NotBlank(message = "La contraseña es requerida")
+    @NotBlank(message = "La dirección es requerida")
     private String address;
 
     @NotBlank(message = "La comuna es requerida")
@@ -49,12 +52,29 @@ public class UserDTO {
     @NotBlank(message = "La región es requerida")
     private String region;
 
+    //Campos opcionale rapa empresa
+    private String businessName; //razon social opcional
+
+    private String rut;
+    @Builder.Default
+    private Boolean isBusiness = false;
+
+    //Campo se solo lectura para respuesta
+    @JsonIgnore
+    private String fullName;
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     @NotNull(message = "El estado activo es requerido")
-    private Boolean active;
+    @Builder.Default
+    private Boolean active =true;
 
     @NotNull(message = "El rol es requerido")
     private UserRole role;
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX") // <-- formato con offset
+    private OffsetDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    private OffsetDateTime updatedAt;
 
 }

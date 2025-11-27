@@ -1,11 +1,17 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroArrowLeft, heroCheckCircle, heroEnvelope, heroLockClosed } from '@ng-icons/heroicons/outline';
+import { heroArrowLeft, heroCheckCircle, heroClock, heroEnvelope, heroExclamationTriangle, heroLockClosed } from '@ng-icons/heroicons/outline';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { ForgotPasswordRequest, ResetPasswordRequest } from '../../interfaces/auth-interface';
+import { ApiResposnse, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest } from '../../models/auth-interface';
+import { AuthStateService } from '../../services/auth-state.service';
+import { ErrorHandlerService } from '../../services/error-handler.service';
+import { NavigationService } from '../../services/navigation.service';
+import { AlertService } from '../../../../shared/service/alert.service';
+import { VersionService } from '../../../../core/services/version.service';
+import { RateLimitService } from '../../services/rate-limit.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -14,150 +20,171 @@ import { ForgotPasswordRequest, ResetPasswordRequest } from '../../interfaces/au
   styleUrl: './forgot-password.component.scss',
   providers: [
     provideIcons({
-      heroEnvelope, heroLockClosed, heroArrowLeft, heroCheckCircle
+      heroEnvelope, heroLockClosed, heroArrowLeft, heroCheckCircle, heroClock, heroExclamationTriangle
     })
   ],
 })
 export class ForgotPasswordComponent {
 
+  currentYear = new Date().getFullYear();
+  appVersion = "";
+
+  //Inyeccionde servicos
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private router = inject(Router);
+  private rateLimitService = inject(RateLimitService);
+  private authStateService = inject(AuthStateService);
+  private errorHandlerService = inject(ErrorHandlerService);
+  private navigationService = inject(NavigationService);
+  private alertService = inject(AlertService);
+  private versionService = inject(VersionService);
+
+
   private destroy$ = new Subject<void>();
-  private route = inject(ActivatedRoute);
 
-  //signals del componente
+  //señles del componente
   private _isSubmitting = signal<boolean>(false);
-  private _showResetForm = signal<boolean>(false);
+  private _showSuccessMessage = signal<boolean>(false);
   private _emailSent = signal<boolean>(false);
-  private _resetSuccess = signal<boolean>(false);
+  private _errorMessage = signal<string | null>(null);
+  private _countdownJustEnded = signal<boolean>(false);
 
 
-  //computed de la propiedades
-  isSubmitting = computed(() => this._isSubmitting() || this.authService.isLoading());
-  showResetForm = computed(() => this._showResetForm());
+  //computed de la propiedades -  INTEGRADO CON AuthStateService
+  isSubmitting = computed(() => this._isSubmitting() || this.authStateService.isLoading());
   emailSent = computed(() => this._emailSent());
-  resetSuccess = computed(() => this._resetSuccess());
-  errorMessage = computed(() => this.authService.error());
+  errorMessage = computed(() => this._errorMessage() || this.authStateService.error());
 
 
-  //token de reset desde URL
-  private resetToken: string | null = null;
+  //computed desde RateLimitService
+  isRateLimited = computed(() => this.rateLimitService.isRateLimited());
+  formattedCountdown = computed(() => this.rateLimitService.formattedTimeRemaining());
+  showSuccessMessage = this._showSuccessMessage.asReadonly();
+
+
 
   //Formmlario para solicitar restablecimiento
   forgotPasswordForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]]
   });
 
-
-  //Formulario para restablecer contraseña
-  resetPasswordForm = this.fb.group({
-    newPassword: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', [Validators.required]]
-  }, {
-    validators: this.passwordNatchValidator
-  })
-
-  constructor() {
-    // Verificar si hay un token en la URL(para reset directo)
-    this.route.queryParamMap.subscribe(params => {
-      const token = params.get('token')
-      if (token) {
-        this.resetToken = token;
-        this._showResetForm.set(true);
-      }
-    })
-  }
-
-  //Validador de coincidencia de contraseñas
-  private passwordNatchValidator(control: any) {
-    const password = control.get('newPassword');
-    const confirmPassword = control.get('confirmPassword');
-    if (password && confirmPassword && password.value !== confirmPassword.value) {
-      confirmPassword.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true }
-    }
-    return null
-  }
-
-  //Obtiene controles de formularios
-  get forgotFormControls() {
+  //Obtener controles del formulario para tener acceso fácil en template
+  get formControls() {
     return this.forgotPasswordForm.controls;
   }
 
-  get resetFormControls() {
-    return this.resetPasswordForm.controls;
-  }
-
-
-
-
-  //Maneja el envío del formulario de solicitud
+  //maneja el envio del formulario de solicitud de reset
   onForgotPasswordSubmit(): void {
     this.forgotPasswordForm.markAllAsTouched();
+    this._errorMessage.set(null);
+
+
+    //verificamos rate limitting
+    if (this.isRateLimited()) {
+      this._errorMessage.set(`Debes esperar ${this.formattedCountdown()} antes de solicitar otro enlace.`);
+      this.scrollToError()
+      return;
+    }
 
     if (this.forgotPasswordForm.valid) {
       this._isSubmitting.set(true);
-
+      //MAPEO DE DATOS COINCIDIENDO CON ForgotPasswordRequest DEL BACKEND
       const requestData: ForgotPasswordRequest = {
-        email: this.forgotFormControls.email.value!.trim().toLowerCase(),
-      };
+        email: (this.formControls.email.value ?? '').trim().toLowerCase(),
+      }
 
+      //lamma al servico  y a la respuesta ApiResponse de backend
       this.authService.forgotPassword(requestData).pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (response) => {
+          next: (response: ApiResposnse<ForgotPasswordResponse>) => {
             this._emailSent.set(true);
+            this._showSuccessMessage.set(true); // ← MOSTRAR MENSAJE SOLO EN ÉXITO
             this._isSubmitting.set(false);
+
+            // MANEJO DE RATE LIMITING MEJORADO - El servicio con signals se encarga automáticamente
+            if (response.data) {
+              this.rateLimitService.handleRateLimitResponse(response.data);
+            }
+
+            //Notificación de exito
+            this.alertService.success(
+              'Email enviado',
+              'Revisa tu correo para restablecer tu contraseña'
+            )
           },
           error: (error) => {
+            const errorMessage = this.errorHandlerService.handleAuthError(error);
+            this._errorMessage.set(errorMessage);
             this._isSubmitting.set(false);
+            this._showSuccessMessage.set(false); // ← OCULTAR EN ERROR
+            this.scrollToError();
           }
-        })
-
+        });
+    } else {
+      this._errorMessage.set('Por favor, ingresa un email válido.');
+      this.scrollToError();
     }
   }
 
-  //Maneja el restablecimiento de contraseña
-  onResetPasswordSubmit(): void {
-    this.resetPasswordForm.markAllAsTouched();
+  //Reenviar email de recuperación
+  resendRecoveryEmail(): void {
 
-    if (this.resetPasswordForm.valid) {
+    //verificar rate limitting
+
+    if (this.isRateLimited()) {
+      this._errorMessage.set(`Debes esperar ${this.formattedCountdown()} antes de solicitar otro enlace.`);
+      this.scrollToError()
+      return;
+    }
+
+    this._errorMessage.set(null);
+    if (this.formControls.email.valid) {
       this._isSubmitting.set(true);
+
+      const requestData: ForgotPasswordRequest = {
+        email: (this.formControls.email.value ?? '').trim().toLowerCase()
+      };
+
+      // Reenviar la solicitud de reset
+      this.authService.forgotPassword(requestData).pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: ApiResposnse<ForgotPasswordResponse>) => {
+            this._emailSent.set(true);
+            this._showSuccessMessage.set(true);
+            this._isSubmitting.set(false);
+
+            // ✅ MANEJAR RATE LIMITING IGUAL QUE EN EL MÉTODO PRINCIPAL
+            if (response.data) {
+              this.rateLimitService.handleRateLimitResponse(response.data);
+            }
+
+
+            //Notificación d exito
+            this.alertService.success(
+              'Email reenviado',
+              'Hemos enviado un nuevo enlace de recuperación a tu correo'
+            )
+          },
+          error: (error) => {
+            const errorMessage = this.errorHandlerService.handleAuthError(error);
+            this._errorMessage.set(errorMessage);
+            this._isSubmitting.set(false);
+            this._showSuccessMessage.set(false);
+            this.scrollToError();
+          }
+        });
+    } else {
+      this._errorMessage.set('Por favor, ingresa un email válido.');
+      this.scrollToError();
     }
-
-    const resetData: ResetPasswordRequest = {
-      token: this.resetToken || 'manual_reset',
-      newPassword: this.resetPasswordForm.value.newPassword!,
-      confirmPassword: this.resetPasswordForm.value.confirmPassword!
-    };
-    this.authService.resetPassword(resetData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this._resetSuccess.set(true);
-          this._isSubmitting.set(false);
-
-          // Redirigir al login después de 3 segundos
-          setTimeout(() => {
-            this.router.navigate(['/auth/login']);
-          }, 3000);
-        },
-        error: () => {
-          this._isSubmitting.set(false);
-        }
-      });
   }
 
-
-
-  //Navega de vuelta al login
+  //navegacion con NavidagationService
   goBackToLogin(): void {
-    this.router.navigate(['/auth/login']);
+    this.navigationService.navigateToLogin();
   }
 
-
-
-  //Obtiene clases CSS para inputs
+  //Obtie clases diámicas para input
   getInputClasses(field: any): string {
     const baseClasses = 'w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 transition-all duration-200 ';
 
@@ -166,13 +193,12 @@ export class ForgotPasswordComponent {
     } else if (field.valid && field.touched) {
       return baseClasses + 'border-green-500 focus:border-green-500 focus:ring-green-200 bg-green-50';
     }
-
     return baseClasses + 'border-gray-300 focus:border-blue-500 focus:ring-blue-200 bg-white';
   }
 
-  //Obtiene mensajes de error
+  //Obtien mensjaes de error
   getErrorMessage(fieldName: string): string {
-    const field = this.resetPasswordForm.get(fieldName);
+    const field = this.forgotPasswordForm.get(fieldName);
     if (!field?.touched || !field?.errors) return '';
 
     const errors = field.errors;
@@ -180,8 +206,7 @@ export class ForgotPasswordComponent {
     const errorMessage: Record<string, string | (() => string)> = {
       required: 'El campo es requerido',
       email: 'Por favor, ingresa un correo electrónico valido',
-      minlength: () => `Mínimo ${errors?.['minlength']?.requiredLength} caracteres`,
-      passwordMismatch: 'Las contraseñas no coinciden',
+
 
     };
 
@@ -195,8 +220,33 @@ export class ForgotPasswordComponent {
   }
 
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private scrollToError(): void {
+    setTimeout(() => {
+      const errorElement = document.querySelector('[aria-live="polite"]');
+      if (errorElement) {
+        errorElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }
+    }, 100);
   }
+
+
+  constructor() {
+    this.versionService.getVersion().subscribe(data => {
+      this.appVersion = data.version
+      // console.log('Hola Mundo', this.appVersion);
+    })
+
+
+    // Ocultar mensaje cuando se active el rate limit
+    effect(() => {
+      if (this.isRateLimited()) {
+        this._showSuccessMessage.set(false);
+      }
+    });
+  }
+
+
 }

@@ -2,6 +2,9 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { AuthService } from '../../auth/services/auth.service';
 import { AdminUser, UserQueryParams, UsersResponse, UserStats, BulkActionRequest } from '../models/user-management.interface';
 import { delay, filter, Observable, of, tap, throwError, map } from 'rxjs';
+import { UserRole } from '../../auth/models/user-role.enum';
+import { User } from '../../auth/models/auth-interface';
+import { AuthStateService } from '../../auth/services/auth-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +12,7 @@ import { delay, filter, Observable, of, tap, throwError, map } from 'rxjs';
 export class UserManagementService {
 
 
-  private authService = inject(AuthService)
+  private authStateService = inject(AuthStateService)
 
   //señales de estado
   private _users = signal<AdminUser[]>([]);
@@ -41,11 +44,11 @@ export class UserManagementService {
     const users = this._users();
     return {
       totalUsers: users.length,
-      activeUsers: users.filter(user => user.isActive).length,
-      adminUsers: users.filter(user => user.role === 'admin').length,
+      activeUsers: users.filter(user => user.active).length,
+      adminUsers: users.filter(user => user.role === 'ROLE_ADMIN').length,
       newUsersThisMonth: this.getNewUsersThisMonth(users),
       verifiedUsers: users.filter(user => user.emailVerified).length,
-      inactiveUsers: users.filter(user => !user.isActive).length,
+      inactiveUsers: users.filter(user => !user.active).length,
       totalLogins: users.reduce((sum, user) => sum + user.loginCount, 0)
     }
   });
@@ -83,7 +86,7 @@ export class UserManagementService {
   //Obtiene toso los usuarios(Solo para adminstradores)
   getUsers(params?: UserQueryParams): Observable<UsersResponse> {
     //vericar permisos de admintrador
-    if (!this.authService.hasRole('admin')) {
+    if (!this.authStateService.hasRole('ROLE_ADMIN')) {
       return throwError(() => new Error('No tienes permisos para ver esta información'))
     }
 
@@ -120,10 +123,10 @@ export class UserManagementService {
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(user =>
-        user.name.toLowerCase().includes(searchLower) ||
+        user.firstName.toLowerCase().includes(searchLower) ||
         user.lastName.toLowerCase().includes(searchLower) ||
         user.email.toLowerCase().includes(searchLower) ||
-        user.company?.toLowerCase().includes(searchLower)
+        user.businessName?.toLowerCase().includes(searchLower)
       )
     }
 
@@ -135,7 +138,7 @@ export class UserManagementService {
     //filtro por estado
     if (filters.status && filters.status !== 'all') {
       const isActive = filters.status === 'active';
-      filtered = filtered.filter(user => user.isActive === isActive)
+      filtered = filtered.filter(user => user.active === isActive)
     }
 
     //ordenamiento
@@ -144,8 +147,8 @@ export class UserManagementService {
 
       switch (filters.sortBy) {
         case 'name':
-          aValue = `${a.name} ${a.lastName}`.toLowerCase();
-          bValue = `${b.name} ${b.lastName}`.toLowerCase();
+          aValue = `${a.firstName} ${a.lastName}`.toLowerCase();
+          bValue = `${b.firstName} ${b.lastName}`.toLowerCase();
           break;
         case 'email':
           aValue = a.email.toLowerCase();
@@ -177,7 +180,7 @@ export class UserManagementService {
 
 
   //Actualzia el rol de un usuario
-  updateUserRole(userId: number, newRole: 'user' | 'admin'): Observable<AdminUser> {
+  updateUserRole(userId: number, newRole: UserRole): Observable<AdminUser> {
     this._isLoading.set(true);
     return new Observable(observer => {
       setTimeout(() => {
@@ -218,7 +221,7 @@ export class UserManagementService {
             if (user.id === userId) {
               return {
                 ...user,
-                isActive: !user.isActive,
+                isActive: !user.active,
                 updatedAt: new Date().toISOString()
               };
             }
@@ -257,9 +260,9 @@ export class UserManagementService {
                   case 'deactivate':
                     return { ...user, isActive: false, updatedAt: new Date().toISOString() };
                   case 'makeAdmin':
-                    return { ...user, role: 'admin', updatedAt: new Date().toISOString() };
+                    return { ...user, role: UserRole.ROLE_ADMIN, updatedAt: new Date().toISOString() };
                   case 'removeAdmin':
-                    return { ...user, role: 'user', updatedAt: new Date().toISOString() };
+                    return { ...user, role: UserRole.ROLE_USER, updatedAt: new Date().toISOString() };
                   case 'delete':
                     return user; // No eliminamos realmente en el mock
                   default:
@@ -370,154 +373,236 @@ export class UserManagementService {
     const mockUsers: AdminUser[] = [
       {
         id: 1,
-        name: 'Ana',
+        firstName: 'Ana',
         lastName: 'García',
         email: 'ana.garcia@empresa.com',
-        role: 'admin',
-        phone: '+56 9 1234 5678',
-        company: 'Imprenta Creativa S.A.',
-        isActive: true,
+        role: UserRole.ROLE_ADMIN,
+        phoneNumber: '+56 9 1234 5678',
+        businessName: 'Imprenta Creativa S.A.',
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-20T10:30:00Z',
         loginCount: 45,
         createdAt: '2024-01-15T08:00:00Z',
-        updatedAt: '2024-03-20T10:30:00Z'
+        updatedAt: '2024-03-20T10:30:00Z',
+        cedula: '',
+        address: '',
+        comuna: '',
+        region: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 2,
-        name: 'Carlos',
+        firstName: 'Carlos',
         lastName: 'López',
         email: 'carlos.lopez@cliente.com',
-        role: 'user',
-        phone: '+56 9 8765 4321',
-        company: 'Distribuidora Norte',
-        isActive: true,
+        role: UserRole.ROLE_ADMIN,
+        phoneNumber: '+56 9 8765 4321',
+        businessName: 'Distribuidora Norte',
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-19T14:20:00Z',
         loginCount: 12,
         createdAt: '2024-02-10T09:15:00Z',
-        updatedAt: '2024-03-19T14:20:00Z'
+        updatedAt: '2024-03-19T14:20:00Z',
+        cedula: '',
+        address: '',
+        comuna: '',
+        region: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 3,
-        name: 'María',
+        firstName: 'María',
         lastName: 'Fernández',
         email: 'maria.fernandez@gmail.com',
-        role: 'user',
-        isActive: false,
+        role: UserRole.ROLE_USER,
+        active: false,
         emailVerified: true,
         lastLogin: '2024-02-28T16:45:00Z',
         loginCount: 3,
         createdAt: '2024-01-20T11:30:00Z',
-        updatedAt: '2024-03-01T10:00:00Z'
+        updatedAt: '2024-03-01T10:00:00Z',
+        cedula: '',
+        phoneNumber: '',
+        address: '',
+        comuna: '',
+        region: '',
+        businessName: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 4,
-        name: 'Roberto',
+        firstName: 'Roberto',
         lastName: 'Silva',
         email: 'roberto.silva@otraempresa.cl',
-        role: 'admin',
-        phone: '+56 9 5555 6666',
-        company: 'Corporación Print',
-        isActive: true,
+        role: UserRole.ROLE_ADMIN,
+        phoneNumber: '+56 9 5555 6666',
+        businessName: 'Corporación Print',
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-18T09:00:00Z',
         loginCount: 28,
         createdAt: '2024-01-05T14:20:00Z',
-        updatedAt: '2024-03-18T09:00:00Z'
+        updatedAt: '2024-03-18T09:00:00Z',
+        cedula: '',
+        address: '',
+        comuna: '',
+        region: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 5,
-        name: 'Elena',
+        firstName: 'Elena',
         lastName: 'Martínez',
         email: 'elena.martinez@nuevocliente.com',
-        role: 'user',
-        isActive: true,
+        role: UserRole.ROLE_USER,
+        phoneNumber: '+56 9 7777 8888',
+        businessName: 'Tech Solutions',
+        active: true,
         emailVerified: false,
         lastLogin: '2024-03-15T13:10:00Z',
         loginCount: 1,
         createdAt: '2024-03-01T16:45:00Z',
-        updatedAt: '2024-03-15T13:10:00Z'
+        updatedAt: '2024-03-15T13:10:00Z',
+        cedula: '',
+        address: '',
+        comuna: '',
+        region: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 6,
-        name: 'Diego',
+        firstName: 'Diego',
         lastName: 'Ramírez',
         email: 'diego.ramirez@startup.io',
-        role: 'user',
-        phone: '+56 9 7777 8888',
-        company: 'Tech Solutions',
-        isActive: true,
+        role: UserRole.ROLE_USER,
+        phoneNumber: '+56 9 7777 8888',
+        businessName: 'Tech Solutions',
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-17T11:20:00Z',
         loginCount: 8,
         createdAt: '2024-02-15T10:30:00Z',
-        updatedAt: '2024-03-17T11:20:00Z'
+        updatedAt: '2024-03-17T11:20:00Z',
+        cedula: '',
+        address: '',
+        comuna: '',
+        region: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 7,
-        name: 'Laura',
+        firstName: 'Laura',
         lastName: 'Hernández',
         email: 'laura.hernandez@consultora.com',
-        role: 'user',
-        isActive: false,
+        role: UserRole.ROLE_USER,
+        active: false,
         emailVerified: true,
         lastLogin: '2024-01-30T15:40:00Z',
         loginCount: 5,
         createdAt: '2023-12-10T12:00:00Z',
-        updatedAt: '2024-02-01T09:15:00Z'
+        updatedAt: '2024-02-01T09:15:00Z',
+        cedula: '',
+        phoneNumber: '',
+        address: '',
+        comuna: '',
+        region: '',
+        businessName: '',
+        rut: '',
+        isBusiness: false
       },
+
       {
         id: 8,
-        name: 'Pablo',
+        firstName: 'Pablo',
         lastName: 'Gómez',
         email: 'pablo.gomez@estudio.com',
-        role: 'admin',
-        isActive: true,
+        role: UserRole.ROLE_ADMIN,
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-19T17:30:00Z',
         loginCount: 33,
         createdAt: '2024-01-08T08:45:00Z',
-        updatedAt: '2024-03-19T17:30:00Z'
+        updatedAt: '2024-03-19T17:30:00Z',
+        cedula: '',
+        phoneNumber: '',
+        address: '',
+        comuna: '',
+        region: '',
+        businessName: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 9,
-        name: 'Sofía',
+        firstName: 'Sofía',
         lastName: 'Castillo',
         email: 'sofia.castillo@artes.com',
-        role: 'user',
-        isActive: true,
+        role: UserRole.ROLE_USER,
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-16T14:15:00Z',
         loginCount: 7,
         createdAt: '2024-02-20T13:20:00Z',
-        updatedAt: '2024-03-16T14:15:00Z'
+        updatedAt: '2024-03-16T14:15:00Z',
+        cedula: '',
+        phoneNumber: '',
+        address: '',
+        comuna: '',
+        region: '',
+        businessName: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 10,
-        name: 'Javier',
+        firstName: 'Javier',
         lastName: 'Morales',
         email: 'javier.morales@consultor.cl',
-        role: 'user',
-        isActive: true,
+        role: UserRole.ROLE_USER,
+        active: true,
         emailVerified: false,
         lastLogin: '2024-03-14T10:00:00Z',
         loginCount: 2,
         createdAt: '2024-03-05T11:10:00Z',
-        updatedAt: '2024-03-14T10:00:00Z'
+        updatedAt: '2024-03-14T10:00:00Z',
+        cedula: '',
+        phoneNumber: '',
+        address: '',
+        comuna: '',
+        region: '',
+        businessName: '',
+        rut: '',
+        isBusiness: false
       },
       {
         id: 11,
-        name: 'Valentina',
+        firstName: 'Valentina',
         lastName: 'Ruiz',
         email: 'valentina.ruiz@empresa.com',
-        role: 'user',
-        isActive: true,
+        role: UserRole.ROLE_USER,
+        active: true,
         emailVerified: true,
         lastLogin: '2024-03-13T16:30:00Z',
         loginCount: 6,
         createdAt: '2024-02-25T09:00:00Z',
-        updatedAt: '2024-03-13T16:30:00Z'
+        updatedAt: '2024-03-13T16:30:00Z',
+        cedula: '',
+        phoneNumber: '',
+        address: '',
+        comuna: '',
+        region: '',
+        businessName: '',
+        rut: '',
+        isBusiness: false
+
       }
     ];
 

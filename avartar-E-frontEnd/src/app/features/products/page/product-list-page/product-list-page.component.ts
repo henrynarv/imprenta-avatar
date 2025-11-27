@@ -59,8 +59,18 @@ export class ProductListPageComponent {
   constructor() {
     // Cargar productos iniciales
     this.loadProducts();
+
+    //efecto Para debuggear filtros
     effect(() => {
-      console.log('Prodcut filter: ', this._filters());
+      const filters = this._filters();
+      console.log('🔍 FILTROS ACTUALES en PADRE:', {
+        searchText: filters.searchText,
+        category: filters.category,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice,
+        sortBy: filters.sortBy,
+        inStock: filters.inStock
+      });
     })
   }
 
@@ -157,12 +167,12 @@ export class ProductListPageComponent {
     let filtered = [...product];
 
     //filtro por categoria
-    if (filters.category) {
+    if (filters.category && filters.category.trim() !== '') {
       filtered = filtered.filter(product => product.category === filters.category);
     }
 
     //filtro por texto de busqueda
-    if (filters.searchText) {
+    if (filters.searchText && filters.searchText.trim() !== '') {
       const searchLower = filters.searchText.toLowerCase();
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchLower) ||
@@ -203,7 +213,8 @@ export class ProductListPageComponent {
 
   //Maneja el cambio de filtros desde componentes hijos
   onFiltersChange(filters: ProductFilters): void {
-    this._filters.set(filters);
+    console.log('FILTROS RECIBIDOS del HIJO:', filters);
+    this._filters.set({ ...filters });
     this.applyFilters();
 
     //actualizar la URL de los filtros
@@ -217,12 +228,16 @@ export class ProductListPageComponent {
   private updateUrlWithFilters(filters: ProductFilters): void {
     const queryParams: any = {};
 
-    if (filters.category) {
+    if (filters.category && filters.category.trim() !== '') {
       queryParams.category = filters.category;
+    } else {
+      queryParams.category = null;
     }
 
-    if (filters.searchText) {
+    if (filters.searchText && filters.searchText.trim() !== '') {
       queryParams.search = filters.searchText;
+    } else {
+      queryParams.search = null;
     }
 
     if (filters.sortBy) {

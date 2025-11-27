@@ -4,6 +4,8 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroArrowLeft, heroChartBar, heroEnvelope, heroExclamationTriangle, heroHome, heroPrinter, heroShoppingBag } from '@ng-icons/heroicons/outline';
 import { AuthService } from '../../../auth/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { AuthStateService } from '../../../auth/services/auth-state.service';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 @Component({
   selector: 'app-not-found-page',
@@ -24,18 +26,22 @@ import { CommonModule } from '@angular/common';
 })
 export class NotFoundPageComponent {
 
+  // Exponemos solo los valores necesarios
+  userRoleUser = UserRole.ROLE_USER;
+  userRoleAdmin = UserRole.ROLE_ADMIN;
+
   currentYear = new Date().getFullYear();
 
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private authStateService = inject(AuthStateService);
 
   //signasl psra el estado del componente
   private _isLoading = signal<boolean>(false);
 
   //computed properties
   isLoading = this._isLoading.asReadonly();
-  currentUser = this.authService.currentUser;
-  userRole = this.authService.userRole;
+  currentUser = this.authStateService.currentUser;
+  userRole = this.authStateService.userRole;
 
   /**
      * Enlaces útiles basados en el rol del usuario

@@ -17,8 +17,11 @@ export class LoadingService {
   //muestra el loading spiner
   show(): void {
     this.activeRequests++;
-    this._isLoading.set(true);
-    console.log('contador de request activos: ', this.activeRequests);
+    //solo mostrar si es el primer request
+    if (this.activeRequests === 1) {
+      this._isLoading.set(true);
+    }
+
   }
 
   // Oculta el loading spinner
@@ -26,7 +29,7 @@ export class LoadingService {
     if (this.activeRequests > 0) {
       this.activeRequests--;
     }
-
+    // Solo ocultar cuando no hay requests activos
     if (this.activeRequests === 0) {
       this._isLoading.set(false);
     }
@@ -38,5 +41,5 @@ export class LoadingService {
     this.activeRequests = 0;
     this._isLoading.set(false);
   }
-  constructor() { }
+
 }

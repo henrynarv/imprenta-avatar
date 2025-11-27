@@ -140,6 +140,33 @@ export class ProductListComponent {
     this.sortOrder.set('desc');
     this.inStockOnly.set(false);
     this.applyFilters();
+
+
+    //Emitir filtros completamenbte vacios al padre
+    const emptyFilters: ProductFilters = {
+      searchText: undefined,
+      category: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+      sortBy: 'newest',
+      sortOrder: 'desc',
+      inStock: false
+    };
+
+    console.log('🔄 Enviando filtros vacíos al padre:', emptyFilters);
+    this.filtersChanged.emit(emptyFilters);
+  }
+
+
+  //limpia el input de busqueda en el DOM
+  private clearSearchInput(): void {
+    setTimeout(() => {
+      const searchInput = document.querySelector('input[type="text"][placeholder*="Buscar"]') as HTMLInputElement;
+      if (searchInput) {
+        searchInput.value = '';
+        console.log('✅ Input de búsqueda limpiado en el DOM');
+      }
+    }, 0);
   }
 
   /**

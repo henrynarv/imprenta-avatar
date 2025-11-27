@@ -1,11 +1,11 @@
 <!-- codigo de prueba -->
 
 <div>
-  @if (authService.isAuthenticated()) {
-  <p>Bienvenido, {{ authService.currentUser()?.name }}</p>
-  <p>Rol: {{ authService.userRole() }}</p>
+  @if (authStateService.isAuthenticated()) {
+  <p>Bienvenido, {{ authStateService.currentUser()?.firstName }}</p>
+  <p>Rol: {{ authStateService.userRole() }}</p>
 
-  @if (authService.hasRole('admin')) {
+  @if (authStateService.hasRole('ROLE_ADMIN')) {
   <button>Panel de Administración</button>
   } } @else {
   <p>Por favor inicia sesión</p>

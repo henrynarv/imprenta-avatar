@@ -7,8 +7,9 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { User } from '../../../auth/interfaces/auth-interface';
+import { User } from '../../../auth/models/auth-interface';
 import { ProfileFormComponent } from "../../components/profile-form/profile-form.component";
+import { AuthStateService } from '../../../auth/services/auth-state.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -34,7 +35,7 @@ import { ProfileFormComponent } from "../../components/profile-form/profile-form
 export class ProfilePageComponent {
 
   //inyeccionde servicios
-  private authService = inject(AuthService);
+  private authStateService = inject(AuthStateService);
   private alertService = inject(AlertService)
   private router = inject(Router)
   private fb = inject(FormBuilder);
@@ -50,8 +51,8 @@ export class ProfilePageComponent {
   isEditing = computed(() => this._isEditing());
   isLoading = computed(() => this._isLoading());
   activeTab = computed(() => this._activeTab());
-  currentUser = computed(() => this.authService.currentUser());
-  userRole = computed(() => this.authService.userRole());
+  currentUser = computed(() => this.authStateService.currentUser());
+  userRole = computed(() => this.authStateService.userRole());
 
   //formatea la fecha para mostrar
   formatDate(dateString: string): string {
@@ -66,8 +67,8 @@ export class ProfilePageComponent {
   //obtiene el texto del rol osea muestra el nombre mas amigable al usuario
   getRoleText(role: string): string {
     const roles = {
-      'user': 'Usuario',
-      'admin': 'Administrador'
+      'ROLE_USER': 'Usuario',
+      'ROLE_ADMIN': 'Administrador'
     };
     return roles[role as keyof typeof roles] || role;
   }
@@ -100,30 +101,30 @@ export class ProfilePageComponent {
   }
 
   //maneja la actualizacion del perfil
-  onProfileUpdate(updateUser: User): void {
-    this._isLoading.set(true);
+  // onProfileUpdate(updateUser: User): void {
+  //   this._isLoading.set(true);
 
-    this.authService.updateProfile(updateUser).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.alertService.success(
-            'Perfil actualizado',
-            'Tu perfil ha sido actualizado correctamente'
-          );
-          this._isEditing.set(false);
-        }
-        this._isLoading.set(false);
-      },
-      error: (error) => {
-        console.log('Error al actualizar el perfil', error);
-        this.alertService.error(
-          'Error',
-          'Ocurrio un error al actualizar el perfil'
-        );
-        this._isLoading.set(false);
-      }
-    })
-  }
+  //   this.authService.updateProfile(updateUser).subscribe({
+  //     next: (response) => {
+  //       if (response.success) {
+  //         this.alertService.success(
+  //           'Perfil actualizado',
+  //           'Tu perfil ha sido actualizado correctamente'
+  //         );
+  //         this._isEditing.set(false);
+  //       }
+  //       this._isLoading.set(false);
+  //     },
+  //     error: (error) => {
+  //       console.log('Error al actualizar el perfil', error);
+  //       this.alertService.error(
+  //         'Error',
+  //         'Ocurrio un error al actualizar el perfil'
+  //       );
+  //       this._isLoading.set(false);
+  //     }
+  //   })
+  // }
 
   //navega hacia atras
   goBack(): void {

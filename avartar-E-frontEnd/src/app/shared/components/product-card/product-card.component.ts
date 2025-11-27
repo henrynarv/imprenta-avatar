@@ -149,6 +149,12 @@ export class ProductCardComponent {
   //Maneja el click en la card del producto
   onProductClick(): void {
     console.log('🎯 Product ID:', this.product().id);
+
+    //Guarda la posición actual antes de navegar
+    const scrollPosition = window.scrollY;
+    sessionStorage.setItem('productsScrollPos', scrollPosition.toString());
+    console.log('Posiciondel escroll gaurdado: ', scrollPosition);
+
     this.productClicked.emit(this.product()); // ✅ Solo emite el evento
     this.router.navigate(['/products', this.product().id]);
   }

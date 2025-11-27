@@ -1,7 +1,12 @@
+import com.avatar.TiendaVirtualAvatarImprenta.entity.order.Order;
+import com.avatar.TiendaVirtualAvatarImprenta.repository.order.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-
+/*
     private final OrderRepository orderRepository;
 
     // Crear una nueva orden con correlativo reiniciado por año
@@ -54,4 +59,6 @@ public class OrderService {
         order.setShippingType(shippingType);
         calculateTotalAmount(order);
     }
+
+ */
 }

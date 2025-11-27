@@ -9,45 +9,50 @@
   <!-- Contenido principal -->
   <main
     class="flex-grow-0 transition-all duration-300"
-    [class]="getMainClasses()"
-    (click)="onContentClick($event)"
+    [class.opacity-70]="isLoading()"
+    [class.pointer-events-none]="isLoading()"
   >
     <!-- Loading overlay global -->
+
+    @if (isLoading()) {
     <div
-      [class]="getLoadingOverlayClasses()"
-      role="status"
-      aria-live="polite"
-      aria-label="Cargando aplicacion"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90"
     >
-      <div class="text-center space-y-4 animate-fade-in">
-        <!-- Logo durante loading -->
+      <div class="text-center space-y-4">
+        <!-- Logo -->
         <div class="flex justify-center mb-4">
           <div
             class="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-2xl shadow-lg"
           >
+            <!-- Si el logo YA está pre-cargado, mostrarlo -->
+            @if (logoPreloaded()) {
             <img
               [src]="logoWhite"
-              alt="logo"
-              class="w-12 h-12 amimate-pulse opacity-60"
+              alt="Logo Imprenta Avatar"
+              class="w-12 h-12 animate-pulse transition-opacity duration-300"
             />
+            }
+            <!-- Mientras carga el logo, mostrar placeholder -->
+            @else {
+            <div
+              class="w-12 h-12 bg-white bg-opacity-20 rounded-lg animate-pulse flex items-center justify-center"
+            >
+              <!-- Icono de carga temporal -->
+              <div
+                class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"
+              ></div>
+            </div>
+            }
           </div>
         </div>
-        <!-- Spinner animado -->
-        <!-- <div class="relative">
-          <div
-            class="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto"
-          ></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-8 h-8 bg-blue-600 rounded-full animate-ping"></div>
-          </div>
-        </div> -->
 
-        <!-- Texto de loading -->
+        <!-- Texto -->
         <div class="space-y-2">
           <p class="text-gray-700 font-semibold text-lg">Imprenta Avatar</p>
           <p class="text-gray-500 text-sm">Cargando...</p>
         </div>
-        <!-- Progress bar sutil -->
+
+        <!-- Progress bar -->
         <div class="w-48 h-1 bg-gray-200 rounded-full overflow-hidden mx-auto">
           <div
             class="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-progress"
@@ -55,7 +60,7 @@
         </div>
       </div>
     </div>
-
+    }
     <!-- Router outlet para contenido dinámico -->
     <router-outlet></router-outlet>
   </main>
@@ -104,3 +109,7 @@ Componentes de alertas globales
 
 <app-alert-container></app-alert-container>
 -->
+
+@if(showFooter()){
+<!-- <app-footer></app-footer> -->
+}

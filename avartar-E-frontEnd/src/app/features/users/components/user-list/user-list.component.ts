@@ -6,6 +6,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBuildingOffice, heroChartBar, heroCheck, heroCheckCircle, heroChevronDown, heroChevronLeft, heroChevronRight, heroCircleStack, heroCog, heroPhone, heroShieldCheck, heroUser, heroUserGroup, heroXCircle } from '@ng-icons/heroicons/outline';
 import { DatePipe } from '@angular/common';
 import { UserActionsComponent } from "../user-actions/user-actions.component";
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 @Component({
   selector: 'app-user-list',
@@ -43,7 +44,7 @@ export class UserListComponent {
   //outputs
   userSelected = output<number>();
   userStatusToggled = output<number>();
-  userRoleChanged = output<{ userId: number; newRole: 'user' | 'admin' }>();
+  userRoleChanged = output<{ userId: number; newRole: UserRole }>();
   userEdit = output<AdminUser>();
   userViewDetails = output<AdminUser>();
 
@@ -71,7 +72,7 @@ export class UserListComponent {
   }
 
   //cambia el rol de un usuario
-  onUserRoleChange(event: { userId: number, newRole: 'user' | 'admin' }): void {
+  onUserRoleChange(event: { userId: number, newRole: UserRole }): void {
     this.userRoleChanged.emit(event);
   }
 

@@ -19,14 +19,14 @@
           id="name"
           type="text"
           formControlName="name"
-          [class]="getInputClasses(profileForm.controls.name)"
+          [class]="getInputClasses(profileForm.controls.firstName)"
           class="pl-10 pr-4"
           placeholder="Nombre Completo"
         />
       </div>
 
-      @if (profileForm.controls.name.touched &&
-      profileForm.controls.name.invalid) {
+      @if (profileForm.controls.firstName.touched &&
+      profileForm.controls.firstName.invalid) {
       <p class="mt-1 text-sm text-red-600 animate-fade-in">
         {{ getErrorMessage("name") }}
       </p>
@@ -82,7 +82,7 @@
           id="phone"
           type="tel"
           formControlName="phone"
-          [class]="getInputClasses(profileForm.controls.phone)"
+          [class]="getInputClasses(profileForm.controls.phoneNumber)"
           class="pl-10 pr-4"
           placeholder="+56 9 1234 5678"
         />
@@ -110,7 +110,7 @@
           id="company"
           type="text"
           formControlName="company"
-          [class]="getInputClasses(profileForm.controls.company)"
+          [class]="getInputClasses(profileForm.controls.businessName)"
           class="pl-10 pr-4"
           placeholder="Nombre de la empresa"
         />

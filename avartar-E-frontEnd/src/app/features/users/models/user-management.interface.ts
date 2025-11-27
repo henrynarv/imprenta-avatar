@@ -1,4 +1,4 @@
-import { User } from "../../auth/interfaces/auth-interface";
+import { User } from "../../auth/models/auth-interface";
 import { OrderDetail } from '../../reports/models/report.interface';
 
 export interface UserStats {
@@ -15,7 +15,7 @@ export interface UserQueryParams {
   page?: number;
   limit?: number;
   search?: string;
-  role?: 'user' | 'admin' | 'all';
+  role?: 'ROLE_USER' | 'ROLE_ADMIN' | 'all';
   status?: 'active' | 'inactive' | 'all';
   sortBy?: 'name' | 'email' | 'createdAt' | 'lastLogin';
   sortOrder?: 'asc' | 'desc';

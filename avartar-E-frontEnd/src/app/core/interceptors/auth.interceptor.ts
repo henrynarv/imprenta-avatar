@@ -1,6 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../../features/auth/services/auth.service';
+import { StorageService } from '../../features/auth/services/storage.service';
 
 
 /**
@@ -10,10 +11,10 @@ import { AuthService } from '../../features/auth/services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
-  const authService = inject(AuthService);
+  const storageService = inject(StorageService);
 
   // obtener el token deñ servicio de autenticación
-  const authToken = authService.getCurrentToken();
+  const authToken = storageService.getToken();
   const publicEndpoints = [
     '/api/auth/login',
     '/api/auth/register',

@@ -10,6 +10,8 @@ import { heroArrowDownTray, heroUserPlus } from '@ng-icons/heroicons/outline';
 import { UserStatsCardComponent } from "../../components/user-stats-card/user-stats-card.component";
 import { UserFiltersComponent } from "../../components/user-filters/user-filters.component";
 import { UserListComponent } from "../../components/user-list/user-list.component";
+import { AuthStateService } from '../../../auth/services/auth-state.service';
+import { UserRole } from '../../../auth/models/user-role.enum';
 
 
 @Component({
@@ -28,6 +30,7 @@ export class UserManagementPageComponent {
   //Inyeccon de servicios
   private userManagementService = inject(UserManagementService);
   private authService = inject(AuthService);
+  private authStateService = inject(AuthStateService);
   private alertService = inject(AlertService);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
@@ -76,7 +79,7 @@ export class UserManagementPageComponent {
 
   //Verifica que el usuario tenga acceso de administrador
   private checkAdminAccess(): void {
-    if (!this.authService.hasRole('admin')) {
+    if (!this.authStateService.hasRole('ROLE_ADMIN')) {
       this.alertService.error(
         'Acceso no denegado',
         'No tienes permisos para acceder a esta sección'
@@ -123,7 +126,7 @@ export class UserManagementPageComponent {
         this._actionLoading.set(false);
         this.alertService.success(
           'Estado actualizado',
-          `Usuario ${updatedUser.isActive ? 'activado' : 'desactivado'} Exitosamente`
+          `Usuario ${updatedUser.active ? 'activado' : 'desactivado'} Exitosamente`
         )
       },
       error: (error) => {
@@ -135,7 +138,7 @@ export class UserManagementPageComponent {
   }
 
   //maneja el camio de rol de un usuario
-  onUserRoleChanged(event: { userId: number, newRole: 'user' | 'admin' }): void {
+  onUserRoleChanged(event: { userId: number, newRole: UserRole }): void {
     this._actionLoading.set(true);
 
     this.userManagementService.updateUserRole(event.userId, event.newRole).pipe(
@@ -145,7 +148,7 @@ export class UserManagementPageComponent {
         this._actionLoading.set(false);
         this.alertService.success(
           'Rol actualizado',
-          `Usuario ahora es ${event.newRole === 'admin' ? 'administardor' : 'usuario normal'}`
+          `Usuario ahora es ${event.newRole === UserRole.ROLE_ADMIN ? 'administardor' : 'usuario normal'}`
         )
       },
       error: (error) => {
@@ -216,7 +219,7 @@ export class UserManagementPageComponent {
     // En una implementación real, abrirías un modal o navegarías a la página de edición
     this.alertService.info(
       'Editar Usuario',
-      `Funcionalidad de edición para ${user.name} ${user.lastName}`
+      `Funcionalidad de edición para ${user.firstName} ${user.lastName}`
     );
     console.log('Editar usuario:', user);
   }
@@ -226,7 +229,7 @@ export class UserManagementPageComponent {
     // En una implementación real, mostrarías un modal con detalles completos
     this.alertService.info(
       'Detalles del Usuario',
-      `Vista detallada de ${user.name} ${user.lastName}`
+      `Vista detallada de ${user.firstName} ${user.lastName}`
     );
     console.log('Ver detalles de usuario:', user);
   }

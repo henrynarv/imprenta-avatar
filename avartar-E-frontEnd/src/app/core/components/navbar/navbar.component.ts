@@ -14,6 +14,9 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { distinctUntilChanged, filter, map, Subject, take, takeUntil } from 'rxjs';
 import { NavbarAdminMenuComponent } from './navbar-admin-menu.component';
 import { AuthService } from '../../../features/auth/services/auth.service';
+import { AuthStateService } from '../../../features/auth/services/auth-state.service';
+import { StorageService } from '../../../features/auth/services/storage.service';
+import { UserRole } from '../../../features/auth/models/user-role.enum';
 
 @Component({
   selector: 'app-navbar',
@@ -35,8 +38,9 @@ export class NavbarComponent {
   readonly logoUrlColor = APP_ASSETS.LOGO_COLOR;
 
   //injeccionde sevcicios
-  private authService = inject(AuthService);
-  private alertService = inject(AlertService)
+  private authStateService = inject(AuthStateService);
+  private alertService = inject(AlertService);
+  private storageService = inject(StorageService);
   private router = inject(Router);
   private destroy$ = new Subject<void>();
 
@@ -47,9 +51,9 @@ export class NavbarComponent {
   currentRoute = signal<string>('/');
 
   // Computed properties del servicio de autenticación
-  role = computed(() => this.authService.userRole());
-  user = computed(() => this.authService.user());
-  isAuthenticated = computed(() => this.authService.isAuthenticated());
+  role = computed(() => this.authStateService.userRole());
+  user = computed(() => this.authStateService.currentUser());
+  isAuthenticated = computed(() => this.authStateService.isAuthenticated());
 
   //compured logo dinamico basado en hover
   currentLogo = computed(() => {
@@ -60,15 +64,20 @@ export class NavbarComponent {
   // Método para obtener el nombre completo (ya que tu User no tiene fullName)
   userFullName = computed(() => {
     const user = this.user();
-    return user ? `${user.name} ${user.lastName}` : '';
+    return user ? `${user.firstName} ${user.lastName}` : '';
   });
 
   // Método para obtener las iniciales del avatar
   userInitials = computed(() => {
     const user = this.user();
     if (!user) return '';
-    return `${user.name?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
+    return `${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`.toUpperCase();
   });
+
+  showCart = computed(() => {
+    return this.role() === UserRole.ROLE_USER
+  })
+
 
   //Configura el listener de cambios de ruta
   private setupRouteListener(): void {
@@ -114,16 +123,16 @@ export class NavbarComponent {
   }
 
   //cambia entre roles (solo para demo)
-  switchRole() {
-    const newRole = this.role() === 'user' ? 'admin' : 'user'
-    this.authService.switchRole(newRole);
+  // switchRole() {
+  //   const newRole = this.role() === 'ROLE_ADMIN' ? 'admin' : 'user'
+  //   this.authService.switchRole(newRole);
 
-    this.alertService.success(
-      `Rol cambiado`,
-      `Ahora estas navegando como ${newRole === 'user' ? 'Usuario' : 'Administrador'}`
+  //   this.alertService.success(
+  //     `Rol cambiado`,
+  //     `Ahora estas navegando como ${newRole === 'user' ? 'Usuario' : 'Administrador'}`
 
-    );
-  }
+  //   );
+  // }
 
   //manea el logout del usuario
   async logout(): Promise<void> {
@@ -138,7 +147,9 @@ export class NavbarComponent {
       icon: 'heroArrowRightOnRectangle'
     });
     if (confirmed) {
-      this.authService.logout();
+      this.authStateService.clearAuth();
+      this.storageService.removeAuthData();
+      this.router.navigate(['/']);
       this.alertService.success(
         'Sesion cerrada',
         'Has cerrado sesión correctamente'

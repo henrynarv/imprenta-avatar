@@ -45,7 +45,7 @@
       <div class="hidden md:flex items-center space-x-8">
         <!-- Menú segun rol -->
         <div class="flex items-center space-x-6">
-          @if (role() === 'user') {
+          @if (role() === 'ROLE_USER') {
           <app-navbar-user-menu></app-navbar-user-menu>
           }@else {
           <app-navbar-admin-menu></app-navbar-admin-menu>
@@ -55,9 +55,11 @@
         <!-- Carrito y usuario -->
         <div class="flex items-center space-x-4">
           <!-- Carrito -->
+          @if (showCart()) {
           <div class="flex items-center">
             <app-cart-badge></app-cart-badge>
           </div>
+          }
 
           <!-- Usuario -->
           @if (isAuthenticated()) {
@@ -84,10 +86,10 @@
               <!-- Información del usuario -->
               <div class="hidden lg:block text-left">
                 <div class="text-sm font-medium text-gray-900 leading-tight">
-                  {{ user()?.name }}
+                  {{ user()?.firstName }}
                 </div>
                 <div class="text-xs text-gray-500 capitalize">
-                  {{ role() === "user" ? "Usuario" : "Administrador" }}
+                  {{ role() === "ROLE_USER" ? "Usuario" : "Administrador" }}
                 </div>
               </div>
 
@@ -115,8 +117,8 @@
               <!-- Header -->
 
               <div class="px-4 py-3 border-b border-gray-100">
-                <p class="text-sm text-medium text-gray-900">
-                  {{ user()?.name }} {{ user()?.lastName }}
+                <p class="text-sm text-medium text-gray-900 truncate">
+                  {{ user()?.firstName }} {{ user()?.lastName }}
                 </p>
                 <p class="text-sm text-gray-500 truncate">
                   {{ user()?.email }}
@@ -192,7 +194,7 @@
         </div>
 
         <!-- Switch de Roles (solo para demo/desarrollo) -->
-        @if (isAuthenticated()) {
+        <!-- @if (isAuthenticated()) {
         <button
           (click)="switchRole()"
           class="hidden xl:flex items-center space-x-2 px-3 py-2 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -207,7 +209,7 @@
             class="text-gray-400"
           ></ng-icon>
         </button>
-        }
+        } -->
       </div>
     </div>
   </div>
@@ -245,7 +247,7 @@
       <div class="h-full overflow-y-auto">
         <!-- Menú según Rol -->
         <div class="p-4">
-          @if (role() === 'user') {
+          @if (role() === 'ROLE_USER') {
           <app-navbar-user-menu></app-navbar-user-menu>
           } @else {
           <app-navbar-admin-menu></app-navbar-admin-menu>
@@ -269,7 +271,9 @@
               {{ userInitials() }}
             </div>
             <div>
-              <div class="font-medium text-gray-900">{{ user()?.name }}</div>
+              <div class="font-medium text-gray-900">
+                {{ user()?.firstName }}
+              </div>
               <div class="text-sm text-gray-500">{{ user()?.email }}</div>
             </div>
           </div>

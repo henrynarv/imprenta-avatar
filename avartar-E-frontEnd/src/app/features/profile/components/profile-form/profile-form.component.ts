@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, output } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroBuildingOffice, heroCheck, heroEnvelope, heroPhone, heroUser, heroXMark } from '@ng-icons/heroicons/outline';
-import { User } from '../../../auth/interfaces/auth-interface';
+import { User } from '../../../auth/models/auth-interface';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
@@ -37,10 +37,10 @@ export class ProfileFormComponent {
 
   //formaulario reactivo
   profileForm = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3)]],
+    firstName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    phone: [''],
-    company: ['']
+    phoneNumber: [''],
+    businessName: ['']
   });
 
   //signal derivados del formulario
@@ -66,10 +66,10 @@ export class ProfileFormComponent {
     const formValue = this.formValue();
     const user = this.user();
 
-    return formValue.name !== user.name ||
+    return formValue.firstName !== user.firstName ||
       formValue.email !== user.email ||
-      formValue.phone !== user.phone ||
-      formValue.company !== user.company
+      formValue.phoneNumber !== user.phoneNumber ||
+      formValue.businessName !== user.businessName
 
   });
 
@@ -82,10 +82,10 @@ export class ProfileFormComponent {
   private initializerForm(): void {
     const user = this.user();
     this.profileForm.patchValue({
-      name: user.name,
+      firstName: user.firstName,
       email: user.email,
-      phone: user.phone,
-      company: user.company
+      phoneNumber: user.phoneNumber,
+      businessName: user.businessName
     })
   }
 
@@ -95,10 +95,10 @@ export class ProfileFormComponent {
 
       const updatedUser: User = {
         ...this.user(),
-        name: formValue.name ?? '',
+        firstName: formValue.firstName ?? '',
         email: formValue.email ?? '',
-        phone: formValue.phone?.trim() || undefined,
-        company: formValue.company?.trim() || undefined
+        phoneNumber: formValue.phoneNumber?.trim() || '',
+        businessName: formValue.businessName?.trim() || undefined
       };
 
       this.save.emit(updatedUser);

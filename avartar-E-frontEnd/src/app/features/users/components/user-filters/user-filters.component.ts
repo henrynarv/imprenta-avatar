@@ -50,7 +50,7 @@ export class UserFiltersComponent {
 
   //señales locales para los controles del formulario
   searchTerm = signal<string>('');
-  selectedRole = signal<'user' | 'admin' | 'all'>('all');
+  selectedRole = signal<'ROLE_USER' | 'ROLE_ADMIN' | 'all'>('all');
   selectedStatus = signal<'active' | 'inactive' | 'all'>('all');
   selectedSort = signal<string>('createdAt-desc');
 

@@ -8,6 +8,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { AuthService } from '../../../auth/services/auth.service';
+import { AuthStateService } from '../../../auth/services/auth-state.service';
 
 @Component({
   selector: 'app-order-report',
@@ -18,7 +19,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 export class OrderReportComponent {
 
   // codigo de pruueba
-  authService = inject(AuthService);
+  authStateService = inject(AuthStateService);
   // codigo de pruueba
 
 

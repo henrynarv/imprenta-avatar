@@ -4,12 +4,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RegisterRequest {
 
     @NotBlank(message = "La cédula es requerida")
@@ -43,4 +45,17 @@ public class RegisterRequest {
 
     @NotBlank(message = "La región es requerida")
     private String region;
+
+    //Campos opcionales
+    private String businessName;//Razón social
+
+    private String rut;
+
+    @Builder.Default
+    private Boolean isBusiness = false;
+
+    //metodo validacion , Mtach entre password
+    public boolean isPasswordMatching(){
+        return password != null && password.equals(confirmPassword);
+    }
 }

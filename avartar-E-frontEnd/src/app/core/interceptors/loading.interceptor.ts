@@ -12,32 +12,47 @@ export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
 
   const loadingService = inject(LoadingService);
 
-  // Excluir requests que ni necesitan laoding
+  // Rutas que NO deben mostrar loading
   const excludeLoading = [
-    '/api/auth/check',
-    '/api/analytics',
-    '/api/notifications'
+    '/auth/login',
+    '/auth/register',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/social-login',
+    '/auth/refresh-token'
   ];
 
-  const shouldShowLoading = !excludeLoading.some(url => req.url.includes(url));
-  let loadingTimeout: any;
+  const shouldShow = !excludeLoading.some(url => req.url.includes(url));
 
-  if (shouldShowLoading) {
-    // Loadin inteligente ; solo muestra si la request tarda mas de 400ms
-    loadingTimeout = setTimeout(() => {
+  // Delay para evitar flicker (150–250ms ideal)
+  const DELAY = 200;
+
+  let timeoutId: any;
+  let loadingShown = false; //Trackear si se mostró
+  if (shouldShow) {
+
+    // Iniciar loader solo si la petición tarda más de DELAY ms
+    timeoutId = setTimeout(() => {
       loadingService.show();
-    }, 300)
+      loadingShown = true; //Marcar que se mostró
+    }, DELAY);
   }
 
   return next(req).pipe(
     finalize(() => {
-      //limpia el timeout y oculta el laoding
-      if (loadingTimeout) {
-        clearTimeout(loadingTimeout);
+
+      if (shouldShow) {
+        // Cancelar timeout si terminó antes de DELAY
+        if (timeoutId) clearTimeout(timeoutId);
+
+
+        // Solo ocultar si realmente se mostró el loading
+        if (loadingShown) {
+          loadingService.hide();
+        }
       }
-      if (shouldShowLoading) {
-        loadingService.hide();
-      }
+
     })
-  )
+  );
+
 };

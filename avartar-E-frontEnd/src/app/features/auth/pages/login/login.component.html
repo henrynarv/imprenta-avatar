@@ -43,12 +43,12 @@
         <!-- componente formulario reutilizable -->
         <app-login-form
           [isLoading]="isLoading()"
-          [errorMessage]="errorMesage()"
+          [errorMessage]="errorMessage()"
           [showSocialLogin]="true"
           [showRegisterLink]="true"
           (loginSubmitted)="onLoginSubmit($event)"
-          (socialLoginRequested)="onSocialLogin($event)"
         ></app-login-form>
+        <!-- (socialLoginRequested)="onSocialLogin($event)" -->
       </div>
     </div>
 

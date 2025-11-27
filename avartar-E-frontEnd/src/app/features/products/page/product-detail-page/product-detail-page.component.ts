@@ -102,6 +102,12 @@ export class ProductDetailPageComponent {
         console.log('✅ Producto encontrado:', product.name);
         this._product.set(product);
         this._quantity.set(product.minimumOrder || 1);
+
+        //scroll al top cuando el prodcuto se carga
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          console.log('scroll al top ejecutado');
+        }, 100);
       } else {
         console.warn('❌ Producto no encontrado para ID:', id);
         this._product.set(null);
@@ -178,11 +184,33 @@ export class ProductDetailPageComponent {
       'startViewTransition' in document;
 
     if (supportsViewTransition) {
-      (document as any).startViewTransition(() => {
-        this.router.navigate(path);
+      (document as any).startViewTransition(async () => {
+        await this.router.navigate(path);
+
+        setTimeout(() => {
+          const savePosition = sessionStorage.getItem('productsScrollPos');
+          if (savePosition) {
+            const position = parseInt(savePosition);
+            console.log('restaurando scroll a posicion: ', position);
+            window.scrollTo({
+              top: position,
+              behavior: 'instant'
+            });
+            sessionStorage.removeItem('productsScrollPos');
+            console.log(' Posición de scroll limpiada del sessionStorage');
+          }
+        }, 50);
       });
     } else {
-      this.router.navigate(path);
+
+      // 🔄 FALLBACK sin View Transitions
+      const savedPosition = sessionStorage.getItem('productsScrollPos');
+      this.router.navigate(path).then(() => {
+        if (savedPosition) {
+          window.scrollTo({ top: parseInt(savedPosition), behavior: 'smooth' });
+          sessionStorage.removeItem('productsScrollPos');
+        }
+      });
     }
   }
 

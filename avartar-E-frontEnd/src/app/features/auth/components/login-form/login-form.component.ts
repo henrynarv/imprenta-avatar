@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { LoginRequest } from '../../interfaces/auth-interface';
+import { LoginRequest } from '../../models/auth-interface';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { heroArrowPath, heroEnvelope, heroExclamationTriangle, heroEye, heroEyeSlash, heroLockClosed } from '@ng-icons/heroicons/outline';
@@ -38,7 +38,7 @@ export class LoginFormComponent {
 
   //formularios reactivos
   loginForm = this.fb.group({
-    email: ['user@gmail.com', [Validators.required, Validators.email]],
+    email: ['juan@imprenta.com', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     rememberMe: [false]
   });

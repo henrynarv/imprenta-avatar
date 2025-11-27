@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroShoppingCartSolid, heroXMarkSolid } from '@ng-icons/heroicons/solid';
+import { heroShoppingCartSolid } from '@ng-icons/heroicons/solid';
 import { heroUsers, heroShoppingBag, heroBars3, heroXMark } from '@ng-icons/heroicons/outline';
 import { CommonModule } from '@angular/common';
 import { OrderReportComponent } from "./features/reports/pages/order-report/order-report.component";
@@ -17,12 +17,14 @@ import { ConfirmDialogComponent } from "./shared/components/confirm-dialog/confi
 import { PruebaListProductComponent } from "./features/prueba-list-product/prueba-list-product.component";
 import { OrderDetailModalComponent } from "./features/reports/components/order-detail-modal/order-detail-modal.component";
 import { ProductCardComponent } from './shared/components/product-card/product-card.component';
-import { Product } from './features/products/models/product.interface';
+
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { LoadingService } from './core/services/loading.service';
-import { AuthService } from './features/auth/services/auth.service';
+
 import { filter, Subject, takeUntil } from 'rxjs';
 import { APP_ASSETS } from './shared/constants/assets';
+import { AuthStateService } from './features/auth/services/auth-state.service';
+
 
 
 
@@ -30,7 +32,7 @@ import { APP_ASSETS } from './shared/constants/assets';
 
 @Component({
   selector: 'app-root',
-  imports: [NgIcon, CommonModule, OrderReportComponent, ColorChipComponent, ProductListPageComponent, NavbarComponent, FooterComponent, LoginComponent, RegisterComponent, ForgotPasswordComponent, AlertContainerComponent, ConfirmDialogComponent, PruebaListProductComponent, OrderReportComponent, OrderDetailModalComponent, ProductCardComponent, RouterOutlet],
+  imports: [NgIcon, CommonModule, NavbarComponent, FooterComponent, AlertContainerComponent, ConfirmDialogComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   providers: [provideIcons({ heroShoppingCartSolid, heroUsers, heroShoppingBag, heroBars3, heroXMark, simpleFacebook, simpleInstagram, simpleWhatsapp, simpleYoutube })],
@@ -40,41 +42,58 @@ export class AppComponent {
   logoGray = APP_ASSETS.LOGO_GRAY;
   logoWhite = APP_ASSETS.LOGO_WHITE;
 
-
+  private navigationTimer: any;
+  private navigationLoadingActive = false; // ← NUEVO: Trackear estado
+  logoPreloaded = signal<boolean>(false);
 
   // Inyeccion de servicios
   private router = inject(Router);
   private loadingService = inject(LoadingService);
-  private authService = inject(AuthService);
+  private authState = inject(AuthStateService);
   private destroy$ = new Subject<void>();
 
-
-  //signals para estado del compoente
-  private _isNavigationLoading = signal<boolean>(false);
-  private _currentYear = signal<number>(new Date().getFullYear());
-
-
-
-  //computed properties de loaading para navegacion
-  isNavigationLoading = computed(() => this._isNavigationLoading());
-  currentYear = computed(() => this._currentYear());
   isLoading = computed(() => this.loadingService.isLoading());
-  isAuthenticated = computed(() => this.authService.isAuthenticated());
+  role = computed(() => this.authState.userRole());
+  isAuthenticated = computed(() => this.authState.isAuthenticated());
+  showFooter = computed(() => {
+    //nadie logueado mostrar footer
+    if (!this.isAuthenticated()) return true;
+
+    //usuario logueado → mostrar solo si es ROLE_USER
+    return this.role() === 'ROLE_USER'
+
+  });
 
   constructor() {
-    //configura el interceptor de laoding para navegacion
     this.setupNavigationLoading();
-
-    //verifica autenticacon final
-    this.checkInitialAuth();
-
   }
 
+  ngOnInit() {
+    this.preloadLogo();
+  }
 
-  /**
- * Configura el interceptor de loading para navegación entre rutas
- * Muestra loading durante la transición entre páginas
- */
+  private preloadLogo(): void {
+    const img = new Image();
+    img.src = this.logoWhite;
+
+    // AGREGAR TIMEOUT DE SEGURIDAD
+    const safetyTimeout = setTimeout(() => {
+      this.logoPreloaded.set(true);
+    }, 3000);
+
+    img.onload = () => {
+      clearTimeout(safetyTimeout);
+      this.logoPreloaded.set(true);
+      console.log('Logo precargado');
+    };
+
+    img.onerror = () => {
+      clearTimeout(safetyTimeout);
+      console.warn('Error al precargar logo');
+      this.logoPreloaded.set(true);
+    };
+  }
+
   private setupNavigationLoading(): void {
     this.router.events
       .pipe(
@@ -88,74 +107,46 @@ export class AppComponent {
       )
       .subscribe(event => {
         if (event instanceof NavigationStart) {
-          this._isNavigationLoading.set(true);
+          // LIMPIAR TIMER ANTERIOR POR SI ACASO
+          if (this.navigationTimer) {
+            clearTimeout(this.navigationTimer);
+          }
+
+          this.navigationTimer = setTimeout(() => {
+            this.loadingService.show();
+            this.navigationLoadingActive = true; // ← MARCAR COMO ACTIVO
+          }, 150);
         }
+
         if (
           event instanceof NavigationEnd ||
           event instanceof NavigationCancel ||
           event instanceof NavigationError
         ) {
-          // setTimeout(() => {
-          this._isNavigationLoading.set(false);
-          // }, 100);
+          // LIMPIAR TIMER INMEDIATAMENTE
+          if (this.navigationTimer) {
+            clearTimeout(this.navigationTimer);
+            this.navigationTimer = null;
+          }
+
+          //SOLO OCULTAR SI REALMENTE SE MOSTRÓ
+          if (this.navigationLoadingActive) {
+            this.loadingService.hide();
+            this.navigationLoadingActive = false;
+          }
         }
-      })
+      });
   }
 
-  //veridfca la autencitacion al iniciar la aplicacion
-  private checkInitialAuth(): void {
-    // El AuthService ya verifica el estado al inicializarse
-    // Aquí podríamos realizar acciones adicionales si es necesario
-    console.log('Estado de autenticación inicial:', this.isAuthenticated());
-  }
-
-  // Obtiene las clases Css para el conenido principal
-  //aplica efectos visiales cuando hay loading
-  getMainClasses(): string {
-    const baseClasses = 'flex-grow transition-opacity duration-300';
-    if (this.isNavigationLoading() || this.isLoading()) {
-      return `${baseClasses} opacity-70 pointer-events-none`;
-    }
-    return baseClasses;
-  }
-
-  //  Obtiene las clases CSS para el loading overlay
-  getLoadingOverlayClasses(): string {
-    const baseClasses = 'fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300';
-
-    if (this.isNavigationLoading() || this.isLoading()) {
-      return `${baseClasses} opacity-100  bg-white bg-opacity-90`;
-    }
-    return `${baseClasses} opacity-0 pointer-events-none`;
-  }
-
-  /**
-  * Maneja el evento de click en el contenido durante loading
-  * Previene interacciones no deseadas
-  */
-  onContentClick(event: Event): void {
-    if (this.isNavigationLoading() || this.isLoading()) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  }
-
-
-
-  /**
- * TrackBy function para optimización
- */
-  trackByIndex(index: number): number {
-    return index;
-  }
-
-  /**
-   * Limpia las subscriptions
-   */
   ngOnDestroy(): void {
+    //LIMPIAR TODO AL DESTRUIR
+    if (this.navigationTimer) {
+      clearTimeout(this.navigationTimer);
+    }
     this.destroy$.next();
     this.destroy$.complete();
   }
+
   /*
     isMenuOpen = signal<boolean>(false);
     isMegaMenuOpen = signal<boolean>(false);
